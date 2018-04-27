@@ -89,8 +89,8 @@ XeTeX 和 LuaTeX 可以直接使用系统字体。
  这样在系统安装依赖于tex的软件（比如R）时就不必重新下载软件仓库中的旧版 texlive 相关软件。
  也不会造成不同版本 tex 命令的冲突。dummy package 就是解决这样的软件依赖问题的“虚包”。
 
- dummy package 的制作可以参考 <a href="https://www.tug.org/texlive/debian.html#vanilla">TUG上的官方说明</a>. 
- <a href="https://ctan.org/pkg/texlive-dummy-enterprise-linux-7">这里</a>是RHEL 7系列的dummy package, 
+ dummy package 的制作可以参考[TUG](https://www.tug.org/texlive/debian.html#vanilla)上的官方说明. 
+ [这里](https://ctan.org/pkg/texlive-dummy-enterprise-linux-7)是RHEL 7系列的dummy package, 
  下载后直接安装即可：
  ```
  rpm -ivh texlive-dummy-2012a-1.el7.*
