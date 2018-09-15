@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.4.1" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/uploads/8.jpg?v=6.4.1">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/uploads/8.jpg?v=6.4.1">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/uploads/favicon.ico?v=6.4.1">
+
+
+  <link rel="mask-icon" href="/uploads/8.jpg?v=6.4.1" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '6.4.1',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="本文对DPDK17.02自带的example l3fwd进行走读解析。该sample application基于DPDK进行3层包转发。该application展示了使用DPDK中hash库和LPM库来实现包转发。初始化和runtime的过程很像l2fwd，主要区别就是l2fwd只是简单的将一个port的包全部转发到另一port,而l3fwd则是根据收到的包的information来决定转发到哪个">
+<meta name="keywords" content="DPDK,l3fwd">
+<meta property="og:type" content="article">
+<meta property="og:title" content="dpdk_l3fwd-源码解析">
+<meta property="og:url" content="https://calmisi.github.io/2017/05/10/dpdk-l3fwd-源码解析/index.html">
+<meta property="og:site_name" content="Calmisi Lee">
+<meta property="og:description" content="本文对DPDK17.02自带的example l3fwd进行走读解析。该sample application基于DPDK进行3层包转发。该application展示了使用DPDK中hash库和LPM库来实现包转发。初始化和runtime的过程很像l2fwd，主要区别就是l2fwd只是简单的将一个port的包全部转发到另一port,而l3fwd则是根据收到的包的information来决定转发到哪个">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2018-09-15T16:54:21.662Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="dpdk_l3fwd-源码解析">
+<meta name="twitter:description" content="本文对DPDK17.02自带的example l3fwd进行走读解析。该sample application基于DPDK进行3层包转发。该application展示了使用DPDK中hash库和LPM库来实现包转发。初始化和runtime的过程很像l2fwd，主要区别就是l2fwd只是简单的将一个port的包全部转发到另一port,而l3fwd则是根据收到的包的information来决定转发到哪个">
+
+
+
+
+
+
+  <link rel="canonical" href="https://calmisi.github.io/2017/05/10/dpdk-l3fwd-源码解析/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>dpdk_l3fwd-源码解析 | Calmisi Lee</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Calmisi Lee</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">Never like what you think.</p>
+      
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />Home</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archives<span class="badge">48</span></a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+    <a href="/categories/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br />Categories<span class="badge">17</span></a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+    <a href="/about/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-user"></i> <br />About</a>
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://calmisi.github.io/2017/05/10/dpdk-l3fwd-源码解析/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Calmisi Lee">
+      <meta itemprop="description" content="Pas de regrets">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Calmisi Lee">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">dpdk_l3fwd-源码解析
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2017-05-10 10:21:43" itemprop="dateCreated datePublished" datetime="2017-05-10T10:21:43+08:00">2017-05-10</time>
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/DPDK源码解析/" itemprop="url" rel="index"><span itemprop="name">DPDK源码解析</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>本文对DPDK17.02自带的example l3fwd进行走读解析。<br>该sample application基于DPDK进行3层包转发。该application展示了使用DPDK中hash库和LPM库来实现包转发。<br>初始化和runtime的过程很像<a href="https://calmisi.github.io/2017/05/09/dpdk-l2fwd-%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/" title="l2fwd源码解析">l2fwd</a>，主要区别就是l2fwd只是简单的将一个port的包全部转发到另一port,而l3fwd则是根据收到的包的information来决定转发到哪个port。<br><a id="more"></a></p>
+<p>我们从<code>main()</code>函数开始进行分析。<br>首先调用<code>rte_eal_init(argc, argv)</code>进行EAL环境的初始化。<br>然后注册系统信号(signal()函数);<br>在然后设置每个port的目的mac address，存在全局数组<code>dest_eth_addr[]</code>中，l3fwd默认的将经过portid号port的包的目的mac address改为<code>02:00:00:00:00:00:portid</code><br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* pre-init dst MACs for all ports to 02:00:00:00:00:xx */</span></span><br><span class="line">	<span class="keyword">for</span> (portid = <span class="number">0</span>; portid &lt; RTE_MAX_ETHPORTS; portid++) &#123;</span><br><span class="line">		dest_eth_addr[portid] =</span><br><span class="line">			ETHER_LOCAL_ADMIN_ADDR + ((<span class="keyword">uint64_t</span>)portid &lt;&lt; <span class="number">40</span>);</span><br><span class="line">		*(<span class="keyword">uint64_t</span> *)(val_eth + portid) = dest_eth_addr[portid];</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure></p>
+<hr>
+<h1 id="parse-args-argc-argv"><a href="#parse-args-argc-argv" class="headerlink" title="parse_args(argc, argv)"></a>parse_args(argc, argv)</h1><p>然后调用<code>parse_args(argc, argv)</code>，解析l3fwd的参数。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* display usage */</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">void</span></span><br><span class="line">print_usage(<span class="keyword">const</span> <span class="keyword">char</span> *prgname)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"%s [EAL options] --"</span></span><br><span class="line">		<span class="string">" -p PORTMASK"</span></span><br><span class="line">		<span class="string">" [-P]"</span></span><br><span class="line">		<span class="string">" [-E]"</span></span><br><span class="line">		<span class="string">" [-L]"</span></span><br><span class="line">		<span class="string">" --config (port,queue,lcore)[,(port,queue,lcore)]"</span></span><br><span class="line">		<span class="string">" [--eth-dest=X,MM:MM:MM:MM:MM:MM]"</span></span><br><span class="line">		<span class="string">" [--enable-jumbo [--max-pkt-len PKTLEN]]"</span></span><br><span class="line">		<span class="string">" [--no-numa]"</span></span><br><span class="line">		<span class="string">" [--hash-entry-num]"</span></span><br><span class="line">		<span class="string">" [--ipv6]"</span></span><br><span class="line">		<span class="string">" [--parse-ptype]\n\n"</span></span><br><span class="line"></span><br><span class="line">		<span class="string">"  -p PORTMASK: Hexadecimal bitmask of ports to configure\n"</span></span><br><span class="line">		<span class="string">"  -P : Enable promiscuous mode\n"</span></span><br><span class="line">		<span class="string">"  -E : Enable exact match\n"</span></span><br><span class="line">		<span class="string">"  -L : Enable longest prefix match (default)\n"</span></span><br><span class="line">		<span class="string">"  --config (port,queue,lcore): Rx queue configuration\n"</span></span><br><span class="line">		<span class="string">"  --eth-dest=X,MM:MM:MM:MM:MM:MM: Ethernet destination for port X\n"</span></span><br><span class="line">		<span class="string">"  --enable-jumbo: Enable jumbo frames\n"</span></span><br><span class="line">		<span class="string">"  --max-pkt-len: Under the premise of enabling jumbo,\n"</span></span><br><span class="line">		<span class="string">"                 maximum packet length in decimal (64-9600)\n"</span></span><br><span class="line">		<span class="string">"  --no-numa: Disable numa awareness\n"</span></span><br><span class="line">		<span class="string">"  --hash-entry-num: Specify the hash entry number in hexadecimal to be setup\n"</span></span><br><span class="line">		<span class="string">"  --ipv6: Set if running ipv6 packets\n"</span></span><br><span class="line">		<span class="string">"  --parse-ptype: Set to use software to analyze packet type\n\n"</span>,</span><br><span class="line">		prgname);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>在parse_args中</p>
+<ul>
+<li><code>-p</code>: 设置enable_port_mask的值</li>
+<li><code>-P</code>: 设置promiscuous_on，是否开启port的混杂模式</li>
+<li><code>-E</code>: 设置l3fwd_em_on,  是否启用exact match</li>
+<li><code>-L</code>: 设置l3fwd_lpm_on, 是否启用long prefix match</li>
+<li><code>--config</code>: 调用<code>parse_config()</code>，这里只配置Rx 队列的信息<ul>
+<li>将<code>(port,queue,lcore)</code>的映射关系存入lcore_params_array数组，最后把指针传给全局变量<code>lcore_params</code></li>
+<li><code>(port,queue,lcore)</code>的映射表示port 的 queue号队列映射给lcore处理。</li>
+</ul>
+</li>
+<li><code>--eth-dest</code>: 调用<code>parse_eth_dest()</code><ul>
+<li>parse_eth_dest()函数，根据参数，将参数传入的mac address存入<code>peer_addr[6]</code>数组</li>
+<li>然后用dest指针，指向dest_eth_addr,<code>dest = (uint8_t *)&amp;dest_eth_addr[portid];</code>，</li>
+<li>在for循环中<code>dest[c] = peer_addr[c]</code>,从而配置了dest_eth_addr[]，以更改不同的port对应的目的mac address</li>
+</ul>
+</li>
+<li><code>--enable-jumbo</code>: 设置<code>port_conf.rxmode.jumbo_frame = 1</code>;</li>
+<li><code>--max-pkt-len</code>:  设置<code>port_conf.rxmode.max_rx_pkt_len</code>;</li>
+<li><code>--no-numa</code>: 设置<code>numa_on = 0</code>;即不启用numa,默认值为1</li>
+<li><code>--ipv6</code>: 设置<code>ipv6 = 1</code>，即启用ipv6，默认值为0</li>
+<li><code>--hash-entry-num</code>: 设置全局变量<code>hash_entry_number</code>，范围为[1,L3FWD_HASH_ENTRIES(1M)]</li>
+<li><p><code>--parse-ptype</code>: 设置全局变量<code>parse_ptype = 1</code>，默认值为0;</p>
+<ul>
+<li>当为1时，即启用rx callback软件方式分析包的type</li>
+<li>当为0时，启用硬件分析。</li>
+</ul>
+<p>后面判断如果l3fwd_lpm_on和l3fwd_em_on同时都被置1，则退出；<br>若都没被置1，则将l3fwd_lpm_on置1，表示默认使用long prefix match;<br>然后若是l3fwd_lpm_on，则禁用ipv6,并将<code>hash_entery_number</code>置为默认值4，因为ipv6和hash只有在exact match时使用。</p>
+<hr>
+<p>调用<code>init_lcore_rx_queues()</code>函数，配置全局数组<code>lcore_conf[]</code>数组中每个具体的lcore所要处理的</p>
+</li>
+<li>n_rx_queue接收队列数，</li>
+<li>以及rx_queue_list<a href="即需要处理那个port的那个rx_queue"></a>;</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">lcore_conf</span> <span class="title">lcore_conf</span>[<span class="title">RTE_MAX_LCORE</span>];</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">lcore_rx_queue</span> &#123;</span></span><br><span class="line">	<span class="keyword">uint8_t</span> port_id;</span><br><span class="line">	<span class="keyword">uint8_t</span> queue_id;</span><br><span class="line">&#125; __rte_cache_aligned;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">lcore_conf</span> &#123;</span></span><br><span class="line">	<span class="keyword">uint16_t</span> n_rx_queue;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">lcore_rx_queue</span> <span class="title">rx_queue_list</span>[<span class="title">MAX_RX_QUEUE_PER_LCORE</span>];</span></span><br><span class="line">	<span class="keyword">uint16_t</span> n_tx_port;</span><br><span class="line">	<span class="keyword">uint16_t</span> tx_port_id[RTE_MAX_ETHPORTS];</span><br><span class="line">	<span class="keyword">uint16_t</span> tx_queue_id[RTE_MAX_ETHPORTS];</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">mbuf_table</span> <span class="title">tx_mbufs</span>[<span class="title">RTE_MAX_ETHPORTS</span>];</span></span><br><span class="line">	<span class="keyword">void</span> *ipv4_lookup_struct;</span><br><span class="line">	<span class="keyword">void</span> *ipv6_lookup_struct;</span><br><span class="line">&#125; __rte_cache_aligned;</span><br></pre></td></tr></table></figure>
+<p>调用<code>check_port_config(nb_ports)</code>检查<code>--config</code>配置的port是否被enabled_port_mask所允许和是否超过了nb_ports的限制。</p>
+<hr>
+<h1 id="建立查找表"><a href="#建立查找表" class="headerlink" title="建立查找表"></a>建立查找表</h1><p>然后运行<code>setup_l3fwd_lookup_tables()</code>，设置建立3层转发需要的转发查找表的函数调用。<br>根据全局变量l3fwd_em_on判断是采用exact match还是Long prefix match.<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">void</span></span><br><span class="line">setup_l3fwd_lookup_tables(<span class="keyword">void</span>)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="comment">/* Setup HASH lookup functions. */</span></span><br><span class="line">	<span class="keyword">if</span> (l3fwd_em_on)</span><br><span class="line">		l3fwd_lkp = l3fwd_em_lkp;</span><br><span class="line">	<span class="comment">/* Setup LPM lookup functions. */</span></span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">		l3fwd_lkp = l3fwd_lpm_lkp;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<hr>
+<h1 id="初始化各个ports"><a href="#初始化各个ports" class="headerlink" title="初始化各个ports"></a>初始化各个ports</h1><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* initialize all ports */</span></span><br><span class="line">	<span class="keyword">for</span> (portid = <span class="number">0</span>; portid &lt; nb_ports; portid++) &#123;</span><br><span class="line">		<span class="comment">/* ...*/</span></span><br><span class="line"></span><br><span class="line">		nb_rx_queue = get_port_n_rx_queues(portid);</span><br><span class="line">		n_tx_queue = nb_lcores;</span><br><span class="line">		<span class="keyword">if</span> (n_tx_queue &gt; MAX_TX_QUEUE_PER_PORT)</span><br><span class="line">			n_tx_queue = MAX_TX_QUEUE_PER_PORT;</span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">"Creating queues: nb_rxq=%d nb_txq=%u... "</span>,</span><br><span class="line">			nb_rx_queue, (<span class="keyword">unsigned</span>)n_tx_queue );</span><br><span class="line">		ret = rte_eth_dev_configure(portid, nb_rx_queue,</span><br><span class="line">					(<span class="keyword">uint16_t</span>)n_tx_queue, &amp;port_conf);</span><br><span class="line">		<span class="keyword">if</span> (ret &lt; <span class="number">0</span>)</span><br><span class="line">			rte_exit(EXIT_FAILURE,</span><br><span class="line">				<span class="string">"Cannot configure device: err=%d, port=%d\n"</span>,</span><br><span class="line">				ret, portid);</span><br><span class="line"></span><br><span class="line">		rte_eth_macaddr_get(portid, &amp;ports_eth_addr[portid]);</span><br><span class="line">		print_ethaddr(<span class="string">" Address:"</span>, &amp;ports_eth_addr[portid]);</span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">", "</span>);</span><br><span class="line">		print_ethaddr(<span class="string">"Destination:"</span>,</span><br><span class="line">			(<span class="keyword">const</span> struct ether_addr *)&amp;dest_eth_addr[portid]);</span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">", "</span>);</span><br><span class="line"></span><br><span class="line">		<span class="comment">/*</span></span><br><span class="line"><span class="comment">		 * prepare src MACs for each port.</span></span><br><span class="line"><span class="comment">		 */</span></span><br><span class="line">		ether_addr_copy(&amp;ports_eth_addr[portid],</span><br><span class="line">			(struct ether_addr *)(val_eth + portid) + <span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">		<span class="comment">/* init memory */</span></span><br><span class="line">		ret = init_mem(NB_MBUF);</span><br><span class="line">		<span class="keyword">if</span> (ret &lt; <span class="number">0</span>)</span><br><span class="line">			rte_exit(EXIT_FAILURE, <span class="string">"init_mem failed\n"</span>);</span><br><span class="line"></span><br><span class="line">		<span class="comment">/* init one TX queue per couple (lcore,port) */</span></span><br><span class="line">		queueid = <span class="number">0</span>;</span><br><span class="line">		<span class="keyword">for</span> (lcore_id = <span class="number">0</span>; lcore_id &lt; RTE_MAX_LCORE; lcore_id++) &#123;</span><br><span class="line">			<span class="keyword">if</span> (rte_lcore_is_enabled(lcore_id) == <span class="number">0</span>)</span><br><span class="line">				<span class="keyword">continue</span>;</span><br><span class="line"></span><br><span class="line">			<span class="keyword">if</span> (numa_on)</span><br><span class="line">				socketid =</span><br><span class="line">				(<span class="keyword">uint8_t</span>)rte_lcore_to_socket_id(lcore_id);</span><br><span class="line">			<span class="keyword">else</span></span><br><span class="line">				socketid = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">			<span class="built_in">printf</span>(<span class="string">"txq=%u,%d,%d "</span>, lcore_id, queueid, socketid);</span><br><span class="line">			fflush(<span class="built_in">stdout</span>);</span><br><span class="line"></span><br><span class="line">			rte_eth_dev_info_get(portid, &amp;dev_info);</span><br><span class="line">			txconf = &amp;dev_info.default_txconf;</span><br><span class="line">			<span class="keyword">if</span> (port_conf.rxmode.jumbo_frame)</span><br><span class="line">				txconf-&gt;txq_flags = <span class="number">0</span>;</span><br><span class="line">			ret = rte_eth_tx_queue_setup(portid, queueid, nb_txd,</span><br><span class="line">						     socketid, txconf);</span><br><span class="line">			<span class="keyword">if</span> (ret &lt; <span class="number">0</span>)</span><br><span class="line">				rte_exit(EXIT_FAILURE,</span><br><span class="line">					<span class="string">"rte_eth_tx_queue_setup: err=%d, "</span></span><br><span class="line">					<span class="string">"port=%d\n"</span>, ret, portid);</span><br><span class="line"></span><br><span class="line">			qconf = &amp;lcore_conf[lcore_id];</span><br><span class="line">			qconf-&gt;tx_queue_id[portid] = queueid;</span><br><span class="line">			queueid++;</span><br><span class="line"></span><br><span class="line">			qconf-&gt;tx_port_id[qconf-&gt;n_tx_port] = portid;</span><br><span class="line">			qconf-&gt;n_tx_port++;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">"\n"</span>);</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>首先调用<code>get_port_n_rx_queues(portid)</code>获取portid表示的port有几个rx queues;</li>
+<li>设置<code>n_tx_queue = nb_lcores</code>;即为应用启动的时候EAL参数设置的用几个lcore;</li>
+<li>然后调用<code>rte_eth_dev_configure(portid, nb_rx_queue,(uint16_t)n_tx_queue, &amp;port_conf)</code>配置该port;</li>
+<li>注意上一步最后传入的port_conf,在参数解析的时候，可能会设置<code>port_conf.rxmode.jumbo_frame</code>和<code>port_conf.rxmode.max_rx_pkt_len</code>;<br><strong>所以这里有几个lcore，对应就会给每个启用的port配置几个TX queues</strong></li>
+<li>然后读取该port的MAC ADDRESS并输出，同时也输出该port的目的mac address，如果有用<code>--eth-dest</code>设置则为设置的值，否则为默认的值；</li>
+<li>然后将该port的mac address 复制到val_eth结构里面，作为该port的源mac address存储。</li>
+</ul>
+<p>然后调用init_mem(NB_MBUF)初始化内存，该函数中用for循环对每个启用的lcore进行处理，</p>
+<ul>
+<li>首先根据是否启用了NUMA,来确定该lcore对应的NUMA节点号（socketid）</li>
+<li>然后根据socketid，判断该socketid上的mempool是否创建了，已经存在的话，跳下一步；没有的话，则创建一个mempool<br><code>pktmbuf_pool[socketid] = rte_pktmbuf_pool_create(s, nb_mbuf, MEMPOOL_CACHE_SIZE, 0, RTE_MBUF_DEFAULT_BUF_SIZE, socketid);</code><br>并创建该socket上的查找表<code>l3fwd_lkp.setup(socketid)</code></li>
+<li>获取该lcore的配置结构体<code>qconf = &amp;lcore_conf[lcore_id]</code>，分别指定<code>qconf-&gt;ipv4_lookup_struct</code>和<code>qconf-&gt;ipv6_lookup_struct</code></li>
+</ul>
+<p>然后初始化TX queue（有<strong>几个lcore，就为每个port配置几个tx queue</strong>）</p>
+<ul>
+<li>首先根据是否启用NUMA,确定socketid</li>
+<li>然后调用<code>rte_eth_dev_info_get(portid, &amp;dev_info)</code>读取该port的设备信息;</li>
+<li>调用<code>txconf = &amp;dev_info.default_txconf</code>，获取tx的配置信息；</li>
+<li>根据是否启用jumbo frame，配置txconf-&gt;txq_flags;</li>
+<li>然后<code>rte_eth_tx_queue_setup(portid, queueid, nb_txd,socketid, txconf)</code>创建一个接收队列;</li>
+<li>最后获取该lcore_id的lcore_conf[]配置数组，并更新tx相关的信息，<br>比如：<code>qconf-&gt;tx_queue_id[port]</code>表示该lcore处理portid的那个queue;<br><code>qconf-&gt;n_tx_port</code>表示该lcore需要处理几个port的tx queue;<br><code>qconf-&gt;tx_port_id[qconf-&gt;n_tx_port]</code>表示该lcore需要处理的tx queue的port_id;</li>
+</ul>
+<p>然后初始化rx queue,for循环启用的lcores.</p>
+<ul>
+<li>首先获取lcore的配置信息，<code>qconf = &amp;lcore_conf[lcore_id]</code></li>
+<li>然后for循环根据配置文件中给这个lcore配置了需要处理几个rx queue,依次对每个rx queue进行配置<br><code>for(queue = 0; queue &lt; qconf-&gt;n_rx_queue; ++queue)</code><ul>
+<li>首先读取portid和queueid信息，</li>
+<li>然后根据是否启用numa_on，设置socketid</li>
+<li>然后调用<code>rte_eth_rx_queue_setup(portid, queueid, nb_rxd,socketid,NULL,pktmbuf_pool[socketid]);</code>建立tx queue</li>
+</ul>
+</li>
+</ul>
+<hr>
+<p>启动各个port和运行l3fwd包转发的死循环</p>
+<ol>
+<li>对各个启用的port调用<code>rte_eth_dev_start(portid)</code>，如果启用了混杂模式，则还需要调用<code>rte_eth_promiscuous_enable(portid)</code></li>
+<li>对各个启用的lcore，先获取其配置数组<code>qconf= &amp;lcore_conf[lcore_id]</code>，然后调用<code>prepare_ptype_parser(portid, queueid)</code>,验证该lcore需要处理的portid号port的queueid队列是否可能解析包的类型；</li>
+<li>调用<code>rte_eal_mp_remote_launch(l3fwd_lkp.main_loop, NULL, CALL_MASTER);</code>在每个lcore上启用l3fwd_lkp.main_loop死循环方法。</li>
+</ol>
+<hr>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>整个l3fwd主要做了这几件事：</p>
+<ol>
+<li>首先调用<code>rte_eal_init(argc,argv)</code>，初始化EAL；</li>
+<li>调用<code>setup_l3fwd_lookup_tables（）</code>设置全局变量<code>l3fwd_lkp</code>是指向exact match结构还是long prefix match结构；</li>
+<li>然后在for循环中对每个enabled port调用<code>rte_eth_dev_configure(portid, nb_rx_queue,(uint16_t)n_tx_queue, &amp;port_conf)</code>;<br>配置各个port,其中设置了rx queue和tx queue的数目，还有port的配置结构体port_conf;</li>
+<li>在同样的for循环中，对每个enabled port调用<code>init_mem()</code>，该函数其实和port没有关系，不知道为什么要放在port的循环中每次调用；<br>该函数里面对enabled lcore进行循环，做了2件事：<ul>
+<li>判断该lcore属于的socket,是否已经创建了对应的<code>pktmbuf_pool</code>，没有则创建,并在创建的时候，调用<code>l3fwd_lkp.setup(socketid)</code>初始化查找表，可见查找表和socket相关；</li>
+<li>配置lcore的配置数组<code>lcore_conf[lcore_id]</code>的<code>ipv4_lookup_struct</code>和<code>ipv6_lookup_struct</code></li>
+</ul>
+</li>
+<li>在同样的for循环中，对每个enabled port,进行enable lcore循环，<ul>
+<li>调用<code>rte_eth_dev_info_get(portid, &amp;dev_info)</code>读取port的配置，然后根据读取的<code>dev_info</code>配置<code>txconf</code>,</li>
+<li>调用<code>rte_eth_tx_queue_setup(portid, queueid, nb_txd, socketid, txconf)</code>建立tx queue;</li>
+<li><strong>说明：这里的2层循环是因为每个lcore会为每个port建立一个tx queue</strong></li>
+<li>最后会更新lcore的配置数组<code>lcore_conf[lcore_id]</code></li>
+</ul>
+</li>
+<li>在新的for循环中，对enabled lcore进行循环，根据lcore的配置数组<code>lcore_conf[lcore_id]</code>中的n_rx_queue进行循环，<ul>
+<li>调用<code>rte_eth_rx_queue_setup(portid, queueid, nb_rxd, socketid, NULL, pktmbuf_pool[socketid])</code>,建立rx queue;</li>
+<li><strong>说明：与第5步不同，每个port的rx queue得根据应用的启动时传入的参数<code>--config</code>配置的lcore_conf建立</strong> </li>
+</ul>
+</li>
+<li>对每个enabled port进行循环调用<code>rte_eth_dev_start(portid)</code>和<code>rte_eth_promiscuous_enable(portid)</code>，分别启动每个port和设置port为混杂模式；</li>
+<li>ptype_parser的处理；</li>
+<li>调用<code>rte_eal_mp_remote_launch(l3fwd_lkp.main_loop, NULL, CALL_MASTER)</code>，在每个enabled lcore上启动l3fwd_lkp.main_loop，准备对接收到的数据进行转发；</li>
+</ol>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/DPDK/" rel="tag"># DPDK</a>
+          
+            <a href="/tags/l3fwd/" rel="tag"># l3fwd</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/05/09/dpdk-l2fwd-源码解析/" rel="next" title="dpdk l2fwd 源码解析">
+                <i class="fa fa-chevron-left"></i> dpdk l2fwd 源码解析
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/08/21/Xeon-CPU命名规则/" rel="prev" title="Xeon CPU命名规则">
+                Xeon CPU命名规则 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Calmisi Lee</p>
+              <p class="site-description motion-element" itemprop="description">Pas de regrets</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">48</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">17</span>
+                    <span class="site-state-item-name">categories</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">49</span>
+                    <span class="site-state-item-name">tags</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/calmisi" target="_blank" title="GitHub"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="mailto:calmisi975@gmail.com" target="_blank" title="E-Mail"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  
+                </span>
+              
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#parse-args-argc-argv"><span class="nav-number">1.</span> <span class="nav-text">parse_args(argc, argv)</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#建立查找表"><span class="nav-number">2.</span> <span class="nav-text">建立查找表</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#初始化各个ports"><span class="nav-number">3.</span> <span class="nav-text">初始化各个ports</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Calmisi Lee</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> v3.7.1</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme – <a class="theme-link" target="_blank" href="https://theme-next.org">NexT.Gemini</a> v6.4.1</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.4.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.4.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.4.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.4.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.4.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.4.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.4.1"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
