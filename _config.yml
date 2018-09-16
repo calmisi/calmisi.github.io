@@ -15,7 +15,7 @@ timezone:
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
 url: https://calmisi.github.io/
 root: /
-permalink: :year/:month/:day/:title/
+permalink: post/:title/
 permalink_defaults:
 
 # Directory
@@ -56,9 +56,6 @@ index_generator:
 # Category & Tag
 default_category: uncategorized
 category_map:
-    编程: Programming
-    日记: Diary
-    SPARK: Spark 
 tag_map:
 
 # Date / Time format
@@ -78,6 +75,8 @@ pagination_dir: page
 ## Themes: https://hexo.io/themes/
 theme: next
 
+#avatar: /images/avatar.jpg
+
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
@@ -85,3 +84,20 @@ deploy:
   repo: git@github.com:calmisi/calmisi.github.io.git
   branch: master
   message: modify or add articles
+  
+# Sitemap
+sitemap:
+  path: sitemap.xml
+
+# Search  
+search:
+  path: search.xml
+  field: post
+  format: html
+  limit: 10000
+  
+symbols_count_time:
+  symbols: true
+  time: true
+  total_symbols: true
+  total_time: true

@@ -45,22 +45,22 @@ cache:
 # For example, you put your favicons into `hexo-site/source/images` directory.
 # Then need to rename & redefine they on any other names, otherwise icons from Next will rewrite your custom icons in Hexo.
 favicon:
-  small: /uploads/favicon.ico
-  medium: /uploads/8.jpg
-  apple_touch_icon: /uploads/8.jpg
-  safari_pinned_tab: /uploads/8.jpg
+  small: /images/favicon.ico
+  medium: /images/8.jpg
+  apple_touch_icon: /images/8.jpg
+  safari_pinned_tab: /images/8.jpg
   #android_manifest: /images/manifest.json
   #ms_browserconfig: /images/browserconfig.xml
 
 # Set rss to false to disable feed link.
-# Leave rss as empty to use site's feed link.
+# Leave rss as empty to use site's feed link, and install hexo-generator-feed: `npm install hexo-generator-feed --save`.
 # Set rss to specific value if you have burned your feed already.
 rss:
 
 footer:
   # Specify the date when the site was setup.
   # If not defined, current year will be used.
-  #since: 2015
+  since: 2015=6
 
   # Icon between year and copyright info.
   icon:
@@ -68,7 +68,7 @@ footer:
     # `heart` is recommended with animation in red (#ff0000).
     name: user
     # If you want to animate the icon, set it to true.
-    animated: false
+    animated: true
     # Change the color of icon, using Hex Code.
     color: "#808080"
 
@@ -79,13 +79,13 @@ footer:
     # Hexo link (Powered by Hexo).
     enable: true
     # Version info of Hexo after Hexo link (vX.X.X).
-    version: true
+    version: false
 
   theme:
     # Theme & scheme info link (Theme - NexT.scheme).
     enable: true
     # Version info of NexT after scheme info (vX.X.X).
-    version: true
+    version: false
   # -------------------------------------------------------------
   # Any custom text can be defined here.
   #custom_text: Hosted by <a target="_blank" rel="external nofollow" href="https://pages.coding.me"><b>Coding Pages</b></a>
@@ -100,11 +100,8 @@ footer:
 canonical: true
 
 # Change headers hierarchy on site-subtitle (will be main site description) and on all post/pages titles for better SEO-optimization.
-seo: false
+seo: true
 
-# If true, will add site-subtitle to index page, added in main hexo config.
-# subtitle: Subtitle
-index_with_subtitle: false
 
 
 # ---------------------------------------------------------------
@@ -118,7 +115,7 @@ index_with_subtitle: false
 # Value after `||` delimeter is the name of FontAwesome icon. If icon (with or without delimeter) is not specified, question icon will be loaded.
 menu:
   home: / || home
-  #tags: /tags/ || tags
+  tags: /tags/ || tags
   categories: /categories/ || th
   archives: /archives/ || archive
   about: /about/ || user
@@ -129,7 +126,7 @@ menu:
 # Enable/Disable menu icons / item badges.
 menu_settings:
   icons: true
-  badges: true
+  badges: false
 
 # ---------------------------------------------------------------
 # Scheme Settings
@@ -156,7 +153,7 @@ site_state: true
 # Value after `||` delimeter is the name of FontAwesome icon. If icon (with or without delimeter) is not specified, globe icon will be loaded.
 social:
   GitHub: https://github.com/calmisi || github
-  E-Mail: mailto:calmisi975@gmail.com || envelope
+  E-Mail: mailto:calmisi@163.com || envelope
   #Google: https://plus.google.com/yourname || google
   #Twitter: https://twitter.com/yourname || twitter
   #FB Page: https://www.facebook.com/yourname || facebook
@@ -190,9 +187,17 @@ links_layout: block
   #Title: http://example.com/
 
 # Sidebar Avatar
-# in theme directory(source/images): /images/avatar.gif
-# in site  directory(source/uploads): /uploads/avatar.gif
-#avatar: /images/avatar.gif
+avatar:
+  # in theme directory(source/images): /images/avatar.gif
+  # in site  directory(source/uploads): /uploads/avatar.gif
+  # You can also use other linking images.
+  url: /images/avatar.jpg
+  # If true, the avatar would be dispalyed in circle.
+  rounded: false
+  # The value of opacity should be choose from 0 to 1 to set the opacity of the avatar.
+  opacity: 1
+  # If true, the avatar would be rotated with the cursor.
+  rotated: false
 
 # Table Of Contents in the Sidebar
 toc:
@@ -215,6 +220,12 @@ sidebar:
   position: left
   #position: right
 
+  # Manual define the sidebar width.
+  # If commented, will be default for:
+  # Muse | Mist: 320
+  # Pisces | Gemini: 240
+  #width: 300
+
   # Sidebar Display, available value (only for Muse | Mist):
   #  - post    expand on posts automatically. Default.
   #  - always  expand for all pages automatically
@@ -229,10 +240,10 @@ sidebar:
   offset: 12
 
   # Back to top in sidebar (only for Pisces | Gemini).
-  b2t: false
+  b2t: true
 
   # Scroll percent label in b2t button.
-  scrollpercent: false
+  scrollpercent: true
 
   # Enable sidebar on narrow view (only for Muse | Mist).
   onmobile: false
@@ -261,9 +272,12 @@ auto_excerpt:
 post_meta:
   item_text: true
   created_at: true
-  updated_at: false
-  # Only show 'updated' if different from 'created'.
-  updated_diff: false
+  updated_at:
+    enabled: true
+    # If true, show updated date label only if `updated date` different from 'created date' (post edited in another day than was created).
+    # And if post will edited in same day as created, edited time will show in popup title under created time label.
+    # If false show anyway, but if post edited in same day, show only edited time.
+    another_day: true
   categories: true
 
 # Post wordcount display settings
@@ -271,25 +285,30 @@ post_meta:
 symbols_count_time:
   separated_meta: true
   item_text_post: true
-  item_text_total: false
-  awl: 5
-  wpm: 200
+  item_text_total: true
+  awl: 4
+  wpm: 275
 
-# Manual define the border radius in codeblock
-# Leave it empty for the default 1
 codeblock:
+  # Manual define the border radius in codeblock
+  # Leave it empty for the default 1
   border_radius:
+  # Add copy button on codeblock
+  copy_button:
+    enable: true
+    # Show text copy result
+    show_result: true
 
 # Wechat Subscriber
 #wechat_subscriber:
-#  enabled: true
-#  qcode: /uploads/wechat_qr.jpg
-#  description: ex. subscribe to my blog by scanning my public wechat account
+  #enabled: true
+  #qcode: /path/to/your/wechatqcode ex. /uploads/wechat-qcode.jpg
+  #description: ex. subscribe to my blog by scanning my public wechat account
 
 # Reward
-#reward_comment: Donate comment here
-#wechatpay: /images/wechatpay.jpg
-#alipay: /images/alipay.jpg
+reward_comment: Donate comment here
+wechatpay: /images/wechat_pay.jpg
+alipay: /images/ali_pay.jpg
 #bitcoin: /images/bitcoin.png
 
 # Related popular posts
@@ -310,6 +329,13 @@ post_copyright:
   enable: false
   license: <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 4.0</a>
 
+# Post edit
+# Dependencies: https://github.com/hexojs/hexo-deployer-git
+post_edit:
+  enable: false
+  url: https://github.com/theme-next/theme-next.org/_posts/tree/master/ # Link for view source.
+# url: https://github.com/theme-next/theme-next.org/_posts/edit/master/ # Link for fork & edit.
+
 
 # ---------------------------------------------------------------
 # Misc Theme Settings
@@ -328,7 +354,7 @@ android_chrome_color: "#222"
 #   image: url-of-image   - Images's url
 custom_logo:
   enabled: false
-  image: 
+  image:
 
 # Code Highlight theme
 # Available values: normal | night | night eighties | night blue | night bright
@@ -338,15 +364,6 @@ highlight_theme: normal
 # Enable "cheers" for archive page.
 cheers_enabled: true
 
-# Manual define the max content width
-# !!Only available for Gemini Scheme currently
-# Leave it empty for the default 75% (suggest not less than 1000px)
-#max_content_width: 1000px
-
-# Manual define the sidebar width
-# !!Only available for Gemini Scheme currently
-# Leave it empty for the default 240
-sidebar_width:
 
 # ---------------------------------------------------------------
 # Font Settings
@@ -463,9 +480,6 @@ disqus:
   count: true
   lazyload: false
 
-# Hypercomments
-#hypercomments_id:
-
 # changyan
 changyan:
   enable: false
@@ -477,7 +491,7 @@ changyan:
 # You can get your appid and appkey from https://leancloud.cn
 # more info please open https://valine.js.org
 valine:
-  enable: false
+  enable: false # When enable is set to be true, leancloud_visitors is recommended to be closed for the re-initialization problem within different leancloud adk version.
   appid:  # your leancloud application appid
   appkey:  # your leancloud application appkey
   notify: false # mail notifier , https://github.com/xCss/Valine/wiki
@@ -486,11 +500,7 @@ valine:
   avatar: mm # gravatar style
   guest_info: nick,mail,link # custom comment header
   pageSize: 10 # pagination size
-
-
-# Support for youyan comments system.
-# You can get your uid from http://www.uyan.cc
-#youyan_uid: your uid
+  visitor: false # leancloud-counter-security is not supported for now. When visitor is set to be true, appid and appkey are recommended to be the same as leancloud_visitors' for counter compatibility. Article reading statistic https://valine.js.org/visitor.html
 
 # Support for LiveRe comments system.
 # You can get your uid from https://livere.com/insight/myCode (General web site)
@@ -519,13 +529,7 @@ gitment:
 #baidushare:
 ##  type: button
 
-# Share
-# This plugin is more useful in China, make sure you known how to use it.
-# And you can find the use guide at official webiste: http://www.jiathis.com/.
-# Warning: JiaThis does not support https.
-#jiathis:
-  ##uid: Get this uid from http://www.jiathis.com/
-
+# addthis Share, see: https://www.addthis.com/
 #add_this_id:
 
 # NeedMoreShare2
@@ -570,6 +574,10 @@ needmoreshare2:
 # Yandex Webmaster tools verification setting
 # See: https://webmaster.yandex.ru/
 #yandex_site_verification:
+
+# Baidu Webmaster tools verification setting
+# See: https://ziyuan.baidu.com/site/
+#baidu_site_verification:
 
 # CNZZ count
 #cnzz_siteid:
@@ -896,19 +904,15 @@ vendors:
   # https://github.com/hustcc/canvas-nest.js
   canvas_nest:
 
-  # three
+  # Internal version: 1.0.0
+  # See: https://github.com/theme-next/theme-next-three
+  # three: //cdn.jsdelivr.net/gh/theme-next/theme-next-three@1.0.0/three.min.js
+  # three_waves: //cdn.jsdelivr.net/gh/theme-next/theme-next-three@1.0.0/three-waves.min.js
+  # canvas_lines: //cdn.jsdelivr.net/gh/theme-next/theme-next-three@1.0.0/canvas_lines.min.js
+  # canvas_sphere: //cdn.jsdelivr.net/gh/theme-next/theme-next-three@1.0.0/canvas_sphere.min.js
   three:
-
-  # three_waves
-  # https://github.com/jjandxa/three_waves
   three_waves:
-
-  # three_waves
-  # https://github.com/jjandxa/canvas_lines
   canvas_lines:
-
-  # three_waves
-  # https://github.com/jjandxa/canvas_sphere
   canvas_sphere:
 
   # Internal version: 1.0.0
@@ -917,7 +921,7 @@ vendors:
 
   # Internal version: 3.3.0
   # https://github.com/ethantw/Han
-  han:
+  Han:
 
   # Internal version: 3.3.0
   # https://github.com/vinta/pangu.js
@@ -948,6 +952,3 @@ vendors:
 css: css
 js: js
 images: images
-
-# Theme version
-version: 6.1.0
