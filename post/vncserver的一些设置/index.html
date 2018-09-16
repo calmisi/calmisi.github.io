@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.4.1" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/8.jpg?v=6.4.1">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/8.jpg?v=6.4.1">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.ico?v=6.4.1">
+
+
+  <link rel="mask-icon" href="/images/8.jpg?v=6.4.1" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '6.4.1',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="实验室有台DELL的服务器，平常都开着。服务器上部署着VNC-server,方便其他同学远程连接进行一些开发工作和实验。 刚好我的显示器有台是2k分辨率的，用VNC-viewer登录服务器后，发现能设置的最大分辨率是1920*1200。全屏的时候不能占满整个屏幕，这严重影响我操作时候的视觉美感。">
+<meta name="keywords" content="Vncserver">
+<meta property="og:type" content="article">
+<meta property="og:title" content="vncserver的一些设置">
+<meta property="og:url" content="https://calmisi.github.io/post/vncserver的一些设置/index.html">
+<meta property="og:site_name" content="Calmisi Lee">
+<meta property="og:description" content="实验室有台DELL的服务器，平常都开着。服务器上部署着VNC-server,方便其他同学远程连接进行一些开发工作和实验。 刚好我的显示器有台是2k分辨率的，用VNC-viewer登录服务器后，发现能设置的最大分辨率是1920*1200。全屏的时候不能占满整个屏幕，这严重影响我操作时候的视觉美感。">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https://calmisi.github.io/post/vncserver的一些设置/1.png">
+<meta property="og:image" content="https://calmisi.github.io/post/vncserver的一些设置/2.png">
+<meta property="og:updated_time" content="2018-09-15T16:54:21.682Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="vncserver的一些设置">
+<meta name="twitter:description" content="实验室有台DELL的服务器，平常都开着。服务器上部署着VNC-server,方便其他同学远程连接进行一些开发工作和实验。 刚好我的显示器有台是2k分辨率的，用VNC-viewer登录服务器后，发现能设置的最大分辨率是1920*1200。全屏的时候不能占满整个屏幕，这严重影响我操作时候的视觉美感。">
+<meta name="twitter:image" content="https://calmisi.github.io/post/vncserver的一些设置/1.png">
+
+
+
+
+
+
+  <link rel="canonical" href="https://calmisi.github.io/post/vncserver的一些设置/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>vncserver的一些设置 | Calmisi Lee</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Calmisi Lee</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <h1 class="site-subtitle" itemprop="description">Never like what you think.</h1>
+      
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />Home</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archives</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />Tags</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+    <a href="/categories/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br />Categories</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+    <a href="/about/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-user"></i> <br />About</a>
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://calmisi.github.io/post/vncserver的一些设置/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Calmisi Lee">
+      <meta itemprop="description" content="Pas de regrets">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Calmisi Lee">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">vncserver的一些设置
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2016-11-08 10:18:11" itemprop="dateCreated datePublished" datetime="2016-11-08T10:18:11+08:00">2016-11-08</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2018-09-16 00:54:21" itemprop="dateModified" datetime="2018-09-16T00:54:21+08:00">2018-09-16</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-symbolscount">
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Symbols count in article: </span>
+                
+                <span title="Symbols count in article">3.7k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Reading time &asymp;</span>
+                
+                <span title="Reading time">3 mins.</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>实验室有台DELL的服务器，平常都开着。<br>服务器上部署着VNC-server,方便其他同学远程连接进行一些开发工作和实验。</p>
+<p>刚好我的显示器有台是2k分辨率的，<br>用VNC-viewer登录服务器后，发现能设置的最大分辨率是1920*1200。<br>全屏的时候不能占满整个屏幕，这严重影响我操作时候的视觉美感。<br><a id="more"></a></p>
+<hr>
+<h1 id="设置分辨率"><a href="#设置分辨率" class="headerlink" title="设置分辨率"></a>设置分辨率</h1><p>遂在网上搜了一下怎么设置分辨率。</p>
+<ol>
+<li><p>设置vnc server的分辨率。<br>在开启vncserver的服务时，加上<code>-geometry</code>参数。如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vncserver -geometry 2560x1440 :2</span><br></pre></td></tr></table></figure>
+<p>即在5902号端口开启当前用户的vncserver服务，<strong>注意2560x1440，其中是字母x,不是符号* </strong>，</p>
+</li>
+<li><p>查看系统中当前运行的vncserver进程有哪些。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ps -ef | grep -i vnc | grep -v grep</span><br></pre></td></tr></table></figure>
+<p>然后用<code>kill -9 pid</code>kill到自己想停掉的vnc服务。<br>因为有时候<code>vncserver -list</code>并不显示全自己已经开启的vncserver进程。</p>
+</li>
+</ol>
+<hr>
+<h1 id="配置VNCserver开机自动开启一个进程。"><a href="#配置VNCserver开机自动开启一个进程。" class="headerlink" title="配置VNCserver开机自动开启一个进程。"></a>配置VNCserver开机自动开启一个进程。</h1><p>由于机器要给组里其他同学做实验用，可能经常要开关机。为了每次开机都能自动开启VNCserver的一个端口服务，方便我自己远程连接。遂决定设置开机启动2个vncserver进程，5901给root,5902给自己的user.</p>
+<p>vncserver的配置文件在 <code>/lib/systemd/system/vncserver@.service</code><br>将配置文件复制到<code>/etc/systemd/system/</code>目录。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cp /lib/systemd/system/vncserver@.service /etc/systemd/system/vncserver@:2.service</span><br></pre></td></tr></table></figure><br>vncserver@:2.service对应5902号端口(即启动vncserver时的命令：vncserver :2)对应的启动脚本。</p>
+<p>修改刚刚复制的配置文件<br><code>vim /etc/systemd/system/vncserver@:2.service</code><br>原始文件如下：<br><img src="/post/vncserver的一些设置/1.png"><br>按照下图修改：<br><img src="/post/vncserver的一些设置/2.png"><br><strong> 说明：</strong> User指明该脚本是以root运行的。不然的话，后面的步骤启动该服务会提示（code=exited,status=1/failed)的错误，就是因为权限不够。<br>将脚本中的两处<user>修改为你需要运行这个端口的用户名。</user></p>
+<p>然后运行<code>systemctl daemon-reload</code><br><code>systemctl start vncserver@:2.service</code>就可以启动对应的5902号端口的VNCserver服务<br><code>systemctl stop vncserver@:2.service</code>是关闭5902号端口的VNCServer服务<br><code>systemctl enable vncserver@:2.service</code>设置5902号端口的VNCserver服务开机自动启动</p>
+<p>设置root的5901号端口的vncserver服务开机自动启动的话，直接把<code>/etc/systemd/system/vncserver@:2.servcie</code>复制一份命名为<code>vncserver@:1.servcie</code>,其中的1即代表5901号端口（同在命令行启动vncserver时的命令：vncserver :1）。然后将<code>vncserver@:1.servcie</code>里面2处对应<user>的地方改成<code>root</code>就可以了。</user></p>
+<p><strong>PS:</strong> 设置过程中，经过不断的重启测试自动启动服务是否正常。遇到如下问题。</p>
+<ol>
+<li><code>code=exited,status=1/failed</code><br>权限问题，上面给出了解决方案。</li>
+<li><code>code=exited,status=2/failed</code><br>是X11的临时文件的问题。去<code>/tmp/.X11-unix</code>删除对应的文件。几号端口有问题，就删除对应的<code>X几</code>文件。如果启动<code>vncserver@:2.servcie</code>出现<code>status=2</code>的问题，则删除<code>X2</code>文件。</li>
+<li>设置其他用户的vncserver某个端口服务自动启动后，非root用户用vncviewer连接时，会提示<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Authentication is required to set the network proxy used for downloading packages</span><br></pre></td></tr></table></figure>
+虽然直接点击<code>cancel</code>就可以了，但是有这个提示还是很烦的。所以我搜了一下解决办法：disable autostart of ‘gnome-software=service’<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sed -e &apos;$aX-GNOME-Autostart-enabled=false&apos; -e &apos;/X-GNOME-Autostart-enabled/d&apos; -i.bak /etc/xdg/autostart/gnome-software-service.desktop</span><br></pre></td></tr></table></figure>
+for those of us who want to edit the file manually simply add <code>X-GNOME-Autostart-enabled=false</code> to the end of <code>/etc/xdg/autostart/gnome-software-service.desktop</code> and restart <code>vncserver</code>.</li>
+<li><strong>Authentication of color</strong><br><code>Authentication is required to create a color managed device</code><br>solution <a href="https://bugzilla.redhat.com/show_bug.cgi?id=1149893#c13" target="_blank" rel="noopener">https://bugzilla.redhat.com/show_bug.cgi?id=1149893#c13</a><br>You can place a .rules file in /etc/polkit-1/rules.d<br>I’m doing in <code>02-allow-colord.rules</code>:<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">polkit.addRule(function(action, subject) &#123;</span><br><span class="line">   if ((action.id == &quot;org.freedesktop.color-manager.create-device&quot; ||</span><br><span class="line">        action.id == &quot;org.freedesktop.color-manager.create-profile&quot; ||</span><br><span class="line">        action.id == &quot;org.freedesktop.color-manager.delete-device&quot; ||</span><br><span class="line">        action.id == &quot;org.freedesktop.color-manager.delete-profile&quot; ||</span><br><span class="line">        action.id == &quot;org.freedesktop.color-manager.modify-device&quot; ||</span><br><span class="line">        action.id == &quot;org.freedesktop.color-manager.modify-profile&quot;) &amp;&amp;</span><br><span class="line">       subject.isInGroup(&quot;nwra&quot;)) &#123;</span><br><span class="line">      return polkit.Result.YES;</span><br><span class="line">   &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+Which allows users in our group to access colord.</li>
+</ol>
+<hr>
+<p>11.30.2016 add<br>centos和fedora使用systemd管理配置信息。</p>
+<ol>
+<li>复制/lib/systemd/system/vncserver@.service到/etc/systemd/system/vncserver@.service来创建服务。  </li>
+<li>需要将/etc/systemd/system/vncserver@.service文件中的USER改成实际用户的用户名。-geometry参数可以指定桌面分辨率的大小，默认为1024x768。</li>
+<li>为不同的用户设置独立显示的VNC配置。<br>可以通过配置不同的显示设备号来实现，比如在配置文件名中加入设备号3和5：<br><code>systemctl start vncserver-USER_1@:3.server</code><br><code>systemctl start vncserver-USER_2@:5.server</code><br>其中<code>:3</code>和<code>:5</code>会被SYSTEMD自动替换成配置文件中的<code>%i</code>。</li>
+<li>限制VNC权限<br>如果你只用加密传输，你可以关闭非加密传输，在service配置文件里修改如下：<br><code>ExecStart=/sbin/runuser -l user -c &quot;/usr/bin/vncserver -localhost %i&quot;</code><br>这样VNC server对于非加密传输将只接受本机，不再允许远程方式。</li>
+</ol>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>Donate comment here</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>Donate</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechat_pay.jpg" alt="Calmisi Lee WeChat Pay"/>
+        <p>WeChat Pay</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/ali_pay.jpg" alt="Calmisi Lee Alipay"/>
+        <p>Alipay</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Vncserver/" rel="tag"># Vncserver</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/post/VMware中Mac-os-X虚拟机调整磁盘大小/" rel="next" title="VMware中Mac os X虚拟机调整磁盘大小">
+                <i class="fa fa-chevron-left"></i> VMware中Mac os X虚拟机调整磁盘大小
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/post/scala函数相关知识点/" rel="prev" title="scala函数相关知识点">
+                scala函数相关知识点 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Calmisi Lee" />
+            
+              <p class="site-author-name" itemprop="name">Calmisi Lee</p>
+              <p class="site-description motion-element" itemprop="description">Pas de regrets</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">48</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">17</span>
+                    <span class="site-state-item-name">categories</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">49</span>
+                    <span class="site-state-item-name">tags</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/calmisi" target="_blank" title="GitHub" rel="external nofollow"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="mailto:calmisi@163.com" target="_blank" title="E-Mail" rel="external nofollow"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  
+                </span>
+              
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#设置分辨率"><span class="nav-number">1.</span> <span class="nav-text">设置分辨率</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#配置VNCserver开机自动开启一个进程。"><span class="nav-number">2.</span> <span class="nav-text">配置VNCserver开机自动开启一个进程。</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2015=6 – <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Calmisi Lee</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Symbols count total: </span>
+    
+    <span title="Symbols count total">155k</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Reading time total &asymp;</span>
+    
+    <span title="Reading time total">2:21</span>
+  
+</div>
+
+
+  
+
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" rel="external nofollow" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme – <a class="theme-link" target="_blank" rel="external nofollow" href="https://theme-next.org">NexT.Gemini</a></div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.4.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.4.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.4.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.4.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.4.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.4.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.4.1"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  <style>
+    .copy-btn {
+      display: inline-block;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 20px;
+      color: #333;
+      white-space: nowrap;
+      vertical-align: middle;
+      cursor: pointer;
+      background-color: #eee;
+      background-image: linear-gradient(#fcfcfc, #eee);
+      border: 1px solid #d5d5d5;
+      border-radius: 3px;
+      user-select: none;
+      outline: 0;
+    }
+
+    .highlight-wrap .copy-btn {
+      transition: opacity .3s ease-in-out;
+      opacity: 0;
+      padding: 2px 6px;
+      position: absolute;
+      right: 4px;
+      top: 8px;
+    }
+
+    .highlight-wrap:hover .copy-btn,
+    .highlight-wrap .copy-btn:focus {
+      opacity: 1
+    }
+
+    .highlight-wrap {
+      position: relative;
+    }
+  </style>
+  <script>
+    $('.highlight').each(function (i, e) {
+      var $wrap = $('<div>').addClass('highlight-wrap')
+      $(e).after($wrap)
+      $wrap.append($('<button>').addClass('copy-btn').append('Copy').on('click', function (e) {
+        var code = $(this).parent().find('.code').find('.line').map(function (i, e) {
+          return $(e).text()
+        }).toArray().join('\n')
+        var ta = document.createElement('textarea')
+        document.body.appendChild(ta)
+        ta.style.position = 'absolute'
+        ta.style.top = '0px'
+        ta.style.left = '0px'
+        ta.value = code
+        ta.select()
+        ta.focus()
+        var result = document.execCommand('copy')
+        document.body.removeChild(ta)
+        
+          if(result)$(this).text('Copied')
+          else $(this).text('Copy failed')
+        
+        $(this).blur()
+      })).on('mouseleave', function (e) {
+        var $b = $(this).find('.copy-btn')
+        setTimeout(function () {
+          $b.text('Copy')
+        }, 300)
+      }).append(e)
+    })
+  </script>
+
+
+</body>
+</html>

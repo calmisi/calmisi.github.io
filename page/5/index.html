@@ -61,16 +61,16 @@
 <link href="/css/main.css?v=6.4.1" rel="stylesheet" type="text/css" />
 
 
-  <link rel="apple-touch-icon" sizes="180x180" href="/uploads/8.jpg?v=6.4.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/8.jpg?v=6.4.1">
 
 
-  <link rel="icon" type="image/png" sizes="32x32" href="/uploads/8.jpg?v=6.4.1">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/8.jpg?v=6.4.1">
 
 
-  <link rel="icon" type="image/png" sizes="16x16" href="/uploads/favicon.ico?v=6.4.1">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.ico?v=6.4.1">
 
 
-  <link rel="mask-icon" href="/uploads/8.jpg?v=6.4.1" color="#222">
+  <link rel="mask-icon" href="/images/8.jpg?v=6.4.1" color="#222">
 
 
 
@@ -86,7 +86,7 @@
     root: '/',
     scheme: 'Gemini',
     version: '6.4.1',
-    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
     fancybox: false,
     fastclick: false,
     lazyload: false,
@@ -199,7 +199,7 @@
     </div>
     
       
-        <p class="site-subtitle">Never like what you think.</p>
+        <h1 class="site-subtitle" itemprop="description">Never like what you think.</h1>
       
     
   </div>
@@ -233,7 +233,15 @@
           
           <li class="menu-item menu-item-archives">
     <a href="/archives/" rel="section">
-      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archives<span class="badge">48</span></a>
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archives</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />Tags</a>
   </li>
         
         
@@ -241,7 +249,7 @@
           
           <li class="menu-item menu-item-categories">
     <a href="/categories/" rel="section">
-      <i class="menu-item-icon fa fa-fw fa-th"></i> <br />Categories<span class="badge">17</span></a>
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br />Categories</a>
   </li>
         
         
@@ -300,12 +308,12 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://calmisi.github.io/2016/11/08/vncserver的一些设置/">
+    <link itemprop="mainEntityOfPage" href="https://calmisi.github.io/post/vncserver的一些设置/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Calmisi Lee">
       <meta itemprop="description" content="Pas de regrets">
-      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="image" content="/images/avatar.jpg">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
@@ -317,14 +325,14 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">
+          <h2 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2016/11/08/vncserver的一些设置/" itemprop="url">
+                <a class="post-title-link" href="/post/vncserver的一些设置/" itemprop="url">
                   vncserver的一些设置
                 </a>
               
             
-          </h1>
+          </h2>
         
 
         <div class="post-meta">
@@ -349,6 +357,22 @@
               <time title="Created: 2016-11-08 10:18:11" itemprop="dateCreated datePublished" datetime="2016-11-08T10:18:11+08:00">2016-11-08</time>
             
 
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2018-09-16 00:54:21" itemprop="dateModified" datetime="2018-09-16T00:54:21+08:00">2018-09-16</time>
+              
             
           </span>
 
@@ -382,6 +406,34 @@
           
 
           
+            <div class="post-symbolscount">
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Symbols count in article: </span>
+                
+                <span title="Symbols count in article">3.7k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Reading time &asymp;</span>
+                
+                <span title="Reading time">3 mins.</span>
+              
+            </div>
+          
 
           
 
@@ -403,7 +455,7 @@
 <p>刚好我的显示器有台是2k分辨率的，<br>用VNC-viewer登录服务器后，发现能设置的最大分辨率是1920*1200。<br>全屏的时候不能占满整个屏幕，这严重影响我操作时候的视觉美感。<br>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2016/11/08/vncserver的一些设置/#more" rel="contents">
+            <a class="btn" href="/post/vncserver的一些设置/#more" rel="contents">
               Read more &raquo;
             </a>
           </div>
@@ -459,12 +511,12 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://calmisi.github.io/2016/11/07/VMware中Mac-os-X虚拟机调整磁盘大小/">
+    <link itemprop="mainEntityOfPage" href="https://calmisi.github.io/post/VMware中Mac-os-X虚拟机调整磁盘大小/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Calmisi Lee">
       <meta itemprop="description" content="Pas de regrets">
-      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="image" content="/images/avatar.jpg">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
@@ -476,14 +528,14 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">
+          <h2 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2016/11/07/VMware中Mac-os-X虚拟机调整磁盘大小/" itemprop="url">
+                <a class="post-title-link" href="/post/VMware中Mac-os-X虚拟机调整磁盘大小/" itemprop="url">
                   VMware中Mac os X虚拟机调整磁盘大小
                 </a>
               
             
-          </h1>
+          </h2>
         
 
         <div class="post-meta">
@@ -508,6 +560,22 @@
               <time title="Created: 2016-11-07 15:27:50" itemprop="dateCreated datePublished" datetime="2016-11-07T15:27:50+08:00">2016-11-07</time>
             
 
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2018-09-16 00:54:21" itemprop="dateModified" datetime="2018-09-16T00:54:21+08:00">2018-09-16</time>
+              
             
           </span>
 
@@ -541,6 +609,34 @@
           
 
           
+            <div class="post-symbolscount">
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Symbols count in article: </span>
+                
+                <span title="Symbols count in article">595</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Reading time &asymp;</span>
+                
+                <span title="Reading time">1 mins.</span>
+              
+            </div>
+          
 
           
 
@@ -561,7 +657,7 @@
           <p>今天想起来之前编的一个补实验室QA的iphone app还有些功能没开发完。<br>打开了很久没用的macos虚拟机，发现XCODE有更新。<br>果断准备先更新一波。<br>结果提示我磁盘空间不足。<br>我用<code>df -hl</code>看了下，<br>总共有40G，已经用了30G，结果还提示我磁盘空间不足。<br>看了Xcode真是个大家伙。<br>没办法，只能给虚拟机扩容啦。<br>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2016/11/07/VMware中Mac-os-X虚拟机调整磁盘大小/#more" rel="contents">
+            <a class="btn" href="/post/VMware中Mac-os-X虚拟机调整磁盘大小/#more" rel="contents">
               Read more &raquo;
             </a>
           </div>
@@ -617,12 +713,12 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://calmisi.github.io/2016/11/07/centos7修改SSH的端口号/">
+    <link itemprop="mainEntityOfPage" href="https://calmisi.github.io/post/centos7修改SSH的端口号/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Calmisi Lee">
       <meta itemprop="description" content="Pas de regrets">
-      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="image" content="/images/avatar.jpg">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
@@ -634,14 +730,14 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">
+          <h2 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2016/11/07/centos7修改SSH的端口号/" itemprop="url">
+                <a class="post-title-link" href="/post/centos7修改SSH的端口号/" itemprop="url">
                   centos7修改SSH的端口号
                 </a>
               
             
-          </h1>
+          </h2>
         
 
         <div class="post-meta">
@@ -666,6 +762,22 @@
               <time title="Created: 2016-11-07 13:18:20" itemprop="dateCreated datePublished" datetime="2016-11-07T13:18:20+08:00">2016-11-07</time>
             
 
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2018-09-16 00:54:21" itemprop="dateModified" datetime="2018-09-16T00:54:21+08:00">2018-09-16</time>
+              
             
           </span>
 
@@ -699,6 +811,34 @@
           
 
           
+            <div class="post-symbolscount">
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Symbols count in article: </span>
+                
+                <span title="Symbols count in article">1k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Reading time &asymp;</span>
+                
+                <span title="Reading time">1 mins.</span>
+              
+            </div>
+          
 
           
 
@@ -719,7 +859,7 @@
           <p>最近刚搬了实验室。<br>新的实验室的网络是一个H3C ER2100的路由器。<br>VPN只支持IPsec，没办法设置个人vpn。<br>想要外网连入实验室局域网的服务器，进行远程开发的话。<br>只能用H3C的虚拟服务器了。<br>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2016/11/07/centos7修改SSH的端口号/#more" rel="contents">
+            <a class="btn" href="/post/centos7修改SSH的端口号/#more" rel="contents">
               Read more &raquo;
             </a>
           </div>
@@ -775,12 +915,12 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://calmisi.github.io/2016/11/03/git开发中的常用命令/">
+    <link itemprop="mainEntityOfPage" href="https://calmisi.github.io/post/git开发中的常用命令/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Calmisi Lee">
       <meta itemprop="description" content="Pas de regrets">
-      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="image" content="/images/avatar.jpg">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
@@ -792,14 +932,14 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">
+          <h2 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2016/11/03/git开发中的常用命令/" itemprop="url">
+                <a class="post-title-link" href="/post/git开发中的常用命令/" itemprop="url">
                   git开发中的常用命令
                 </a>
               
             
-          </h1>
+          </h2>
         
 
         <div class="post-meta">
@@ -825,6 +965,22 @@
             
 
             
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2018-09-16 00:54:21" itemprop="dateModified" datetime="2018-09-16T00:54:21+08:00">2018-09-16</time>
+              
+            
           </span>
 
           
@@ -857,6 +1013,34 @@
           
 
           
+            <div class="post-symbolscount">
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Symbols count in article: </span>
+                
+                <span title="Symbols count in article">3.9k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Reading time &asymp;</span>
+                
+                <span title="Reading time">4 mins.</span>
+              
+            </div>
+          
 
           
 
@@ -879,7 +1063,7 @@
 <h2 id="git-merge"><a href="#git-merge" class="headerlink" title="git merge"></a>git merge</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git merge --no-ff &lt;branch&gt;</span><br></pre></td></tr></table></figure>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2016/11/03/git开发中的常用命令/#more" rel="contents">
+            <a class="btn" href="/post/git开发中的常用命令/#more" rel="contents">
               Read more &raquo;
             </a>
           </div>
@@ -935,12 +1119,12 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://calmisi.github.io/2016/10/29/使用git时的一些技巧、问题和解决方案/">
+    <link itemprop="mainEntityOfPage" href="https://calmisi.github.io/post/使用git时的一些技巧、问题和解决方案/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Calmisi Lee">
       <meta itemprop="description" content="Pas de regrets">
-      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="image" content="/images/avatar.jpg">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
@@ -952,14 +1136,14 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">
+          <h2 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2016/10/29/使用git时的一些技巧、问题和解决方案/" itemprop="url">
+                <a class="post-title-link" href="/post/使用git时的一些技巧、问题和解决方案/" itemprop="url">
                   使用git时的一些技巧、问题和解决方案
                 </a>
               
             
-          </h1>
+          </h2>
         
 
         <div class="post-meta">
@@ -985,6 +1169,22 @@
             
 
             
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2018-09-16 00:54:21" itemprop="dateModified" datetime="2018-09-16T00:54:21+08:00">2018-09-16</time>
+              
+            
           </span>
 
           
@@ -1017,6 +1217,34 @@
           
 
           
+            <div class="post-symbolscount">
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Symbols count in article: </span>
+                
+                <span title="Symbols count in article">563</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Reading time &asymp;</span>
+                
+                <span title="Reading time">1 mins.</span>
+              
+            </div>
+          
 
           
 
@@ -1037,7 +1265,7 @@
           <p>本文描述一些使用git时，需要用到的一些技巧。以及可能遇到的问题和相应的解决方案。<br>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2016/10/29/使用git时的一些技巧、问题和解决方案/#more" rel="contents">
+            <a class="btn" href="/post/使用git时的一些技巧、问题和解决方案/#more" rel="contents">
               Read more &raquo;
             </a>
           </div>
@@ -1093,12 +1321,12 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://calmisi.github.io/2016/10/29/使用Hexo和Next的一些技巧/">
+    <link itemprop="mainEntityOfPage" href="https://calmisi.github.io/post/使用Hexo和Next的一些技巧/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Calmisi Lee">
       <meta itemprop="description" content="Pas de regrets">
-      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="image" content="/images/avatar.jpg">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
@@ -1110,14 +1338,14 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">
+          <h2 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2016/10/29/使用Hexo和Next的一些技巧/" itemprop="url">
+                <a class="post-title-link" href="/post/使用Hexo和Next的一些技巧/" itemprop="url">
                   使用Hexo和Next的一些技巧
                 </a>
               
             
-          </h1>
+          </h2>
         
 
         <div class="post-meta">
@@ -1142,6 +1370,22 @@
               <time title="Created: 2016-10-29 15:19:36" itemprop="dateCreated datePublished" datetime="2016-10-29T15:19:36+08:00">2016-10-29</time>
             
 
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2018-09-16 00:54:21" itemprop="dateModified" datetime="2018-09-16T00:54:21+08:00">2018-09-16</time>
+              
             
           </span>
 
@@ -1175,6 +1419,34 @@
           
 
           
+            <div class="post-symbolscount">
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Symbols count in article: </span>
+                
+                <span title="Symbols count in article">1.4k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Reading time &asymp;</span>
+                
+                <span title="Reading time">1 mins.</span>
+              
+            </div>
+          
 
           
 
@@ -1195,7 +1467,7 @@
           <p>本文描述一些关于Hexo和NEXT的技巧，大多数为自己在网上搜索所得，整理于此，方便自己查看。<br>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2016/10/29/使用Hexo和Next的一些技巧/#more" rel="contents">
+            <a class="btn" href="/post/使用Hexo和Next的一些技巧/#more" rel="contents">
               Read more &raquo;
             </a>
           </div>
@@ -1251,12 +1523,12 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://calmisi.github.io/2016/10/28/部署spark调试开发环境/">
+    <link itemprop="mainEntityOfPage" href="https://calmisi.github.io/post/部署spark调试开发环境/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Calmisi Lee">
       <meta itemprop="description" content="Pas de regrets">
-      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="image" content="/images/avatar.jpg">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
@@ -1268,14 +1540,14 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">
+          <h2 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2016/10/28/部署spark调试开发环境/" itemprop="url">
+                <a class="post-title-link" href="/post/部署spark调试开发环境/" itemprop="url">
                   部署spark调试开发环境
                 </a>
               
             
-          </h1>
+          </h2>
         
 
         <div class="post-meta">
@@ -1300,6 +1572,22 @@
               <time title="Created: 2016-10-28 21:02:13" itemprop="dateCreated datePublished" datetime="2016-10-28T21:02:13+08:00">2016-10-28</time>
             
 
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2018-09-16 00:54:21" itemprop="dateModified" datetime="2018-09-16T00:54:21+08:00">2018-09-16</time>
+              
             
           </span>
 
@@ -1333,6 +1621,34 @@
           
 
           
+            <div class="post-symbolscount">
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Symbols count in article: </span>
+                
+                <span title="Symbols count in article">6.5k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Reading time &asymp;</span>
+                
+                <span title="Reading time">6 mins.</span>
+              
+            </div>
+          
 
           
 
@@ -1355,7 +1671,7 @@
 <p>本文针对的是需要了解 spark 源码 的情况下的开发环境配置. 如果只是需要写 spark job, 而并不想 trace 到源码里面去看运行上下文, 那么有很多资料讲这个的了: 无非是下载 spark 的 jar, 新建一个 scala/python/R 项目, 把这个 jar 设置成依赖就可以开始写了. 具体怎么运行 spark job, 在官方文档中已经写得很清楚了. 本文记录的 不是 后一种情况<br>由于实验室工作需要于是开始学习 spark 的源码. 之前都是东一坨西一块地配置, 好了也不知道为什么, 没好也只会到处找相关 blog, 然后关闭项目再从头 import 试试. 大部分能找到的中文资料还是比较没用, 或者只能干掉一两件事, 于是坐下来好好看了看 maven 的入门文档 (因为 spark 开发组偏向于 maven 做项目管理, 感觉钦定的比较🐵), 从头到尾地把大部分入门 spark 开发的 intellij 配置给手动操作了一遍, 目前算是一篇milestone文档.<br>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2016/10/28/部署spark调试开发环境/#more" rel="contents">
+            <a class="btn" href="/post/部署spark调试开发环境/#more" rel="contents">
               Read more &raquo;
             </a>
           </div>
@@ -1411,12 +1727,12 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://calmisi.github.io/2016/10/28/git一些指令的说明/">
+    <link itemprop="mainEntityOfPage" href="https://calmisi.github.io/post/git一些指令的说明/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Calmisi Lee">
       <meta itemprop="description" content="Pas de regrets">
-      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="image" content="/images/avatar.jpg">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
@@ -1428,14 +1744,14 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">
+          <h2 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2016/10/28/git一些指令的说明/" itemprop="url">
+                <a class="post-title-link" href="/post/git一些指令的说明/" itemprop="url">
                   git一些指令的说明
                 </a>
               
             
-          </h1>
+          </h2>
         
 
         <div class="post-meta">
@@ -1460,6 +1776,22 @@
               <time title="Created: 2016-10-28 17:40:02" itemprop="dateCreated datePublished" datetime="2016-10-28T17:40:02+08:00">2016-10-28</time>
             
 
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2018-09-16 00:54:21" itemprop="dateModified" datetime="2018-09-16T00:54:21+08:00">2018-09-16</time>
+              
             
           </span>
 
@@ -1493,6 +1825,34 @@
           
 
           
+            <div class="post-symbolscount">
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Symbols count in article: </span>
+                
+                <span title="Symbols count in article">2.3k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Reading time &asymp;</span>
+                
+                <span title="Reading time">2 mins.</span>
+              
+            </div>
+          
 
           
 
@@ -1513,7 +1873,7 @@
           <p>本文记录本人在使用git的过程中，学习到的一些指令的说明。<br><strong>本文不定期更新…</strong><br>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2016/10/28/git一些指令的说明/#more" rel="contents">
+            <a class="btn" href="/post/git一些指令的说明/#more" rel="contents">
               Read more &raquo;
             </a>
           </div>
@@ -1589,6 +1949,10 @@
       <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Calmisi Lee" />
             
               <p class="site-author-name" itemprop="name">Calmisi Lee</p>
               <p class="site-description motion-element" itemprop="description">Pas de regrets</p>
@@ -1773,12 +2137,12 @@
             <div class="links-of-author motion-element">
               
                 <span class="links-of-author-item">
-                  <a href="https://github.com/calmisi" target="_blank" title="GitHub"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                  <a href="https://github.com/calmisi" target="_blank" title="GitHub" rel="external nofollow"><i class="fa fa-fw fa-github"></i>GitHub</a>
                   
                 </span>
               
                 <span class="links-of-author-item">
-                  <a href="mailto:calmisi975@gmail.com" target="_blank" title="E-Mail"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  <a href="mailto:calmisi@163.com" target="_blank" title="E-Mail" rel="external nofollow"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
                   
                 </span>
               
@@ -1802,6 +2166,13 @@
       
 
       
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
 
     </div>
   </aside>
@@ -1813,21 +2184,41 @@
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+        <div class="copyright">&copy; 2015=6 – <span itemprop="copyrightYear">2018</span>
   <span class="with-love" id="animate">
     <i class="fa fa-user"></i>
   </span>
   <span class="author" itemprop="copyrightHolder">Calmisi Lee</span>
 
   
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Symbols count total: </span>
+    
+    <span title="Symbols count total">155k</span>
+  
 
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Reading time total &asymp;</span>
+    
+    <span title="Reading time total">2:21</span>
   
 </div>
 
 
+  
 
 
-  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> v3.7.1</div>
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" rel="external nofollow" href="https://hexo.io">Hexo</a></div>
 
 
 
@@ -1835,7 +2226,7 @@
 
 
 
-  <div class="theme-info">Theme – <a class="theme-link" target="_blank" href="https://theme-next.org">NexT.Gemini</a> v6.4.1</div>
+  <div class="theme-info">Theme – <a class="theme-link" target="_blank" rel="external nofollow" href="https://theme-next.org">NexT.Gemini</a></div>
 
 
 
@@ -1853,11 +2244,6 @@
       </div>
     </footer>
 
-    
-      <div class="back-to-top">
-        <i class="fa fa-arrow-up"></i>
-        
-      </div>
     
 
     
@@ -1985,6 +2371,75 @@
   
 
   
+  <style>
+    .copy-btn {
+      display: inline-block;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 20px;
+      color: #333;
+      white-space: nowrap;
+      vertical-align: middle;
+      cursor: pointer;
+      background-color: #eee;
+      background-image: linear-gradient(#fcfcfc, #eee);
+      border: 1px solid #d5d5d5;
+      border-radius: 3px;
+      user-select: none;
+      outline: 0;
+    }
+
+    .highlight-wrap .copy-btn {
+      transition: opacity .3s ease-in-out;
+      opacity: 0;
+      padding: 2px 6px;
+      position: absolute;
+      right: 4px;
+      top: 8px;
+    }
+
+    .highlight-wrap:hover .copy-btn,
+    .highlight-wrap .copy-btn:focus {
+      opacity: 1
+    }
+
+    .highlight-wrap {
+      position: relative;
+    }
+  </style>
+  <script>
+    $('.highlight').each(function (i, e) {
+      var $wrap = $('<div>').addClass('highlight-wrap')
+      $(e).after($wrap)
+      $wrap.append($('<button>').addClass('copy-btn').append('Copy').on('click', function (e) {
+        var code = $(this).parent().find('.code').find('.line').map(function (i, e) {
+          return $(e).text()
+        }).toArray().join('\n')
+        var ta = document.createElement('textarea')
+        document.body.appendChild(ta)
+        ta.style.position = 'absolute'
+        ta.style.top = '0px'
+        ta.style.left = '0px'
+        ta.value = code
+        ta.select()
+        ta.focus()
+        var result = document.execCommand('copy')
+        document.body.removeChild(ta)
+        
+          if(result)$(this).text('Copied')
+          else $(this).text('Copy failed')
+        
+        $(this).blur()
+      })).on('mouseleave', function (e) {
+        var $b = $(this).find('.copy-btn')
+        setTimeout(function () {
+          $b.text('Copy')
+        }, 300)
+      }).append(e)
+    })
+  </script>
+
 
 </body>
 </html>
