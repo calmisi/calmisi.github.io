@@ -1,0 +1,1609 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.4.1" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/8.jpg?v=6.4.1">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/8.jpg?v=6.4.1">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.ico?v=6.4.1">
+
+
+  <link rel="mask-icon" href="/images/8.jpg?v=6.4.1" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '6.4.1',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="本文转自知乎，详见：https://zhuanlan.zhihu.com/p/23165312https://zhuanlan.zhihu.com/p/23058741https://zhuanlan.zhihu.com/p/22050145https://zhuanlan.zhihu.com/p/22967479">
+<meta name="keywords" content="Optical module,QSFP">
+<meta property="og:type" content="article">
+<meta property="og:title" content="QSFP,QSFP28等光模块及线缆">
+<meta property="og:url" content="https://blog.calmisi.cn/post/2016/12/QSFP-QSFP28等光模块及线缆.html">
+<meta property="og:site_name" content="Calmisi Lee">
+<meta property="og:description" content="本文转自知乎，详见：https://zhuanlan.zhihu.com/p/23165312https://zhuanlan.zhihu.com/p/23058741https://zhuanlan.zhihu.com/p/22050145https://zhuanlan.zhihu.com/p/22967479">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https://blog.calmisi.cn/post/2016/12/QSFP-QSFP28等光模块及线缆/1-1.jpg">
+<meta property="og:image" content="https://blog.calmisi.cn/post/2016/12/QSFP-QSFP28等光模块及线缆/1-2.jpg">
+<meta property="og:image" content="https://blog.calmisi.cn/post/2016/12/QSFP-QSFP28等光模块及线缆/1-3.jpg">
+<meta property="og:image" content="https://blog.calmisi.cn/post/2016/12/QSFP-QSFP28等光模块及线缆/1-4.jpg">
+<meta property="og:image" content="https://blog.calmisi.cn/post/2016/12/QSFP-QSFP28等光模块及线缆/1-5.jpg">
+<meta property="og:image" content="https://blog.calmisi.cn/post/2016/12/QSFP-QSFP28等光模块及线缆/1-6.jpg">
+<meta property="og:image" content="https://blog.calmisi.cn/post/2016/12/QSFP-QSFP28等光模块及线缆/1-7.jpg">
+<meta property="og:image" content="https://blog.calmisi.cn/post/2016/12/QSFP-QSFP28等光模块及线缆/2-1.png">
+<meta property="og:image" content="https://blog.calmisi.cn/post/2016/12/QSFP-QSFP28等光模块及线缆/2-2.jpg">
+<meta property="og:image" content="https://blog.calmisi.cn/post/2016/12/QSFP-QSFP28等光模块及线缆/2-3.jpg">
+<meta property="og:image" content="https://blog.calmisi.cn/post/2016/12/QSFP-QSFP28等光模块及线缆/2-4.jpg">
+<meta property="og:image" content="https://blog.calmisi.cn/post/2016/12/QSFP-QSFP28等光模块及线缆/2-5.jpg">
+<meta property="og:image" content="https://blog.calmisi.cn/post/2016/12/QSFP-QSFP28等光模块及线缆/2-6.jpg">
+<meta property="og:image" content="https://blog.calmisi.cn/post/2016/12/QSFP-QSFP28等光模块及线缆/2-7.jpg">
+<meta property="og:image" content="https://blog.calmisi.cn/post/2016/12/QSFP-QSFP28等光模块及线缆/3-1.jpg">
+<meta property="og:image" content="https://blog.calmisi.cn/post/2016/12/QSFP-QSFP28等光模块及线缆/3-2.png">
+<meta property="og:image" content="https://blog.calmisi.cn/post/2016/12/QSFP-QSFP28等光模块及线缆/3-3.jpg">
+<meta property="og:image" content="https://blog.calmisi.cn/post/2016/12/QSFP-QSFP28等光模块及线缆/3-4.jpg">
+<meta property="og:image" content="https://blog.calmisi.cn/post/2016/12/QSFP-QSFP28等光模块及线缆/3-5.jpg">
+<meta property="og:image" content="https://blog.calmisi.cn/post/2016/12/QSFP-QSFP28等光模块及线缆/4-1.jpg">
+<meta property="og:image" content="https://blog.calmisi.cn/post/2016/12/QSFP-QSFP28等光模块及线缆/4-2.jpg">
+<meta property="og:image" content="https://blog.calmisi.cn/post/2016/12/QSFP-QSFP28等光模块及线缆/4-3.jpg">
+<meta property="og:image" content="https://blog.calmisi.cn/post/2016/12/QSFP-QSFP28等光模块及线缆/4-4.jpg">
+<meta property="og:image" content="https://blog.calmisi.cn/post/2016/12/QSFP-QSFP28等光模块及线缆/4-5.jpg">
+<meta property="og:image" content="https://blog.calmisi.cn/post/2016/12/QSFP-QSFP28等光模块及线缆/4-6.jpg">
+<meta property="og:image" content="https://blog.calmisi.cn/post/2016/12/QSFP-QSFP28等光模块及线缆/4-7.jpg">
+<meta property="og:image" content="https://blog.calmisi.cn/post/2016/12/QSFP-QSFP28等光模块及线缆/4-8.jpg">
+<meta property="og:updated_time" content="2018-09-15T16:54:21.643Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="QSFP,QSFP28等光模块及线缆">
+<meta name="twitter:description" content="本文转自知乎，详见：https://zhuanlan.zhihu.com/p/23165312https://zhuanlan.zhihu.com/p/23058741https://zhuanlan.zhihu.com/p/22050145https://zhuanlan.zhihu.com/p/22967479">
+<meta name="twitter:image" content="https://blog.calmisi.cn/post/2016/12/QSFP-QSFP28等光模块及线缆/1-1.jpg">
+
+
+
+
+
+
+  <link rel="canonical" href="https://blog.calmisi.cn/post/2016/12/QSFP-QSFP28等光模块及线缆.html"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>QSFP,QSFP28等光模块及线缆 | Calmisi Lee</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Calmisi Lee</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <h1 class="site-subtitle" itemprop="description">Never like what you think.</h1>
+      
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />Home</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archives</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />Tags</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+    <a href="/categories/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br />Categories</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+    <a href="/about/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-user"></i> <br />About</a>
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />Search</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="Searching..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://blog.calmisi.cn/post/2016/12/QSFP-QSFP28等光模块及线缆.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Calmisi Lee">
+      <meta itemprop="description" content="Pas de regrets">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Calmisi Lee">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">QSFP,QSFP28等光模块及线缆
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2016-12-13 15:33:36" itemprop="dateCreated datePublished" datetime="2016-12-13T15:33:36+08:00">2016-12-13</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2018-09-16 00:54:21" itemprop="dateModified" datetime="2018-09-16T00:54:21+08:00">2018-09-16</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Networking/" itemprop="url" rel="index"><span itemprop="name">Networking</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/post/2016/12/QSFP-QSFP28等光模块及线缆.html#comments" itemprop="discussionUrl">
+                  <span class="post-meta-item-text">Comments: </span> <span class="post-comments-count valine-comment-count" data-xid="/post/2016/12/QSFP-QSFP28等光模块及线缆.html" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-symbolscount">
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Symbols count in article: </span>
+                
+                <span title="Symbols count in article">6.4k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Reading time &asymp;</span>
+                
+                <span title="Reading time">6 mins.</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>本文转自知乎，详见：<br><a href="https://zhuanlan.zhihu.com/p/23165312" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/23165312</a><br><a href="https://zhuanlan.zhihu.com/p/23058741" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/23058741</a><br><a href="https://zhuanlan.zhihu.com/p/22050145" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/22050145</a><br><a href="https://zhuanlan.zhihu.com/p/22967479" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/22967479</a><br><a id="more"></a></p>
+<h1 id="1-40G高速线缆——高速通信发展的里程碑"><a href="#1-40G高速线缆——高速通信发展的里程碑" class="headerlink" title="1.40G高速线缆——高速通信发展的里程碑"></a>1.40G高速线缆——高速通信发展的里程碑</h1><p>高速线缆简称DAC，是一种通信设备的连接线缆，一般用于实现短距离的互连通信，是一种极具成本效益的高速互联解决方案。高速线缆先从最初的10G发展到40G以及如今的100G 高速线缆只是经过了短短的几年，可见高速数据通信的发展多么迅猛，每一次的发展都将成为下一次的过渡。那么，接下来，我们就谈谈作为过渡阶段如今仍旧热门的40G高速线缆。</p>
+<p>40G DAC（高速线缆）是指线缆两端都装上光模块可实现40Gbps数据传输的铜芯线缆。目前，市场上流行的40G DAC接口主要有三种类型：40G QSFP+ 转 QSFP+ DAC、40G QSFP+ 转 4<em>SFP+ DAC以及 40G QSFP+ 转 4</em>XFP+ DAC，线缆类型主要有两种：一种是有源铜芯线缆，一种是无源铜芯线缆。还有一点值得注意的是，其实高速线缆上面的光模块都不是真正意义上的光模块，它们是不带组件的，只能传输信号。<br><img src="/post/2016/12/QSFP-QSFP28等光模块及线缆/1-1.jpg"><br><strong>为什么40G高速线缆的一端都是QSFP+接口？</strong></p>
+<p>QSFP+ 是一些计算及电信应用中使用的高性能交换机、路由器、服务器和主机总线适配器的新一代热插拔接口。这种接口是目前业界最紧凑的独立4通道的可插拔接口，支持高达40 Gbps (4通道 x 10 Gbps) 的数据速率，同时向下兼容5Gbps，2.5Gbps数据传输速率。40GBase QSFP+ 高速线缆适用于短距离QSFP设备间的堆叠与集联。</p>
+<p>40G QSFP+ 转 QSFP+ DAC可以分为QSFP+ 转 QSFP+ 无源铜芯高速线缆和QSFP+ 转 QSFP+ 有源铜芯高速线缆。两种高速线缆都是由2个40G QSFP+光收发器（Transceiver）+ 铜芯线（Copper cable）构成。不同的是，有源线缆比无源线缆多了一个驱动芯片。用户可以利用这两种线缆实现现有的40G QSFP+ 端口（40Gbase) 到 40G QSFP+ 端口（40GBase ）的互连。<br><img src="/post/2016/12/QSFP-QSFP28等光模块及线缆/1-2.jpg"><br><img src="/post/2016/12/QSFP-QSFP28等光模块及线缆/1-3.jpg"><br>40G QSFP+ 转 4<em>SFP+ DAC只有QSFP+转 4 x SFP+ 无源铜芯高速线缆一种类型，它是由1个40G QSFP+光收发器（Transceiver）+ 铜芯线（Copper cable） + 4个10G SFP+光收发器（Transceiver）构成，主要用于为客户实现40G和10G设备（NIC/HBA/CNA,交换机设备和服务器）间的互连。用户可以利用这种线缆实现现有的40G QSFP+ 端口（40Gbase) 到 4个SFP+ 端口（10GBase ）的互连。<br><img src="/post/2016/12/QSFP-QSFP28等光模块及线缆/1-4.jpg"><br>40G QSFP+ 转 4</em>XFP+ DAC也只有QSFP+ 转 4 x XFP 无源铜芯高速线缆一种类型，它是由1个40G QSFP+光收发器（Transceiver）+ 铜芯线（Copper cable）+ 4个10G XFP光收发器（Transceiver）构成。由于XFP是个没有DAC铜缆标准的产品，设备给到的信号补偿低，电缆本身的损耗很大，只能做短距离传输，一般只能做2m以内的距离。用户可以利用这种线缆实现现有的40G QSFP+ 端口（40Gbase) 到 4个XFP 端口（10GBase ）的互连。<br><img src="/post/2016/12/QSFP-QSFP28等光模块及线缆/1-5.jpg"><br><strong>40G高速线缆的应用</strong></p>
+<p>（1）交换机与交换机之间互联<br><img src="/post/2016/12/QSFP-QSFP28等光模块及线缆/1-6.jpg"><br>（2）交换机与服务器之间互联</p>
+<p>（3）交换机与转换器之间互联<br><img src="/post/2016/12/QSFP-QSFP28等光模块及线缆/1-7.jpg"></p>
+<hr>
+<h1 id="2-想要全面了解100G光模块吗？"><a href="#2-想要全面了解100G光模块吗？" class="headerlink" title="2.想要全面了解100G光模块吗？"></a>2.想要全面了解100G光模块吗？</h1><p>近年来随着用户对40G和100G光模块传输链路需求的快速增长，云计算、移动宽带和IPTV用户对带宽的要求也日益提高。40G链路已经部署了几年，如今，40G光模块在数据中心里无所不在。近两年来，由于光学行业以“100G网络部署”为中心进行发展，100G光模块在数据中心市场上得以快速发展。目前市场上推出的100G光模块类型主要有：CXP光模块、CFP光模块、CFP2光模块、CFP4光模块以及QSFP28光模块。<br><img src="/post/2016/12/QSFP-QSFP28等光模块及线缆/2-1.png"><br><img src="/post/2016/12/QSFP-QSFP28等光模块及线缆/2-2.jpg"><br><strong>CXP光模块</strong></p>
+<p>CXP光模块的传输速率高达12×10Gbps，支持热插拔。“C”代表十六进制中的12，罗马数“X”代表每个通道具有10Gbps的传输速率，“P”是指支持热插拔的可插拔器。CXP光模块主要针对高速计算机市场，是CFP光模块在以太网数据中心里的补充。在技术上，CFP光模块和多模光纤一起应用于短距离数据传输。由于多模光纤市场需要高密度面板，所以其尺寸在多模光纤市场上并没有得到真正的优化。</p>
+<p>CXP光模块长45mm、宽27mm，尺寸比XFP光模块或CFP光模块大，因此可提供更高密度的网络接口。除此之外，CXP光模块是由无线宽带贸易协会指定的铜连接器系统，可支持12个适用于100 GbE，3个适用于40 GbE通道的10G链路传输或12个10G以太网光纤通道或无线宽带信号的12×QDR链路传输。<br><img src="/post/2016/12/QSFP-QSFP28等光模块及线缆/2-3.jpg"></p>
+<p><strong>CFP/CFP2/CFP4光模块</strong></p>
+<p>CFP多源协议（MSA）定义了热插拔光模块可应用于40G和100G网络传输的要求，包括下一代高速以太网（40GbE和100GbE）。CFP光模块支持在单模和多模光纤上以多种速率、协议和链路长度为要求进行传输，包括IEEE 802.3ba标准中包含的所有物理介质相关（PMD）接口。100G网络有三个PMD：100 GBASE-SR10可以传输100m、100GBASE-LR4可以传输10km、100GBASE-ER4可以传输40km。</p>
+<p>CFP光模块是在小型可插拔光模块（SFP）接口基础上设计的，尺寸更大，支持100 Gbps数据传输。CFP光模块用的电接口在每个方向上（RX、TX）使用10 x 10 Gbps通道进行传输，因此支持10 x 10 Gbps和4 x 25 Gbps的互转。CFP光模块可以支持单个100G信号，OTU4、一个或多个40G信号，OTU3或STM-256/OC-768。</p>
+<p>虽然CFP光模块可以实现100G数据应用，但其大尺寸不再能满足高密度数据中心的需求。在这种情况下，CFP-MSA委员会定义了其他两种形式：CFP2和CFP4光模块。下图显示了CFP，CFP2和CFP4光模块的尺寸对比：<br><img src="/post/2016/12/QSFP-QSFP28等光模块及线缆/2-4.jpg"></p>
+<p>CFP2通常为100G应用程序提供两种解决方案，如下图所示：<br><img src="/post/2016/12/QSFP-QSFP28等光模块及线缆/2-5.jpg"></p>
+<p>CFP4光模块是CFP2光模块宽度的一半，而CFP2光模块宽度又是CFP光模块的一半，它更适用于高密度网络应用。CFP4光模块解决方案如下所示：<br><img src="/post/2016/12/QSFP-QSFP28等光模块及线缆/2-6.jpg"></p>
+<p><strong>QSFP28光模块</strong></p>
+<p>同样，作为小尺寸的100G光模块，QSFP28光模块也受到越来越多的关注。顾名思义，QSFP28光模块与QSFP光模块一样，具有相同的设计理念。第一代QSFP光模块配有四个Tx和Rx端口，每个通道间的速率为10 Gbps。对于QSFP28光模块来说，QSFP光模块的每个通道可以发送和接收高达28 Gbps的数据。与CFP4光模块相比，QSFP28光模块尺寸仅艄小于CFP4光模块。虽然QSFP28光模块具有超出CFP4光模块的密度优势，但CFP4光模块较高的最大功耗使其在更长距离的光学传输上具有优势。<br><img src="/post/2016/12/QSFP-QSFP28等光模块及线缆/2-7.jpg"></p>
+<p>CPAK光模块</p>
+<p>市场上还有另一个称为CPAK的100G光模块。CPAK光模块是今年流行的新模块类型。外观与思科（Cisco）光模块类似，但是接口采用IEEE标准，支持与其他接口兼容。<br></p>
+<p>100G光模块可供选择的范围更加广泛，此外，100G AOC（有源光缆）组件也将推出市场，用于短距离互连和100G迁移应用，这对于100G光模块的挑战将是巨大的。同时，随着技术的飞速发展，100G光模块将变得更具成本效益，100G网络应用离我们越来越近。</p>
+<hr>
+<h1 id="3-100GBASE-SR4-Vs-100GBASE-SR10光模块"><a href="#3-100GBASE-SR4-Vs-100GBASE-SR10光模块" class="headerlink" title="3.100GBASE-SR4 Vs 100GBASE-SR10光模块"></a>3.100GBASE-SR4 Vs 100GBASE-SR10光模块</h1><p>如今，100G以太网在光通信领域变得越来越流行，在数据中心也形成了一种流行的趋势。下面，我们就短距离互联的两个主要物理层标准的几个方面，一起探讨一下100GBASE-SR10和100GBASE-SR4光模块之间的区别。</p>
+<p><strong>光模块元器件对比</strong></p>
+<p>CFP是典型的100GBASE-SR10代表元器件。它是由竞争激烈的制造商内部规定的一种多元协议（MSA）所定义，CFP出现在小型可插拔（SFP）接口之后，但是对于用10 x 10Gbps通道实现100Gbps的数据传输意义却非同凡响。</p>
+<p>QSFP28是最新的100G以太网组成元器件，QSFP28使用4个25G的数据传输通道，其中各通道都支持最新的100/50/25G光模块和设备互联。因而，它是100GBASE-SR4最具代表性的组成元器件。<br><img src="/post/2016/12/QSFP-QSFP28等光模块及线缆/3-1.jpg"><br>结论：从外形来看，QSFP28比CFP更加流行。</p>
+<p><strong>尺寸对比</strong></p>
+<p>100GBASE-SR4和100GBASE-SR10接口的收发器分别对应于QSFP28和CFP。因此，它们具有在尺寸显著差异。如下图所示，CFP尺寸要比QSFP28大得多。 显而易见，CFP不适合于高密度的应用。相比之下，QSFP28增加了前面板的密度，降低了功耗，而且价格也相对便宜。因而，QSFP28比CFP更受欢迎。<br><img src="/post/2016/12/QSFP-QSFP28等光模块及线缆/3-2.png"></p>
+<p>结论：随着高密度已经成为数据中心的一种趋势，为了满足这一需求，QSFP28（100GBASE-SR4）相对于CFP（100GBASE-SR10）更具优势。</p>
+<p><strong>光电通道图对比</strong></p>
+<p>下图展示了100GBASE-SR4 和 100GBASE-SR10的基本构造:<br><img src="/post/2016/12/QSFP-QSFP28等光模块及线缆/3-3.jpg"><br><img src="/post/2016/12/QSFP-QSFP28等光模块及线缆/3-4.jpg"><br>结论:100GBASE-SR4能够以较少通道数量实现各通道更高的数据传输速率，以便可以减小端口密度。</p>
+<p><strong>线缆和连接器类型对比</strong></p>
+<p>无论100GBASE-SR4还是100GBASE-SR10都采用光学激光优化多模光纤（OM3/ OM4）来传输信号。但100GBASE-SR4用一根12芯的标准QSFP MPO/ MTP连接线（4 Tx和4 Rx，每个通道提供25 Gbps的吞吐量）来连接，而100GBASE-SR10则使用2×12芯或24芯 MPO/ MTP连接线（10 Tx和10 RX，每个LAN提供吞吐量25 Gbps）来发射的同时，100GBASE-SR10还使用2×12芯 或24芯 MPO/ MTP 线缆（10 Tx和10Rx，每个通道提供吞吐量的10 Gbps）来连接。</p>
+<p>100GBASE-SR4和100GBASE-SR10的接口光学上可分别达到4×25 Gbps和10×10 Gbps的数据传输速率，因此，它们只需使用MPO/ MTP到LC主干跳线就能轻而易举的完成25GbE/10 GbE 到 100 GbE的升级。<br><img src="/post/2016/12/QSFP-QSFP28等光模块及线缆/3-5.jpg"></p>
+<p>结论：100GBASE-SR4使用12芯MPO/ MTP跳线，而100GBASE-SR10使用两根12芯或一根24芯MPO/ MTP跳线。对于100G点到点互联来说，100GBASE-SR4更具成本效益。对于网络迁移，100GBASE-SR4也更具优势，因为它的分支更少，可大大降低线缆管理的成本。</p>
+<p>总而言之，100GBASE-SR4提供主机板的布局优势，大大减少了布线的数量。同时，100GBASE-SR4在成本和功耗更具有竞争力，所以目前100GBASE-SR10已经慢慢退出市场。飞速光纤（Feisu.com）是一家致力于光通讯产品研发设计并提供系统解决方案的公司，供应一系列100GBASE-SR4光模块，可与各大品牌的交换机兼容。</p>
+<hr>
+<h1 id="4-100G-QSFP28光模块——高性价比解决方案"><a href="#4-100G-QSFP28光模块——高性价比解决方案" class="headerlink" title="4.100G QSFP28光模块——高性价比解决方案"></a>4.100G QSFP28光模块——高性价比解决方案</h1><p>第一代100G光模块是CFP光模块，体积非常大，随后出现了CFP2和CFP4光模块，其中CFP4光模块是目前最新一代的100G光模块，其宽度只有CFP光模块的1/4，封装大小和QSFP+光模块的封装大小一致。而QSFP28光模块的封装大小比CFP4光模块更小，这意味着QSFP28光模块在交换机上具有更高的端口密度。<br><img src="/post/2016/12/QSFP-QSFP28等光模块及线缆/4-1.jpg"><br>QSFP28适用于4x25GE接入端口，SFP28适用于单个25GE接入端口。SFP28模块，基于SFP+的封装形式，支持25G以太网标准。SFP28能提供25Gb/s的无误码传输，在超四类多模光纤中传输距离可达到100米，并能应用于高密度的25G以太网交换机和网路接口中，促进数据中心的服务器连接。它采用流行的SFP+封装形式，为企业升级以太网连接，提供了一个更具成本效益的解决方案。</p>
+<p>以下是几款100G QSFP28系列光模块：<br><img src="/post/2016/12/QSFP-QSFP28等光模块及线缆/4-2.jpg"><br>100G QSFP28 SR4光模块，传输距离为100m，作为新兴QSFP28家族中的一员，是100G网络短途传输中非常理想的一种解决方案。<br><img src="/post/2016/12/QSFP-QSFP28等光模块及线缆/4-3.jpg"><br>QSFP-100G-LR4光模块传输距离为10km,为目前超大型数据中心不断增加传输距离的需求提供了理想解决方案， 并将引领单模光纤在数据中心的使用。</p>
+<p>当然，除了上述几款外，QSFP28系列产品还包括100G QSFP28有源光缆、100G QSFP28 PSM4光模块等等，这些产品在100G的发展中均发挥了重要作用。<br><img src="/post/2016/12/QSFP-QSFP28等光模块及线缆/4-4.jpg"><br><strong>QSFP28光模块的优势</strong></p>
+<ol>
+<li>功耗</li>
+</ol>
+<p>QSFP28光模块工作时的功耗通常不超过3.5W，而其他100G光模块的功耗通常在6W到24W之间。由此看来，QSFP28光模块要比其他100G光模块的功耗要低得多。</p>
+<ol start="2">
+<li>成本</li>
+</ol>
+<p>现在的数据中心主要是10G网络架构，其互连解决方案主要是10GBASE-SR光模块和双工LC多模光纤跳线，如果在现有10G网络架构的基础上直接升级到40/100G网络将会节省大量的时间和成本。因此，数据中心的主要互连趋势之一是在不改变现有双工多模基础网络架构的情况下从10G网络升级到40/100G网络。在这种情况下，MPO/MTP可分支光缆无疑是10G向40/100G升级的理想解决方案。</p>
+<ol start="3">
+<li>带宽</li>
+</ol>
+<p>采用最先进的100G传输技术为数据中心提供机架交换机和核心网之间的连接，比40G QSFP方案提高了150%的面板带宽密度</p>
+<p><strong>光模块测试</strong></p>
+<p>光模块使用时，测试性能是必不可少的步骤。光模块是由发射器和接收器组成，所以我们在测试的时候，一般分为4个步骤（如下图），主要分为对发射器和接收器的测试。</p>
+<p>一、发射器部分</p>
+<p>测试时，需要注意发射器输出波形的波长和形状，以及接收器的抖动容限和带宽，测试发射器时，需要注意：</p>
+<ol>
+<li>用来测试发射器的输入信号的质量必须足够好。此外，还必须通过抖动测量和眼图测量来确认电气测量的质量。眼图测量是检查发射器输出波形的常见方法，因为眼图包含了丰富的信息，能够反映出发射器的整体性能。<img src="/post/2016/12/QSFP-QSFP28等光模块及线缆/4-5.jpg"></li>
+<li>发射器的输出光信号必须用眼图测试、光调制振幅和消光比等光学质量指标来测量。<img src="/post/2016/12/QSFP-QSFP28等光模块及线缆/4-6.jpg">
+二、接收器部分</li>
+</ol>
+<p>与测试发射器不同的是，测试接收器时，光信号的质量必须足够差，因此，必须创造出一种代表最差信号的光压力眼图，这种最差的光信号必须通过抖动测量和光功率测试来进行校准。<br><img src="/post/2016/12/QSFP-QSFP28等光模块及线缆/4-7.jpg"><br>需要测试接收器的电子输出信号，这种测试主要有三个种类：</p>
+<ol>
+<li><p>眼图测试，这样能保证眼图的“眼睛”处于张开状态。眼图测试通常由误码率的深度实现</p>
+</li>
+<li><p>抖动测试，测试不同类型的抖动</p>
+</li>
+<li><p>抖动跟踪和容限，测试内部时钟恢复电路对抖动的跟踪情况</p>
+<img src="/post/2016/12/QSFP-QSFP28等光模块及线缆/4-8.jpg">
+<p>总而言之，测试光模块是一项复杂的工作，但是也是保证其性能良好不可或缺的步骤。眼图测量作为一种广泛使用的测量方法，能有效测试光模块的发射器。而光模块的接收器测试则更加复杂一点，也需要更多的测试方法。</p>
+</li>
+</ol>
+<p>飞速光纤（<a href="http://Feisu.com）供应多种光模块，且每个光模块都经过兼容性测试，可与主流品牌如思科（Cisco）、惠普（HP）、IBM、Arista、博科（Brocade）、戴尔（DELL）、瞻博（Juniper）等完全兼容，质量有保证。更多详情，请直接访问飞速光纤官网。" target="_blank" rel="noopener">http://Feisu.com）供应多种光模块，且每个光模块都经过兼容性测试，可与主流品牌如思科（Cisco）、惠普（HP）、IBM、Arista、博科（Brocade）、戴尔（DELL）、瞻博（Juniper）等完全兼容，质量有保证。更多详情，请直接访问飞速光纤官网。</a></p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>Donate comment here</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>Donate</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechat_pay.jpg" alt="Calmisi Lee WeChat Pay"/>
+        <p>WeChat Pay</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/ali_pay.jpg" alt="Calmisi Lee Alipay"/>
+        <p>Alipay</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>Post author:  </strong>Calmisi Lee</li>
+  <li class="post-copyright-link">
+    <strong>Post link: </strong>
+    <a href="https://blog.calmisi.cn/post/2016/12/QSFP-QSFP28等光模块及线缆.html" title="QSFP,QSFP28等光模块及线缆">https://blog.calmisi.cn/post/2016/12/QSFP-QSFP28等光模块及线缆.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 4.0</a> unless stating additionally.</li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Optical-module/" rel="tag"># Optical module</a>
+          
+            <a href="/tags/QSFP/" rel="tag"># QSFP</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/post/2016/12/硬件知识的一些总结.html" rel="next" title="硬件知识的一些总结">
+                <i class="fa fa-chevron-left"></i> 硬件知识的一些总结
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/post/2016/12/notes-for-video-learning-of-vivado-PR-project.html" rel="prev" title="notes for video learning of vivado PR project">
+                notes for video learning of vivado PR project <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Calmisi Lee" />
+            
+              <p class="site-author-name" itemprop="name">Calmisi Lee</p>
+              <p class="site-description motion-element" itemprop="description">Pas de regrets</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">48</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">17</span>
+                    <span class="site-state-item-name">categories</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">49</span>
+                    <span class="site-state-item-name">tags</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/calmisi" target="_blank" title="GitHub" rel="external nofollow"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="mailto:calmisi@163.com" target="_blank" title="E-Mail" rel="external nofollow"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  
+                </span>
+              
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1-40G高速线缆——高速通信发展的里程碑"><span class="nav-number">1.</span> <span class="nav-text">1.40G高速线缆——高速通信发展的里程碑</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-想要全面了解100G光模块吗？"><span class="nav-number">2.</span> <span class="nav-text">2.想要全面了解100G光模块吗？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3-100GBASE-SR4-Vs-100GBASE-SR10光模块"><span class="nav-number">3.</span> <span class="nav-text">3.100GBASE-SR4 Vs 100GBASE-SR10光模块</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#4-100G-QSFP28光模块——高性价比解决方案"><span class="nav-number">4.</span> <span class="nav-text">4.100G QSFP28光模块——高性价比解决方案</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2015=6 – <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Calmisi Lee</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Symbols count total: </span>
+    
+    <span title="Symbols count total">155k</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Reading time total &asymp;</span>
+    
+    <span title="Reading time total">2:21</span>
+  
+</div>
+
+
+  
+
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" rel="external nofollow" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme – <a class="theme-link" target="_blank" rel="external nofollow" href="https://theme-next.org">NexT.Gemini</a></div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.4.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.4.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.4.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.4.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.4.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.4.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.4.1"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  
+  
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(function (item) {
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'tf4TRbjrkONfr7VekxlWI8Py-gzGzoHsz',
+        appKey: '5c1wL7zY6VY7oLzi5xaCIu5x',
+        placeholder: 'Just go go',
+        avatar:'mm',
+        meta:guest,
+        pageSize:'10' || 10,
+        visitor: false
+    });
+  </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+
+  
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  <style>
+    .copy-btn {
+      display: inline-block;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 20px;
+      color: #333;
+      white-space: nowrap;
+      vertical-align: middle;
+      cursor: pointer;
+      background-color: #eee;
+      background-image: linear-gradient(#fcfcfc, #eee);
+      border: 1px solid #d5d5d5;
+      border-radius: 3px;
+      user-select: none;
+      outline: 0;
+    }
+
+    .highlight-wrap .copy-btn {
+      transition: opacity .3s ease-in-out;
+      opacity: 0;
+      padding: 2px 6px;
+      position: absolute;
+      right: 4px;
+      top: 8px;
+    }
+
+    .highlight-wrap:hover .copy-btn,
+    .highlight-wrap .copy-btn:focus {
+      opacity: 1
+    }
+
+    .highlight-wrap {
+      position: relative;
+    }
+  </style>
+  <script>
+    $('.highlight').each(function (i, e) {
+      var $wrap = $('<div>').addClass('highlight-wrap')
+      $(e).after($wrap)
+      $wrap.append($('<button>').addClass('copy-btn').append('Copy').on('click', function (e) {
+        var code = $(this).parent().find('.code').find('.line').map(function (i, e) {
+          return $(e).text()
+        }).toArray().join('\n')
+        var ta = document.createElement('textarea')
+        document.body.appendChild(ta)
+        ta.style.position = 'absolute'
+        ta.style.top = '0px'
+        ta.style.left = '0px'
+        ta.value = code
+        ta.select()
+        ta.focus()
+        var result = document.execCommand('copy')
+        document.body.removeChild(ta)
+        
+          if(result)$(this).text('Copied')
+          else $(this).text('Copy failed')
+        
+        $(this).blur()
+      })).on('mouseleave', function (e) {
+        var $b = $(this).find('.copy-btn')
+        setTimeout(function () {
+          $b.text('Copy')
+        }, 300)
+      }).append(e)
+    })
+  </script>
+
+
+</body>
+</html>
