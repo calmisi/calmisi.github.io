@@ -13,9 +13,9 @@ timezone:
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
-url: https://calmisi.github.io/
+url: https://blog.calmisi.cn
 root: /
-permalink: post/:title/
+permalink: post/:year/:i_month/:title.html
 permalink_defaults:
 
 # Directory
