@@ -80,12 +80,20 @@ theme: next
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
-  type: git
+- type: git
   repo: git@github.com:calmisi/calmisi.github.io.git
   branch: master
   message: modify or add articles
+  # other deployer
+- type: leancloud_counter_security_sync
   
-# Sitemap
+  
+  
+  
+  
+  
+  
+# Sitemap ???
 sitemap:
   path: sitemap.xml
 
@@ -95,9 +103,18 @@ search:
   field: post
   format: html
   limit: 10000
-  
+
+#  
 symbols_count_time:
   symbols: true
   time: true
   total_symbols: true
   total_time: true
+
+#leancloud_counter_security  
+leancloud_counter_security:
+  enable_sync: true
+  app_id: tf4TRbjrkONfr7VekxlWI8Py-gzGzoHsz
+  app_key: 5c1wL7zY6VY7oLzi5xaCIu5x
+  username: calmisi
+  password: calmisi
