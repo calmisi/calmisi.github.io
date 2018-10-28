@@ -1,9 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title><![CDATA[size of segment]]></title>
+    <url>%2Fpost%2F2018%2F10%2Fsize-of-segment.html</url>
+    <content type="text"><![CDATA[在segment descriptor中，高4个bytes(4-7bytes)的bit 22为D/B字段。（this flag should always be set to 1 for 32-bit code and data segments and 0 for 16-bit code and data segments） Executable code segment:该字段为D flag，决定了该代码段中指令的有效地址的长度和操作数的长度。1表示使用32位的地址和32-bit(4字节)或者8-bit(1字节)的操作数；0表示使用16位的地址和16-bit(2字节)或者8-bit(1字节)的操作数.(当Lbit, bit 21 of the second doubleword of the segment descriptor indicates whether a code segment contains native 64-bit code. 1表示该code segment中的指令在64-bit模式执行；0表示该code segment的指令在compatibility模式执行。 如果L位置1了，那么D bit必须清除；当不在IA-32e模式，或者不是code segment时，L bit is reserved and should always be set to 0.) Stack segment (data segment pointed to by the SS register). 该字段为B（big）flag.该字段决定了堆栈指针的大小。1表示使用32-bit stack pointer,存放在32-bit的ESP寄存器中；0表示16-bit的stack pointer，存放在16-bit的SP寄存器中。如果stack segment是一个expand-down的data-segment，那么该B flag也制定了stack segment的upper bond. Expand-down data segment:该字段为B flag,指定了segment的upper bound. 1表示upper bound为FFFFFFFF(4GBytes);0表示upper bound为FFFF(64KBytes). 所以当segment为stack segment时，第2条和第3条同时生效。 Stack Alignment The stack pointer for a stack segment should be aligned on 16-bit (word) or 32-bit (double-word) boundaries, depending on the width of the stack segment. The D flag in the segment secriptor for the current code segment sets the stack-segment width. (当Dbit为1时，表示使用32-bit或8bit的操作数；当D bit为0时，表示使用16-bit和8-bit的操作数) (即，当D bit为1时，stack的width为32bits；当D bit为0时，stack的width为16bits) Adress-Size Attributes for Stack Accesses:implicit adress of the top of the stack, and they may also have an explicit memory address (for example, PUSH Array1[EBX]). The address-size attribute of the top of the stack determines whether SP or ESP is used for the stack access.Stack operations with an address-size attribute of 16 use the 16-bit SP stack pointer can can use a maximum stack address of FFFFH;Stack operations with an address-size attribute of 32 bits ues the 32-bit ESP register and can usa a maximum address of FFFFFFFFH.The default addre-size attribute for data segments used as stack is controlled by the B flag of the segment’s descriptor. The attribute of the explicit address is determined by the D flag of the current code segment and the presence or absence of the 67H address-size prefix. Stack Behavior in 64-Bit Mode 64位模式的时候，SS segment的基地址为0.Fields(base, limit, and attribute) in segment descriptor registers are ignored.SSregister的DPL is modified that it is always equal to CPL. This will be true even if it is the only field in the ss descriptor that is modified. ESP, EIP, EBP寄存器扩展为64 bits，并重命名为RSP, RIP, RBP. PUSH/POP指令以64-bit的宽度增加/减少堆栈。 When the contents of a segment register is pushed onto 64-bit stack, the pointer is automatically aligned to 64 bits (as with a stack that has a 32-bit width).]]></content>
+      <categories>
+        <category>Intel-SDM</category>
+      </categories>
+      <tags>
+        <tag>Intel</tag>
+      </tags>
+  </entry>
+  <entry>
     <title><![CDATA[CPL,RPL,DPL三者的关系，以及CPL的切换规则]]></title>
     <url>%2Fpost%2F2018%2F10%2FCPL-RPL-DPL.html</url>
     <content type="text"><![CDATA[三个概念： CPL: Current privilege Level, 当前特权级，其为当前的CS段和SS段的段寄存器的第0-1位的值，如下图所示，段寄存器中的可见部分的内容，即为segment selector的值，所以当前代码的CPL即为载入段描述符时，段选择符的RPL的值。注意：当前的CS段和SS段的段寄存器总的CPL值一定是一样的，当发生CPL切换时，对应的也会切换SS堆栈 DPL: Descriptor privilege level,为segment或者gate的特权级。其值在segment decriptor或gate descriptor的DPL区域。 RPL: Requested Privilege level，如下图所示为segment selector的最低2位。 CPL,DPL,RPL的取值为0,1,2,3.数值越大，特权级越低。当要访问数据段中的操作数的时候，数据段(data segment)对应的段选择符(segment selector)必须加载到对应的数据段寄存器(data segment registers, DS, ES, FS or GS)或者堆栈段(stack-segment register,SS)。在加载的时候，需要进行特权级检查，需要对比当前正在运行的程序的CPL,目标操作数所在段的段选择符的RPL,以及目标操作数所在段的段描述符的DPL只有当CPL &lt;= DPL &amp;&amp; RPL &lt;= DPL，目标操作数所在的段才会加载成功，否则产生一个GP,general protection. 特权级的检查(Privilege level checking)访问数据段(access data segment)当访问数据段(data segment)的时候，段选择符(segment selector)必须加载到数据段寄存器（DS、ES、FS、GS）或者堆栈寄存器SS(Stack segment是一种特殊的数据段)。 条件：CPL &lt;= DPL &amp;&amp; RPL &lt;= DPL 注意：segment selector的RPL是受软件控制的，也就是说一个CPL=3的程序可以将一个data-segment的RPL设为0,然后去访问一个data segment.那么RPL &lt;= DPL必定成立，则只用检查DPL。 访问代码段（code segment）中的数据 Load a data-segment register with a segment selector for a nonconforming, readable, code segment: CPL &lt;= DPL &amp;&amp; RPL &lt;= DPL. Load a data-segment register with a segment selector for a conforming, readable, code segment: always valid, 因为conforming的code segment的特权级总是和CPL一样的 Use a code-segment override prefix(CS) to read a readable, code segment whose selector is already loaded in the CS register: always valid,因为CS寄存器选择的code segment的DPL和CPL是一样的 访问SS register当想SS(stack segment) register中加载新的stack segment的segment selector时： CPL == DPL == RPL 访问代码段程序控制权从一个code segment转移到另一个code segment时，目标段的segment selector必须加载到code-segment register。此时会进行多种权限检查，如上面提到的CPL，DPL，RPL。以及目标代码段的type, limit等。如果检查通过，则将目标code segment的segment selector加载到CS段寄存器，程序控制权则被转移到了新加载的代码段，并且程序从EIP寄存器所指向的地址开始执行。 程序控制权的转移 通过以下指令：JMP，CALL，RET，SYSENTER，SYSEXIT，SYSCALL，SYSRET，INT n; exception和interrupt机制，以及IERT指令； JMP或CALL指令可以以下面4种方式来引用另一个code segment: 目标操作数包含指向目标code segment 的segment selector； 目标操作数指向一个call-gate descriptor,其包含一个指向目标code segment的segment selector. 目标操作数指向一个TSS,其包含指向目标code segment的segment selector; 目标操作数指向一个task gate,其指向一个TSS，TSS包含指向目标code segment的segment selector; 1.直接跳转到code segment:目标操作数包含指向目标code segment 的segment selector； JMP, CALL 和RET指令的段内跳转，不用切换code segment。 JMP, CALL 和RET指令的远程跳转，跳转到另一个code segment,需要进行特权级检查。转移程序控制权到另一个code segment,且没有使用call gate的时候： 当转移到Nonconforming code segment: CPL == DPL &amp;&amp; RPL &lt;= CPL(== DPL),并且切换到新的code segment后，CPL不变（即使RPL &lt; CPL） 当转移到Conforming code segment: CPL &gt;= DPL (RPL直接被忽略)此情形时，当程序控制权转移到conforming code segment,CPL不会改变，即使目标code segment的DPL比调用程序的CPL数值要小。因为CPL没有改变，所以也不会发生stack切换。一般Conforming segments为math libraries和exception handlers之类的代码模块。 2.使用gate descriptor进行跳转 Call gates Trap gates Interrupt gates Task gates其中Task gates用来task swithcingl; Trap and interrupt gates是特殊的call gates用来调用exception and interrupt handlers.下面主要讨论call gates. Call gatesCall gates用来在不同的特权级之间转移程序控制权，此外call gates也可以在16bits和32bits的代码段之间转移程序控制权。Call gates descriptor存放于GDT或者LDT中，但不会出现在IDT中。下图为call-gate descriptor的组成: 指明了需要被访问的code segment(segment selector) 目标code segment的程序入口(offset in segment) caller程序的特权级。（DPL域指明了call gate的特权级，which in turn is the privilege level required to access the selected procedure through the gate） 如果需要进行stack切换，指明了需要在stack之间复制的可选参数的数量.(Parm Count specifies the number of words for 16-bit call gates and doublewords for 32-bit call gates) 定义了要push到目标stack的size: 16-bit gates force 16-bit pushes and 32-bit gates forces 32-bit pushes. 指明当前call-gate是否有效。(P flag) 通过call gate访问一个code segment。为了访问call gate，CALL或者JMP指令的目标操作数需要为一个指向call gate的far pointer。如下图所示，the segment selector指明了call gate, the offset是需要的，但是不被检查和使用。会使用far pointer的segment selector在GDT或者LDT中选中一个call gate.然后使用该call gate中的segment selector和offset来组成目标线性地址。如下图所示，需要检查4个特权级： CPL （当前caller的cs的特权级） RPL （requestor’s privilege level）：指向call gate descripter的selector的RPL DPL （descriptor privilege level）：call gate descriptor的DPL DPL： call gate descriptor中的segment selector所指向的code segment descriptor中的DPL下图给出了使用JMP或者CALL指令是，上述4个特权级需要满足的关系： 如果call了一个更高特权级的nonconforming的目标code segment.那么CPL会被减小数值之目标code segment的DPL。那么就会发生stack切换。如果call或者jump了一个更高特权级的conforming的目标code segment.不会改变CPL，所以也不会发生stack切换。 总结1when access code segment When transferring program control to another code segment without going through a call gate. nonconforming: CPL == DPL &amp;&amp; RPL &lt;= CPL (RPL &lt;= CPL == DPL)。并且新的CPL不变，即使RPL比较小 conforming: CPL &gt;= DPL &amp;&amp; RPL is ignored. 并且新的CPL不变。 When transferring program control through a call gate.CPL &lt;= DPL of call gate descriptor &amp;&amp; RPL of call gate selector &lt;= DPL of call gate descriptor nonconforming code segment: DPL &lt;= CPL (CALL) DPL == CPL (JMP) conforming code segment: DPL &lt;= CPL (CALL) DPL &lt;= CPL (JMP)That means:Only CALL instructions can use call gates to transfer program control to more privileged (数值更小的) nonconforming code segment.A JMP instruction can use a call gate only to transfer program control to a nonconforming code segment with a DPL equal to the CPL.CALL and JMP instruction can both transfer program control to a more privileged conforming code segment; 总结2the change of CPL without call gate near call: CPL不变； far call: CPL不变； with call gate more privileged nonconforming destination code segment: the CPL is lowered to the DPL of the destination code segment and a stack switch occurs. more privileged conforming destination code segment: CPL不变，stack不切换。]]></content>
+      <categories>
+        <category>Intel-SDM</category>
+      </categories>
+      <tags>
+        <tag>Intel</tag>
+      </tags>
   </entry>
   <entry>
     <title><![CDATA[kvm源码解析之kvm-intel.ko模块初始化]]></title>
@@ -136,8 +153,8 @@
         <category>DPDK源码解析</category>
       </categories>
       <tags>
-        <tag>l3fwd</tag>
         <tag>DPDK</tag>
+        <tag>l3fwd</tag>
       </tags>
   </entry>
   <entry>
@@ -148,8 +165,8 @@
         <category>DPDK源码解析</category>
       </categories>
       <tags>
-        <tag>DPDK</tag>
         <tag>l2fwd</tag>
+        <tag>DPDK</tag>
       </tags>
   </entry>
   <entry>
@@ -343,8 +360,8 @@
         <category>Java &amp; eclipse</category>
       </categories>
       <tags>
-        <tag>java</tag>
         <tag>Eclipse</tag>
+        <tag>java</tag>
         <tag>JNI</tag>
       </tags>
   </entry>
@@ -439,8 +456,8 @@
         <category>Java &amp; eclipse</category>
       </categories>
       <tags>
-        <tag>Eclipse</tag>
         <tag>Java</tag>
+        <tag>Eclipse</tag>
       </tags>
   </entry>
   <entry>

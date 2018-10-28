@@ -109,6 +109,7 @@
 
 
   <meta name="description" content="三个概念： CPL: Current privilege Level, 当前特权级，其为当前的CS段和SS段的段寄存器的第0-1位的值，如下图所示，段寄存器中的可见部分的内容，即为segment selector的值，所以当前代码的CPL即为载入段描述符时，段选择符的RPL的值。注意：当前的CS段和SS段的段寄存器总的CPL值一定是一样的，当发生CPL切换时，对应的也会切换SS堆栈 DPL: De">
+<meta name="keywords" content="Intel">
 <meta property="og:type" content="article">
 <meta property="og:title" content="CPL,RPL,DPL三者的关系，以及CPL的切换规则">
 <meta property="og:url" content="https://blog.calmisi.cn/post/2018/10/CPL-RPL-DPL.html">
@@ -121,7 +122,7 @@
 <meta property="og:image" content="https://blog.calmisi.cn/post/2018/10/CPL-RPL-DPL/call_gate_desc.JPG">
 <meta property="og:image" content="https://blog.calmisi.cn/post/2018/10/CPL-RPL-DPL/call_gate_checks_items.JPG">
 <meta property="og:image" content="https://blog.calmisi.cn/post/2018/10/CPL-RPL-DPL/call_gate_privilege_check.JPG">
-<meta property="og:updated_time" content="2018-10-28T07:15:37.046Z">
+<meta property="og:updated_time" content="2018-10-28T07:24:54.159Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="CPL,RPL,DPL三者的关系，以及CPL的切换规则">
 <meta name="twitter:description" content="三个概念： CPL: Current privilege Level, 当前特权级，其为当前的CS段和SS段的段寄存器的第0-1位的值，如下图所示，段寄存器中的可见部分的内容，即为segment selector的值，所以当前代码的CPL即为载入段描述符时，段选择符的RPL的值。注意：当前的CS段和SS段的段寄存器总的CPL值一定是一样的，当发生CPL切换时，对应的也会切换SS堆栈 DPL: De">
@@ -405,11 +406,29 @@
                 
                   <span class="post-meta-item-text">Edited on</span>
                 
-                <time title="Modified: 2018-10-28 15:15:37" itemprop="dateModified" datetime="2018-10-28T15:15:37+08:00">2018-10-28</time>
+                <time title="Modified: 2018-10-28 15:24:54" itemprop="dateModified" datetime="2018-10-28T15:24:54+08:00">2018-10-28</time>
               
             
           </span>
 
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Intel-SDM/" itemprop="url" rel="index"><span itemprop="name">Intel-SDM</span></a></span>
+
+                
+                
+              
+            </span>
           
 
           
@@ -484,6 +503,7 @@
 </li>
 </ul>
 <p>CPL,DPL,RPL的取值为0,1,2,3.数值越大，特权级越低。<br>当要访问数据段中的操作数的时候，数据段(data segment)对应的段选择符(segment selector)必须加载到对应的数据段寄存器(data segment registers, DS, ES, FS or GS)或者堆栈段(stack-segment register,SS)。<br>在加载的时候，需要进行特权级检查，需要对比当前正在运行的程序的CPL,目标操作数所在段的段选择符的RPL,以及目标操作数所在段的段描述符的DPL<br>只有当CPL &lt;= DPL &amp;&amp; RPL &lt;= DPL，目标操作数所在的段才会加载成功，否则产生一个GP,general protection.</p>
+<a id="more"></a>
 <hr>
 <h1 id="特权级的检查-Privilege-level-checking"><a href="#特权级的检查-Privilege-level-checking" class="headerlink" title="特权级的检查(Privilege level checking)"></a>特权级的检查(Privilege level checking)</h1><h2 id="访问数据段-access-data-segment"><a href="#访问数据段-access-data-segment" class="headerlink" title="访问数据段(access data segment)"></a>访问数据段(access data segment)</h2><p>当访问数据段(data segment)的时候，段选择符(segment selector)必须加载到数据段寄存器（DS、ES、FS、GS）或者堆栈寄存器SS(Stack segment是一种特殊的数据段)。</p>
 <blockquote>
@@ -638,6 +658,12 @@
 
     <footer class="post-footer">
       
+        <div class="post-tags">
+          
+            <a href="/tags/Intel/" rel="tag"># Intel</a>
+          
+        </div>
+      
 
       
       
@@ -656,6 +682,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/post/2018/10/size-of-segment.html" rel="prev" title="size of segment">
+                size of segment <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -734,7 +764,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">50</span>
+                    <span class="site-state-item-count">51</span>
                     <span class="site-state-item-name">posts</span>
                   </a>
                 </div>
@@ -781,7 +811,9 @@
                     
                       
                     
-                    <span class="site-state-item-count">17</span>
+                      
+                    
+                    <span class="site-state-item-count">18</span>
                     <span class="site-state-item-name">categories</span>
                   </a>
                 </div>
@@ -892,7 +924,9 @@
                     
                       
                     
-                    <span class="site-state-item-count">49</span>
+                      
+                    
+                    <span class="site-state-item-count">50</span>
                     <span class="site-state-item-name">tags</span>
                   </a>
                 </div>
@@ -983,7 +1017,7 @@
     
       <span class="post-meta-item-text">Symbols count total: </span>
     
-    <span title="Symbols count total">169k</span>
+    <span title="Symbols count total">172k</span>
   
 
   
@@ -994,7 +1028,7 @@
     
       <span class="post-meta-item-text">Reading time total &asymp;</span>
     
-    <span title="Reading time total">2:34</span>
+    <span title="Reading time total">2:36</span>
   
 </div>
 
