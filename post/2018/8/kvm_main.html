@@ -108,25 +108,25 @@
 
 
 
-  <meta name="description" content="kvm_main.c中的init函数首先会调用，kvm_arch_init(opaque);  kvm_arch_init这时会调用与architecture相关的对应的初始化函数，我们只关心x86平台，所以看对应的arch/x86/kvm/x86.c中的实现：  1234567891011121314151617181920212223242526272829303132333435363738">
+  <meta name="description" content="kvm_main.c中的init函数首先会调用，kvm_arch_init(opaque);  kvm_arch_init这时会调用与architecture相关的对应的初始化函数，我们只关心x86平台，所以看对应的arch/x86/kvm/x86.c中的实现：">
 <meta name="keywords" content="KVM">
 <meta property="og:type" content="article">
-<meta property="og:title" content="kvm源码解析（一），KVkvm_main.c">
-<meta property="og:url" content="https://blog.calmisi.cn/post/2018/8/kvm源码解析（一），kvm-main-c.html">
+<meta property="og:title" content="kvm源码解析之kvm_main.c">
+<meta property="og:url" content="https://blog.calmisi.cn/post/2018/8/kvm_main.html">
 <meta property="og:site_name" content="Calmisi Lee">
-<meta property="og:description" content="kvm_main.c中的init函数首先会调用，kvm_arch_init(opaque);  kvm_arch_init这时会调用与architecture相关的对应的初始化函数，我们只关心x86平台，所以看对应的arch/x86/kvm/x86.c中的实现：  1234567891011121314151617181920212223242526272829303132333435363738">
+<meta property="og:description" content="kvm_main.c中的init函数首先会调用，kvm_arch_init(opaque);  kvm_arch_init这时会调用与architecture相关的对应的初始化函数，我们只关心x86平台，所以看对应的arch/x86/kvm/x86.c中的实现：">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2018-09-15T16:54:21.670Z">
+<meta property="og:updated_time" content="2018-09-18T13:48:07.646Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="kvm源码解析（一），KVkvm_main.c">
-<meta name="twitter:description" content="kvm_main.c中的init函数首先会调用，kvm_arch_init(opaque);  kvm_arch_init这时会调用与architecture相关的对应的初始化函数，我们只关心x86平台，所以看对应的arch/x86/kvm/x86.c中的实现：  1234567891011121314151617181920212223242526272829303132333435363738">
+<meta name="twitter:title" content="kvm源码解析之kvm_main.c">
+<meta name="twitter:description" content="kvm_main.c中的init函数首先会调用，kvm_arch_init(opaque);  kvm_arch_init这时会调用与architecture相关的对应的初始化函数，我们只关心x86平台，所以看对应的arch/x86/kvm/x86.c中的实现：">
 
 
 
 
 
 
-  <link rel="canonical" href="https://blog.calmisi.cn/post/2018/8/kvm源码解析（一），kvm-main-c.html"/>
+  <link rel="canonical" href="https://blog.calmisi.cn/post/2018/8/kvm_main.html"/>
 
 
 
@@ -136,7 +136,7 @@
   };
 </script>
 
-  <title>kvm源码解析（一），KVkvm_main.c | Calmisi Lee</title>
+  <title>kvm源码解析之kvm_main.c | Calmisi Lee</title>
   
 
 
@@ -340,7 +340,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://blog.calmisi.cn/post/2018/8/kvm源码解析（一），kvm-main-c.html">
+    <link itemprop="mainEntityOfPage" href="https://blog.calmisi.cn/post/2018/8/kvm_main.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Calmisi Lee">
@@ -357,7 +357,7 @@
 
         
         
-          <h2 class="post-title" itemprop="name headline">kvm源码解析（一），KVkvm_main.c
+          <h2 class="post-title" itemprop="name headline">kvm源码解析之kvm_main.c
               
             
           </h2>
@@ -399,7 +399,7 @@
                 
                   <span class="post-meta-item-text">Edited on</span>
                 
-                <time title="Modified: 2018-09-16 00:54:21" itemprop="dateModified" datetime="2018-09-16T00:54:21+08:00">2018-09-16</time>
+                <time title="Modified: 2018-09-18 21:48:07" itemprop="dateModified" datetime="2018-09-18T21:48:07+08:00">2018-09-18</time>
               
             
           </span>
@@ -430,7 +430,7 @@
 
           
           
-             <span id="/post/2018/8/kvm源码解析（一），kvm-main-c.html" class="leancloud_visitors" data-flag-title="kvm源码解析（一），KVkvm_main.c">
+             <span id="/post/2018/8/kvm_main.html" class="leancloud_visitors" data-flag-title="kvm源码解析之kvm_main.c">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -493,6 +493,7 @@
 <ol>
 <li>kvm_arch_init<br>这时会调用与architecture相关的对应的初始化函数，<br>我们只关心x86平台，所以看对应的arch/x86/kvm/x86.c中的实现：</li>
 </ol>
+<a id="more"></a>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">kvm_arch_init</span><span class="params">(<span class="keyword">void</span> *opaque)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">int</span> r;</span><br><span class="line">	<span class="comment">//该结构体为与x86平台相关的kvm需要使用的函数的指针集合</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">kvm_x86_ops</span> *<span class="title">ops</span> = <span class="title">opaque</span>;</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">//首先判断该指针是否已经被赋值，即是否已经初始化x86平台相关</span></span><br><span class="line">	<span class="keyword">if</span> (kvm_x86_ops) &#123;</span><br><span class="line">		printk(KERN_ERR <span class="string">"kvm: already loaded the other module\n"</span>);</span><br><span class="line">		r = -EEXIST;</span><br><span class="line">		<span class="keyword">goto</span> out;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//调用x86平台对应的函数实现，检测cpu是否支持KVM</span></span><br><span class="line">	<span class="keyword">if</span> (!ops-&gt;cpu_has_kvm_support()) &#123;</span><br><span class="line">		printk(KERN_ERR <span class="string">"kvm: no hardware support\n"</span>);</span><br><span class="line">		r = -EOPNOTSUPP;</span><br><span class="line">		<span class="keyword">goto</span> out;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> (ops-&gt;disabled_by_bios()) &#123;</span><br><span class="line">		printk(KERN_ERR <span class="string">"kvm: disabled by bios\n"</span>);</span><br><span class="line">		r = -EOPNOTSUPP;</span><br><span class="line">		<span class="keyword">goto</span> out;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	r = -ENOMEM;</span><br><span class="line">	<span class="comment">//为每个CPU建立shared msrs</span></span><br><span class="line">	shared_msrs = alloc_percpu(struct kvm_shared_msrs);</span><br><span class="line">	<span class="keyword">if</span> (!shared_msrs) &#123;</span><br><span class="line">		printk(KERN_ERR <span class="string">"kvm: failed to allocate percpu kvm_shared_msrs\n"</span>);</span><br><span class="line">		<span class="keyword">goto</span> out;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//初始化mmu</span></span><br><span class="line">	r = kvm_mmu_module_init();</span><br><span class="line">	<span class="keyword">if</span> (r)</span><br><span class="line">		<span class="keyword">goto</span> out_free_percpu;</span><br><span class="line"></span><br><span class="line">	kvm_set_mmio_spte_mask();</span><br><span class="line"></span><br><span class="line">	<span class="comment">//注意，这里给kvm_x86_ops赋值，即下次在调用该函数进行x86平台的初始化，则会提示已经加载了与x86平台的其他实现。</span></span><br><span class="line">	kvm_x86_ops = ops;</span><br><span class="line"></span><br><span class="line">	kvm_mmu_set_mask_ptes(PT_USER_MASK, PT_ACCESSED_MASK,</span><br><span class="line">			PT_DIRTY_MASK, PT64_NX_MASK, <span class="number">0</span>,</span><br><span class="line">			PT_PRESENT_MASK, <span class="number">0</span>, sme_me_mask);</span><br><span class="line">	kvm_timer_init();</span><br><span class="line"></span><br><span class="line">	perf_register_guest_info_callbacks(&amp;kvm_guest_cbs);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (boot_cpu_has(X86_FEATURE_XSAVE))</span><br><span class="line">		host_xcr0 = xgetbv(XCR_XFEATURE_ENABLED_MASK);</span><br><span class="line"></span><br><span class="line">	kvm_lapic_init();</span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> CONFIG_X86_64</span></span><br><span class="line">	pvclock_gtod_register_notifier(&amp;pvclock_gtod_notifier);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (hypervisor_is_type(X86_HYPER_MS_HYPERV))</span><br><span class="line">		set_hv_tscchange_cb(kvm_hyperv_tsc_notifier);</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">out_free_percpu:</span><br><span class="line">	free_percpu(shared_msrs);</span><br><span class="line">out:</span><br><span class="line">	<span class="keyword">return</span> r;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <ol start="2">
 <li><p>kvm_irqfd_init()</p>
@@ -518,7 +519,7 @@
     
       <div>
         <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
-  <div>Donate comment here</div>
+  <div></div>
   <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
     <span>Donate</span>
   </button>
@@ -553,7 +554,7 @@
     <strong>Post author:  </strong>Calmisi Lee</li>
   <li class="post-copyright-link">
     <strong>Post link: </strong>
-    <a href="https://blog.calmisi.cn/post/2018/8/kvm源码解析（一），kvm-main-c.html" title="kvm源码解析（一），KVkvm_main.c">https://blog.calmisi.cn/post/2018/8/kvm源码解析（一），kvm-main-c.html</a>
+    <a href="https://blog.calmisi.cn/post/2018/8/kvm_main.html" title="kvm源码解析之kvm_main.c">https://blog.calmisi.cn/post/2018/8/kvm_main.html</a>
   </li>
   <li class="post-copyright-license">
     <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 4.0</a> unless stating additionally.</li>
@@ -588,6 +589,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/post/2018/9/kvm-module-init.html" rel="prev" title="kvm源码解析之kvm-intel.ko模块初始化">
+                kvm源码解析之kvm-intel.ko模块初始化 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -657,7 +662,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">48</span>
+                    <span class="site-state-item-count">50</span>
                     <span class="site-state-item-name">posts</span>
                   </a>
                 </div>
@@ -890,7 +895,7 @@
     
       <span class="post-meta-item-text">Symbols count total: </span>
     
-    <span title="Symbols count total">155k</span>
+    <span title="Symbols count total">169k</span>
   
 
   
@@ -901,7 +906,7 @@
     
       <span class="post-meta-item-text">Reading time total &asymp;</span>
     
-    <span title="Reading time total">2:21</span>
+    <span title="Reading time total">2:34</span>
   
 </div>
 
@@ -1033,7 +1038,7 @@
   
     <script type="text/javascript">
       window.livereOptions = {
-        refer: 'post/2018/8/kvm源码解析（一），kvm-main-c.html'
+        refer: 'post/2018/8/kvm_main.html'
       };
       (function(d, s) {
         var j, e = d.getElementsByTagName(s)[0];

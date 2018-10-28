@@ -1,0 +1,1634 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.4.1" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/8.jpg?v=6.4.1">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/8.jpg?v=6.4.1">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.ico?v=6.4.1">
+
+
+  <link rel="mask-icon" href="/images/8.jpg?v=6.4.1" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '6.4.1',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="三个概念： CPL: Current privilege Level, 当前特权级，其为当前的CS段和SS段的段寄存器的第0-1位的值，如下图所示，段寄存器中的可见部分的内容，即为segment selector的值，所以当前代码的CPL即为载入段描述符时，段选择符的RPL的值。注意：当前的CS段和SS段的段寄存器总的CPL值一定是一样的，当发生CPL切换时，对应的也会切换SS堆栈 DPL: De">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CPL,RPL,DPL三者的关系，以及CPL的切换规则">
+<meta property="og:url" content="https://blog.calmisi.cn/post/2018/10/CPL-RPL-DPL.html">
+<meta property="og:site_name" content="Calmisi Lee">
+<meta property="og:description" content="三个概念： CPL: Current privilege Level, 当前特权级，其为当前的CS段和SS段的段寄存器的第0-1位的值，如下图所示，段寄存器中的可见部分的内容，即为segment selector的值，所以当前代码的CPL即为载入段描述符时，段选择符的RPL的值。注意：当前的CS段和SS段的段寄存器总的CPL值一定是一样的，当发生CPL切换时，对应的也会切换SS堆栈 DPL: De">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https://blog.calmisi.cn/post/2018/10/CPL-RPL-DPL/segment_register.JPG">
+<meta property="og:image" content="https://blog.calmisi.cn/post/2018/10/CPL-RPL-DPL/segment_descriptor.JPG">
+<meta property="og:image" content="https://blog.calmisi.cn/post/2018/10/CPL-RPL-DPL/segment_selector.JPG">
+<meta property="og:image" content="https://blog.calmisi.cn/post/2018/10/CPL-RPL-DPL/call_gate_desc.JPG">
+<meta property="og:image" content="https://blog.calmisi.cn/post/2018/10/CPL-RPL-DPL/call_gate_checks_items.JPG">
+<meta property="og:image" content="https://blog.calmisi.cn/post/2018/10/CPL-RPL-DPL/call_gate_privilege_check.JPG">
+<meta property="og:updated_time" content="2018-10-28T07:15:37.046Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="CPL,RPL,DPL三者的关系，以及CPL的切换规则">
+<meta name="twitter:description" content="三个概念： CPL: Current privilege Level, 当前特权级，其为当前的CS段和SS段的段寄存器的第0-1位的值，如下图所示，段寄存器中的可见部分的内容，即为segment selector的值，所以当前代码的CPL即为载入段描述符时，段选择符的RPL的值。注意：当前的CS段和SS段的段寄存器总的CPL值一定是一样的，当发生CPL切换时，对应的也会切换SS堆栈 DPL: De">
+<meta name="twitter:image" content="https://blog.calmisi.cn/post/2018/10/CPL-RPL-DPL/segment_register.JPG">
+
+
+
+
+
+
+  <link rel="canonical" href="https://blog.calmisi.cn/post/2018/10/CPL-RPL-DPL.html"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>CPL,RPL,DPL三者的关系，以及CPL的切换规则 | Calmisi Lee</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Calmisi Lee</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <h1 class="site-subtitle" itemprop="description">Never like what you think.</h1>
+      
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />Home</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />Archives</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />Tags</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+    <a href="/categories/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br />Categories</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+    <a href="/about/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-user"></i> <br />About</a>
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />Search</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="Searching..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://blog.calmisi.cn/post/2018/10/CPL-RPL-DPL.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Calmisi Lee">
+      <meta itemprop="description" content="Pas de regrets">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Calmisi Lee">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">CPL,RPL,DPL三者的关系，以及CPL的切换规则
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2018-10-18 20:41:34" itemprop="dateCreated datePublished" datetime="2018-10-18T20:41:34+08:00">2018-10-18</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2018-10-28 15:15:37" itemprop="dateModified" datetime="2018-10-28T15:15:37+08:00">2018-10-28</time>
+              
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/post/2018/10/CPL-RPL-DPL.html" class="leancloud_visitors" data-flag-title="CPL,RPL,DPL三者的关系，以及CPL的切换规则">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">Views: </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-symbolscount">
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Symbols count in article: </span>
+                
+                <span title="Symbols count in article">5.6k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Reading time &asymp;</span>
+                
+                <span title="Reading time">5 mins.</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="三个概念："><a href="#三个概念：" class="headerlink" title="三个概念："></a>三个概念：</h1><ul>
+<li>CPL: Current privilege Level, 当前特权级，其为当前的CS段和SS段的段寄存器的第0-1位的值，如下图所示，段寄存器中的可见部分的内容，即为segment selector的值，所以当前代码的CPL即为载入段描述符时，段选择符的RPL的值。<br><strong>注意：当前的CS段和SS段的段寄存器总的CPL值一定是一样的，当发生CPL切换时，对应的也会切换SS堆栈</strong><img src="/post/2018/10/CPL-RPL-DPL/segment_register.JPG" title="segment register"></li>
+<li>DPL: Descriptor privilege level,为segment或者gate的特权级。其值在segment decriptor或gate descriptor的DPL区域。<img src="/post/2018/10/CPL-RPL-DPL/segment_descriptor.JPG" title="segment descriptor"></li>
+<li>RPL: Requested Privilege level，如下图所示为segment selector的最低2位。<img src="/post/2018/10/CPL-RPL-DPL/segment_selector.JPG" title="segment selector">
+</li>
+</ul>
+<p>CPL,DPL,RPL的取值为0,1,2,3.数值越大，特权级越低。<br>当要访问数据段中的操作数的时候，数据段(data segment)对应的段选择符(segment selector)必须加载到对应的数据段寄存器(data segment registers, DS, ES, FS or GS)或者堆栈段(stack-segment register,SS)。<br>在加载的时候，需要进行特权级检查，需要对比当前正在运行的程序的CPL,目标操作数所在段的段选择符的RPL,以及目标操作数所在段的段描述符的DPL<br>只有当CPL &lt;= DPL &amp;&amp; RPL &lt;= DPL，目标操作数所在的段才会加载成功，否则产生一个GP,general protection.</p>
+<hr>
+<h1 id="特权级的检查-Privilege-level-checking"><a href="#特权级的检查-Privilege-level-checking" class="headerlink" title="特权级的检查(Privilege level checking)"></a>特权级的检查(Privilege level checking)</h1><h2 id="访问数据段-access-data-segment"><a href="#访问数据段-access-data-segment" class="headerlink" title="访问数据段(access data segment)"></a>访问数据段(access data segment)</h2><p>当访问数据段(data segment)的时候，段选择符(segment selector)必须加载到数据段寄存器（DS、ES、FS、GS）或者堆栈寄存器SS(Stack segment是一种特殊的数据段)。</p>
+<blockquote>
+<p><strong>条件：CPL &lt;= DPL &amp;&amp; RPL &lt;= DPL</strong></p>
+</blockquote>
+<p><strong>注意：segment selector的RPL是受软件控制的，也就是说一个CPL=3的程序可以将一个data-segment的RPL设为0,然后去访问一个data segment.那么RPL &lt;= DPL必定成立，则只用检查DPL。</strong></p>
+<h3 id="访问代码段（code-segment）中的数据"><a href="#访问代码段（code-segment）中的数据" class="headerlink" title="访问代码段（code segment）中的数据"></a>访问代码段（code segment）中的数据</h3><ol>
+<li>Load a data-segment register with a segment selector for a nonconforming, readable, code segment: CPL &lt;= DPL &amp;&amp; RPL &lt;= DPL.</li>
+<li>Load a data-segment register with a segment selector for a conforming, readable, code segment: <strong> always valid, 因为conforming的code segment的特权级总是和CPL一样的</strong></li>
+<li>Use a code-segment override prefix(CS) to read a readable, code segment whose selector is already loaded in the CS register: <strong> always valid,因为CS寄存器选择的code segment的DPL和CPL是一样的</strong> </li>
+</ol>
+<h2 id="访问SS-register"><a href="#访问SS-register" class="headerlink" title="访问SS register"></a>访问SS register</h2><p>当想SS(stack segment) register中加载新的stack segment的segment selector时：</p>
+<blockquote>
+<p><strong>CPL == DPL == RPL</strong></p>
+</blockquote>
+<hr>
+<h2 id="访问代码段"><a href="#访问代码段" class="headerlink" title="访问代码段"></a>访问代码段</h2><p>程序控制权从一个code segment转移到另一个code segment时，目标段的segment selector必须加载到code-segment register。<br>此时会进行多种权限检查，如上面提到的CPL，DPL，RPL。以及目标代码段的type, limit等。<br>如果检查通过，则将目标code segment的segment selector加载到CS段寄存器，程序控制权则被转移到了新加载的代码段，并且程序从EIP寄存器所指向的地址开始执行。</p>
+<h3 id="程序控制权的转移"><a href="#程序控制权的转移" class="headerlink" title="程序控制权的转移"></a>程序控制权的转移</h3><ol>
+<li>通过以下指令：JMP，CALL，RET，SYSENTER，SYSEXIT，SYSCALL，SYSRET，INT n;</li>
+<li>exception和interrupt机制，以及IERT指令；</li>
+</ol>
+<h4 id="JMP或CALL指令可以以下面4种方式来引用另一个code-segment"><a href="#JMP或CALL指令可以以下面4种方式来引用另一个code-segment" class="headerlink" title="JMP或CALL指令可以以下面4种方式来引用另一个code segment:"></a>JMP或CALL指令可以以下面4种方式来引用另一个code segment:</h4><ol>
+<li>目标操作数包含指向目标code segment 的segment selector；</li>
+<li>目标操作数指向一个call-gate descriptor,其包含一个指向目标code segment的segment selector.</li>
+<li>目标操作数指向一个TSS,其包含指向目标code segment的segment selector;</li>
+<li>目标操作数指向一个task gate,其指向一个TSS，TSS包含指向目标code segment的segment selector;</li>
+</ol>
+<h5 id="1-直接跳转到code-segment-目标操作数包含指向目标code-segment-的segment-selector；"><a href="#1-直接跳转到code-segment-目标操作数包含指向目标code-segment-的segment-selector；" class="headerlink" title="1.直接跳转到code segment:目标操作数包含指向目标code segment 的segment selector；"></a>1.直接跳转到code segment:目标操作数包含指向目标code segment 的segment selector；</h5><ul>
+<li>JMP, CALL 和RET指令的段内跳转，不用切换code segment。</li>
+<li>JMP, CALL 和RET指令的远程跳转，跳转到另一个code segment,需要进行特权级检查。<br>转移程序控制权到另一个code segment,<strong>且没有使用call gate的时候</strong>：<ol>
+<li>当转移到Nonconforming code segment: CPL == DPL &amp;&amp; RPL &lt;= CPL(== DPL),<strong>并且切换到新的code segment后，CPL不变（即使RPL &lt; CPL）</strong></li>
+<li>当转移到Conforming code segment: CPL &gt;= DPL (RPL直接被忽略)<br>此情形时，当程序控制权转移到conforming code segment,CPL不会改变，即使目标code segment的DPL比调用程序的CPL数值要小。因为CPL没有改变，所以也不会发生stack切换。<br>一般Conforming segments为math libraries和exception handlers之类的代码模块。</li>
+</ol>
+</li>
+</ul>
+<h5 id="2-使用gate-descriptor进行跳转"><a href="#2-使用gate-descriptor进行跳转" class="headerlink" title="2.使用gate descriptor进行跳转"></a>2.使用gate descriptor进行跳转</h5><ol>
+<li>Call gates</li>
+<li>Trap gates</li>
+<li>Interrupt gates</li>
+<li>Task gates<br>其中Task gates用来task swithcingl; Trap and interrupt gates是特殊的call gates用来调用exception and interrupt handlers.<br>下面主要讨论call gates.</li>
+</ol>
+<h3 id="Call-gates"><a href="#Call-gates" class="headerlink" title="Call gates"></a>Call gates</h3><p>Call gates用来在不同的特权级之间转移程序控制权，此外call gates也可以在16bits和32bits的代码段之间转移程序控制权。<br>Call gates descriptor存放于GDT或者LDT中，但不会出现在IDT中。<br>下图为call-gate descriptor的组成:</p>
+<img src="/post/2018/10/CPL-RPL-DPL/call_gate_desc.JPG" title="call gate descriptor">
+<ol>
+<li>指明了需要被访问的code segment(segment selector)</li>
+<li>目标code segment的程序入口(offset in segment)</li>
+<li>caller程序的特权级。（DPL域指明了call gate的特权级，which in turn is the privilege level required to access the selected procedure through the gate）</li>
+<li>如果需要进行stack切换，指明了需要在stack之间复制的可选参数的数量.(Parm Count specifies the number of words for 16-bit call gates and doublewords for 32-bit call gates)</li>
+<li>定义了要push到目标stack的size: 16-bit gates force 16-bit pushes and 32-bit gates forces 32-bit pushes.</li>
+<li>指明当前call-gate是否有效。(P flag)</li>
+</ol>
+<h3 id="通过call-gate访问一个code-segment。"><a href="#通过call-gate访问一个code-segment。" class="headerlink" title="通过call gate访问一个code segment。"></a>通过call gate访问一个code segment。</h3><p>为了访问call gate，CALL或者JMP指令的目标操作数需要为一个指向call gate的far pointer。<br>如下图所示，the segment selector指明了call gate, the offset是需要的，但是不被检查和使用。<br>会使用far pointer的segment selector在GDT或者LDT中选中一个call gate.然后使用该call gate中的segment selector和offset来组成目标线性地址。<br>如下图所示，需要检查4个特权级：</p>
+<img src="/post/2018/10/CPL-RPL-DPL/call_gate_checks_items.JPG" title="Privilege Check for Control Transfer with Call Gate">
+<ul>
+<li>CPL （当前caller的cs的特权级）</li>
+<li>RPL （requestor’s privilege level）：指向call gate descripter的selector的RPL</li>
+<li>DPL （descriptor privilege level）：call gate descriptor的DPL</li>
+<li>DPL： call gate descriptor中的segment selector所指向的code segment descriptor中的DPL<br>下图给出了使用JMP或者CALL指令是，上述4个特权级需要满足的关系：</li>
+</ul>
+<img src="/post/2018/10/CPL-RPL-DPL/call_gate_privilege_check.JPG" title="Priviledge Check Rules for Call Gates">
+<p>如果call了一个更高特权级的nonconforming的目标code segment.那么CPL会被减小数值之目标code segment的DPL。那么就会发生stack切换。<br>如果call或者jump了一个更高特权级的conforming的目标code segment.不会改变CPL，所以也不会发生stack切换。</p>
+<blockquote>
+<p>总结1<br>when access code segment</p>
+<ol>
+<li><p>When transferring program control to another code segment without going through a call gate.</p>
+<ul>
+<li>nonconforming: CPL == DPL &amp;&amp; RPL &lt;= CPL (RPL &lt;= CPL == DPL)。并且新的CPL不变，即使RPL比较小</li>
+<li>conforming: CPL &gt;= DPL &amp;&amp; RPL is ignored. 并且新的CPL不变。</li>
+</ul>
+</li>
+<li><p>When transferring program control through a call gate.<br><strong>CPL &lt;= DPL of call gate descriptor</strong> &amp;&amp; <strong>RPL of call gate selector &lt;= DPL of call gate descriptor</strong></p>
+<ul>
+<li>nonconforming code segment: DPL &lt;= CPL (CALL)     DPL == CPL (JMP)</li>
+<li>conforming code segment: DPL &lt;= CPL (CALL)     DPL &lt;= CPL  (JMP)<br>That means:<br>Only CALL instructions can use call gates to transfer program control to more privileged (数值更小的) <strong>nonconforming</strong> code segment.<br>A JMP instruction can use a call gate only to transfer program control to a <strong>nonconforming</strong> code segment with a DPL equal to the CPL.<br>CALL and JMP instruction can both transfer program control to a more privileged conforming code segment;</li>
+</ul>
+</li>
+</ol>
+</blockquote>
+<blockquote>
+<p>总结2<br>the  change of CPL</p>
+<ol>
+<li>without call gate<ul>
+<li>near call: CPL不变；</li>
+<li>far call: CPL不变；</li>
+</ul>
+</li>
+<li>with call gate<ul>
+<li><strong>more privileged nonconforming destination code segment: the CPL is lowered to the DPL of the destination code segment and a stack switch occurs.</strong></li>
+<li>more privileged conforming destination code segment: CPL不变，stack不切换。</li>
+</ul>
+</li>
+</ol>
+</blockquote>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div></div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>Donate</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechat_pay.jpg" alt="Calmisi Lee WeChat Pay"/>
+        <p>WeChat Pay</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/ali_pay.jpg" alt="Calmisi Lee Alipay"/>
+        <p>Alipay</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>Post author:  </strong>Calmisi Lee</li>
+  <li class="post-copyright-link">
+    <strong>Post link: </strong>
+    <a href="https://blog.calmisi.cn/post/2018/10/CPL-RPL-DPL.html" title="CPL,RPL,DPL三者的关系，以及CPL的切换规则">https://blog.calmisi.cn/post/2018/10/CPL-RPL-DPL.html</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 4.0</a> unless stating additionally.</li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/post/2018/9/kvm-module-init.html" rel="next" title="kvm源码解析之kvm-intel.ko模块初始化">
+                <i class="fa fa-chevron-left"></i> kvm源码解析之kvm-intel.ko模块初始化
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8zOTc5MS8xNjMxOA=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Calmisi Lee" />
+            
+              <p class="site-author-name" itemprop="name">Calmisi Lee</p>
+              <p class="site-description motion-element" itemprop="description">Pas de regrets</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">50</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">17</span>
+                    <span class="site-state-item-name">categories</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">49</span>
+                    <span class="site-state-item-name">tags</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/calmisi" target="_blank" title="GitHub" rel="external nofollow"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="mailto:calmisi@163.com" target="_blank" title="E-Mail" rel="external nofollow"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  
+                </span>
+              
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#三个概念："><span class="nav-number">1.</span> <span class="nav-text">三个概念：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#特权级的检查-Privilege-level-checking"><span class="nav-number">2.</span> <span class="nav-text">特权级的检查(Privilege level checking)</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#访问数据段-access-data-segment"><span class="nav-number">2.1.</span> <span class="nav-text">访问数据段(access data segment)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#访问代码段（code-segment）中的数据"><span class="nav-number">2.1.1.</span> <span class="nav-text">访问代码段（code segment）中的数据</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#访问SS-register"><span class="nav-number">2.2.</span> <span class="nav-text">访问SS register</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#访问代码段"><span class="nav-number">2.3.</span> <span class="nav-text">访问代码段</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#程序控制权的转移"><span class="nav-number">2.3.1.</span> <span class="nav-text">程序控制权的转移</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#JMP或CALL指令可以以下面4种方式来引用另一个code-segment"><span class="nav-number">2.3.1.1.</span> <span class="nav-text">JMP或CALL指令可以以下面4种方式来引用另一个code segment:</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-直接跳转到code-segment-目标操作数包含指向目标code-segment-的segment-selector；"><span class="nav-number">2.3.1.1.1.</span> <span class="nav-text">1.直接跳转到code segment:目标操作数包含指向目标code segment 的segment selector；</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-使用gate-descriptor进行跳转"><span class="nav-number">2.3.1.1.2.</span> <span class="nav-text">2.使用gate descriptor进行跳转</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Call-gates"><span class="nav-number">2.3.2.</span> <span class="nav-text">Call gates</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#通过call-gate访问一个code-segment。"><span class="nav-number">2.3.3.</span> <span class="nav-text">通过call gate访问一个code segment。</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2015=6 – <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Calmisi Lee</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Symbols count total: </span>
+    
+    <span title="Symbols count total">169k</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Reading time total &asymp;</span>
+    
+    <span title="Reading time total">2:34</span>
+  
+</div>
+
+
+  
+
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" rel="external nofollow" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme – <a class="theme-link" target="_blank" rel="external nofollow" href="https://theme-next.org">NexT.Gemini</a></div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.4.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.4.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.4.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.4.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.4.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.4.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.4.1"></script>
+
+
+
+  
+
+
+
+  
+    <script type="text/javascript">
+      window.livereOptions = {
+        refer: 'post/2018/10/CPL-RPL-DPL.html'
+      };
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+  <script>
+    
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+
+      Counter('get', '/classes/Counter', { where: JSON.stringify({ url }) })
+        .done(function ({ results }) {
+          if (results.length > 0) {
+            var counter = results[0];
+            
+              var $element = $(document.getElementById(url));
+              $element.find('.leancloud-visitors-count').text(counter.time + 1);
+            
+            Counter('put', `/classes/Counter/${counter.objectId}`, JSON.stringify({ time: { "__op":"Increment", "amount":1 } }))
+            
+            .fail(function ({ responseJSON }) {
+                console.log('Failed to save Visitor num, with error message: ' + responseJSON.error);
+            })
+          } else {
+            
+              var $element = $(document.getElementById(url));
+              $element.find('.leancloud-visitors-count').text('Counter not initialized! See more at console err msg.');
+              console.error('ATTENTION! LeanCloud counter has security bug, see here how to solve it: https://github.com/theme-next/hexo-leancloud-counter-security. \n But you also can use LeanCloud without security, by set \'security\' option to \'false\'.');
+            
+          }
+        })
+      .fail(function ({ responseJSON }) {
+        console.log('LeanCloud Counter Error:' + responseJSON.code + " " + responseJSON.error);
+      });
+    }
+    
+
+    $(function() {
+      $.get('https://app-router.leancloud.cn/2/route?appId=' + "tf4TRbjrkONfr7VekxlWI8Py-gzGzoHsz")
+        .done(function ({ api_server }) {
+          var Counter = function (method, url, data) {
+            return $.ajax({
+              method: method,
+              url: `https://${api_server}/1.1${url}`,
+              headers: {
+                'X-LC-Id': "tf4TRbjrkONfr7VekxlWI8Py-gzGzoHsz",
+                'X-LC-Key': "5c1wL7zY6VY7oLzi5xaCIu5x",
+                'Content-Type': 'application/json',
+              },
+              data: data,
+            });
+          };
+          
+          addCount(Counter);
+          
+        })
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+  
+
+  
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  <style>
+    .copy-btn {
+      display: inline-block;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 20px;
+      color: #333;
+      white-space: nowrap;
+      vertical-align: middle;
+      cursor: pointer;
+      background-color: #eee;
+      background-image: linear-gradient(#fcfcfc, #eee);
+      border: 1px solid #d5d5d5;
+      border-radius: 3px;
+      user-select: none;
+      outline: 0;
+    }
+
+    .highlight-wrap .copy-btn {
+      transition: opacity .3s ease-in-out;
+      opacity: 0;
+      padding: 2px 6px;
+      position: absolute;
+      right: 4px;
+      top: 8px;
+    }
+
+    .highlight-wrap:hover .copy-btn,
+    .highlight-wrap .copy-btn:focus {
+      opacity: 1
+    }
+
+    .highlight-wrap {
+      position: relative;
+    }
+  </style>
+  <script>
+    $('.highlight').each(function (i, e) {
+      var $wrap = $('<div>').addClass('highlight-wrap')
+      $(e).after($wrap)
+      $wrap.append($('<button>').addClass('copy-btn').append('Copy').on('click', function (e) {
+        var code = $(this).parent().find('.code').find('.line').map(function (i, e) {
+          return $(e).text()
+        }).toArray().join('\n')
+        var ta = document.createElement('textarea')
+        document.body.appendChild(ta)
+        ta.style.position = 'absolute'
+        ta.style.top = '0px'
+        ta.style.left = '0px'
+        ta.value = code
+        ta.select()
+        ta.focus()
+        var result = document.execCommand('copy')
+        document.body.removeChild(ta)
+        
+          if(result)$(this).text('Copied')
+          else $(this).text('Copy failed')
+        
+        $(this).blur()
+      })).on('mouseleave', function (e) {
+        var $b = $(this).find('.copy-btn')
+        setTimeout(function () {
+          $b.text('Copy')
+        }, 300)
+      }).append(e)
+    })
+  </script>
+
+
+</body>
+</html>

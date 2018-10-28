@@ -339,7 +339,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://blog.calmisi.cn/post/2018/8/kvm源码解析（一），kvm-main-c.html">
+    <link itemprop="mainEntityOfPage" href="https://blog.calmisi.cn/post/2018/10/CPL-RPL-DPL.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Calmisi Lee">
@@ -358,8 +358,499 @@
         
           <h2 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/post/2018/8/kvm源码解析（一），kvm-main-c.html" itemprop="url">
-                  kvm源码解析（一），KVkvm_main.c
+                <a class="post-title-link" href="/post/2018/10/CPL-RPL-DPL.html" itemprop="url">
+                  CPL,RPL,DPL三者的关系，以及CPL的切换规则
+                </a>
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2018-10-18 20:41:34" itemprop="dateCreated datePublished" datetime="2018-10-18T20:41:34+08:00">2018-10-18</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2018-10-28 15:15:37" itemprop="dateModified" datetime="2018-10-28T15:15:37+08:00">2018-10-28</time>
+              
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/post/2018/10/CPL-RPL-DPL.html" class="leancloud_visitors" data-flag-title="CPL,RPL,DPL三者的关系，以及CPL的切换规则">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">Views: </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-symbolscount">
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Symbols count in article: </span>
+                
+                <span title="Symbols count in article">5.6k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Reading time &asymp;</span>
+                
+                <span title="Reading time">5 mins.</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="三个概念："><a href="#三个概念：" class="headerlink" title="三个概念："></a>三个概念：</h1><ul>
+<li>CPL: Current privilege Level, 当前特权级，其为当前的CS段和SS段的段寄存器的第0-1位的值，如下图所示，段寄存器中的可见部分的内容，即为segment selector的值，所以当前代码的CPL即为载入段描述符时，段选择符的RPL的值。<br><strong>注意：当前的CS段和SS段的段寄存器总的CPL值一定是一样的，当发生CPL切换时，对应的也会切换SS堆栈</strong><img src="/post/2018/10/CPL-RPL-DPL/segment_register.JPG" title="segment register"></li>
+<li>DPL: Descriptor privilege level,为segment或者gate的特权级。其值在segment decriptor或gate descriptor的DPL区域。<img src="/post/2018/10/CPL-RPL-DPL/segment_descriptor.JPG" title="segment descriptor"></li>
+<li>RPL: Requested Privilege level，如下图所示为segment selector的最低2位。<img src="/post/2018/10/CPL-RPL-DPL/segment_selector.JPG" title="segment selector">
+</li>
+</ul>
+<p>CPL,DPL,RPL的取值为0,1,2,3.数值越大，特权级越低。<br>当要访问数据段中的操作数的时候，数据段(data segment)对应的段选择符(segment selector)必须加载到对应的数据段寄存器(data segment registers, DS, ES, FS or GS)或者堆栈段(stack-segment register,SS)。<br>在加载的时候，需要进行特权级检查，需要对比当前正在运行的程序的CPL,目标操作数所在段的段选择符的RPL,以及目标操作数所在段的段描述符的DPL<br>只有当CPL &lt;= DPL &amp;&amp; RPL &lt;= DPL，目标操作数所在的段才会加载成功，否则产生一个GP,general protection.</p>
+<hr>
+<h1 id="特权级的检查-Privilege-level-checking"><a href="#特权级的检查-Privilege-level-checking" class="headerlink" title="特权级的检查(Privilege level checking)"></a>特权级的检查(Privilege level checking)</h1><h2 id="访问数据段-access-data-segment"><a href="#访问数据段-access-data-segment" class="headerlink" title="访问数据段(access data segment)"></a>访问数据段(access data segment)</h2><p>当访问数据段(data segment)的时候，段选择符(segment selector)必须加载到数据段寄存器（DS、ES、FS、GS）或者堆栈寄存器SS(Stack segment是一种特殊的数据段)。</p>
+<blockquote>
+<p><strong>条件：CPL &lt;= DPL &amp;&amp; RPL &lt;= DPL</strong></p>
+</blockquote>
+<p><strong>注意：segment selector的RPL是受软件控制的，也就是说一个CPL=3的程序可以将一个data-segment的RPL设为0,然后去访问一个data segment.那么RPL &lt;= DPL必定成立，则只用检查DPL。</strong></p>
+<h3 id="访问代码段（code-segment）中的数据"><a href="#访问代码段（code-segment）中的数据" class="headerlink" title="访问代码段（code segment）中的数据"></a>访问代码段（code segment）中的数据</h3><ol>
+<li>Load a data-segment register with a segment selector for a nonconforming, readable, code segment: CPL &lt;= DPL &amp;&amp; RPL &lt;= DPL.</li>
+<li>Load a data-segment register with a segment selector for a conforming, readable, code segment: <strong> always valid, 因为conforming的code segment的特权级总是和CPL一样的</strong></li>
+<li>Use a code-segment override prefix(CS) to read a readable, code segment whose selector is already loaded in the CS register: <strong> always valid,因为CS寄存器选择的code segment的DPL和CPL是一样的</strong> </li>
+</ol>
+<h2 id="访问SS-register"><a href="#访问SS-register" class="headerlink" title="访问SS register"></a>访问SS register</h2><p>当想SS(stack segment) register中加载新的stack segment的segment selector时：</p>
+<blockquote>
+<p><strong>CPL == DPL == RPL</strong></p>
+</blockquote>
+<hr>
+<h2 id="访问代码段"><a href="#访问代码段" class="headerlink" title="访问代码段"></a>访问代码段</h2><p>程序控制权从一个code segment转移到另一个code segment时，目标段的segment selector必须加载到code-segment register。<br>此时会进行多种权限检查，如上面提到的CPL，DPL，RPL。以及目标代码段的type, limit等。<br>如果检查通过，则将目标code segment的segment selector加载到CS段寄存器，程序控制权则被转移到了新加载的代码段，并且程序从EIP寄存器所指向的地址开始执行。</p>
+<h3 id="程序控制权的转移"><a href="#程序控制权的转移" class="headerlink" title="程序控制权的转移"></a>程序控制权的转移</h3><ol>
+<li>通过以下指令：JMP，CALL，RET，SYSENTER，SYSEXIT，SYSCALL，SYSRET，INT n;</li>
+<li>exception和interrupt机制，以及IERT指令；</li>
+</ol>
+<h4 id="JMP或CALL指令可以以下面4种方式来引用另一个code-segment"><a href="#JMP或CALL指令可以以下面4种方式来引用另一个code-segment" class="headerlink" title="JMP或CALL指令可以以下面4种方式来引用另一个code segment:"></a>JMP或CALL指令可以以下面4种方式来引用另一个code segment:</h4><ol>
+<li>目标操作数包含指向目标code segment 的segment selector；</li>
+<li>目标操作数指向一个call-gate descriptor,其包含一个指向目标code segment的segment selector.</li>
+<li>目标操作数指向一个TSS,其包含指向目标code segment的segment selector;</li>
+<li>目标操作数指向一个task gate,其指向一个TSS，TSS包含指向目标code segment的segment selector;</li>
+</ol>
+<h5 id="1-直接跳转到code-segment-目标操作数包含指向目标code-segment-的segment-selector；"><a href="#1-直接跳转到code-segment-目标操作数包含指向目标code-segment-的segment-selector；" class="headerlink" title="1.直接跳转到code segment:目标操作数包含指向目标code segment 的segment selector；"></a>1.直接跳转到code segment:目标操作数包含指向目标code segment 的segment selector；</h5><ul>
+<li>JMP, CALL 和RET指令的段内跳转，不用切换code segment。</li>
+<li>JMP, CALL 和RET指令的远程跳转，跳转到另一个code segment,需要进行特权级检查。<br>转移程序控制权到另一个code segment,<strong>且没有使用call gate的时候</strong>：<ol>
+<li>当转移到Nonconforming code segment: CPL == DPL &amp;&amp; RPL &lt;= CPL(== DPL),<strong>并且切换到新的code segment后，CPL不变（即使RPL &lt; CPL）</strong></li>
+<li>当转移到Conforming code segment: CPL &gt;= DPL (RPL直接被忽略)<br>此情形时，当程序控制权转移到conforming code segment,CPL不会改变，即使目标code segment的DPL比调用程序的CPL数值要小。因为CPL没有改变，所以也不会发生stack切换。<br>一般Conforming segments为math libraries和exception handlers之类的代码模块。</li>
+</ol>
+</li>
+</ul>
+<h5 id="2-使用gate-descriptor进行跳转"><a href="#2-使用gate-descriptor进行跳转" class="headerlink" title="2.使用gate descriptor进行跳转"></a>2.使用gate descriptor进行跳转</h5><ol>
+<li>Call gates</li>
+<li>Trap gates</li>
+<li>Interrupt gates</li>
+<li>Task gates<br>其中Task gates用来task swithcingl; Trap and interrupt gates是特殊的call gates用来调用exception and interrupt handlers.<br>下面主要讨论call gates.</li>
+</ol>
+<h3 id="Call-gates"><a href="#Call-gates" class="headerlink" title="Call gates"></a>Call gates</h3><p>Call gates用来在不同的特权级之间转移程序控制权，此外call gates也可以在16bits和32bits的代码段之间转移程序控制权。<br>Call gates descriptor存放于GDT或者LDT中，但不会出现在IDT中。<br>下图为call-gate descriptor的组成:</p>
+<img src="/post/2018/10/CPL-RPL-DPL/call_gate_desc.JPG" title="call gate descriptor">
+<ol>
+<li>指明了需要被访问的code segment(segment selector)</li>
+<li>目标code segment的程序入口(offset in segment)</li>
+<li>caller程序的特权级。（DPL域指明了call gate的特权级，which in turn is the privilege level required to access the selected procedure through the gate）</li>
+<li>如果需要进行stack切换，指明了需要在stack之间复制的可选参数的数量.(Parm Count specifies the number of words for 16-bit call gates and doublewords for 32-bit call gates)</li>
+<li>定义了要push到目标stack的size: 16-bit gates force 16-bit pushes and 32-bit gates forces 32-bit pushes.</li>
+<li>指明当前call-gate是否有效。(P flag)</li>
+</ol>
+<h3 id="通过call-gate访问一个code-segment。"><a href="#通过call-gate访问一个code-segment。" class="headerlink" title="通过call gate访问一个code segment。"></a>通过call gate访问一个code segment。</h3><p>为了访问call gate，CALL或者JMP指令的目标操作数需要为一个指向call gate的far pointer。<br>如下图所示，the segment selector指明了call gate, the offset是需要的，但是不被检查和使用。<br>会使用far pointer的segment selector在GDT或者LDT中选中一个call gate.然后使用该call gate中的segment selector和offset来组成目标线性地址。<br>如下图所示，需要检查4个特权级：</p>
+<img src="/post/2018/10/CPL-RPL-DPL/call_gate_checks_items.JPG" title="Privilege Check for Control Transfer with Call Gate">
+<ul>
+<li>CPL （当前caller的cs的特权级）</li>
+<li>RPL （requestor’s privilege level）：指向call gate descripter的selector的RPL</li>
+<li>DPL （descriptor privilege level）：call gate descriptor的DPL</li>
+<li>DPL： call gate descriptor中的segment selector所指向的code segment descriptor中的DPL<br>下图给出了使用JMP或者CALL指令是，上述4个特权级需要满足的关系：</li>
+</ul>
+<img src="/post/2018/10/CPL-RPL-DPL/call_gate_privilege_check.JPG" title="Priviledge Check Rules for Call Gates">
+<p>如果call了一个更高特权级的nonconforming的目标code segment.那么CPL会被减小数值之目标code segment的DPL。那么就会发生stack切换。<br>如果call或者jump了一个更高特权级的conforming的目标code segment.不会改变CPL，所以也不会发生stack切换。</p>
+<blockquote>
+<p>总结1<br>when access code segment</p>
+<ol>
+<li><p>When transferring program control to another code segment without going through a call gate.</p>
+<ul>
+<li>nonconforming: CPL == DPL &amp;&amp; RPL &lt;= CPL (RPL &lt;= CPL == DPL)。并且新的CPL不变，即使RPL比较小</li>
+<li>conforming: CPL &gt;= DPL &amp;&amp; RPL is ignored. 并且新的CPL不变。</li>
+</ul>
+</li>
+<li><p>When transferring program control through a call gate.<br><strong>CPL &lt;= DPL of call gate descriptor</strong> &amp;&amp; <strong>RPL of call gate selector &lt;= DPL of call gate descriptor</strong></p>
+<ul>
+<li>nonconforming code segment: DPL &lt;= CPL (CALL)     DPL == CPL (JMP)</li>
+<li>conforming code segment: DPL &lt;= CPL (CALL)     DPL &lt;= CPL  (JMP)<br>That means:<br>Only CALL instructions can use call gates to transfer program control to more privileged (数值更小的) <strong>nonconforming</strong> code segment.<br>A JMP instruction can use a call gate only to transfer program control to a <strong>nonconforming</strong> code segment with a DPL equal to the CPL.<br>CALL and JMP instruction can both transfer program control to a more privileged conforming code segment;</li>
+</ul>
+</li>
+</ol>
+</blockquote>
+<blockquote>
+<p>总结2<br>the  change of CPL</p>
+<ol>
+<li>without call gate<ul>
+<li>near call: CPL不变；</li>
+<li>far call: CPL不变；</li>
+</ul>
+</li>
+<li>with call gate<ul>
+<li><strong>more privileged nonconforming destination code segment: the CPL is lowered to the DPL of the destination code segment and a stack switch occurs.</strong></li>
+<li>more privileged conforming destination code segment: CPL不变，stack不切换。</li>
+</ul>
+</li>
+</ol>
+</blockquote>
+
+          
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://blog.calmisi.cn/post/2018/9/kvm-module-init.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Calmisi Lee">
+      <meta itemprop="description" content="Pas de regrets">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Calmisi Lee">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/post/2018/9/kvm-module-init.html" itemprop="url">
+                  kvm源码解析之kvm-intel.ko模块初始化
+                </a>
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2018-09-18 21:51:00 / Modified: 22:51:20" itemprop="dateCreated datePublished" datetime="2018-09-18T21:51:00+08:00">2018-09-18</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/KVM/" itemprop="url" rel="index"><span itemprop="name">KVM</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/post/2018/9/kvm-module-init.html" class="leancloud_visitors" data-flag-title="kvm源码解析之kvm-intel.ko模块初始化">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">Views: </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-symbolscount">
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Symbols count in article: </span>
+                
+                <span title="Symbols count in article">8.7k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Reading time &asymp;</span>
+                
+                <span title="Reading time">8 mins.</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h1 id="1-x86-arch-with-Intel-cpu-needs-two-modules-kvm-ko-and-kvm-intel-ko"><a href="#1-x86-arch-with-Intel-cpu-needs-two-modules-kvm-ko-and-kvm-intel-ko" class="headerlink" title="1. x86 arch with Intel cpu needs two modules kvm.ko and kvm-intel.ko"></a>1. x86 arch with Intel cpu needs two modules kvm.ko and kvm-intel.ko</h1><p>KVM是kernel-based virtual machine,但平台使用的是Intel CPU的时，需要用到内核中的2个模块：kvm.ko和kvm-intel.ko。<br>其中kvm-intel.ko模块由vmx.c和pmu_intel.c两个文件编译。<br>本文分析KVM源码中，系统加载这两个模块的时候，内核做了哪些工作。</p>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/post/2018/9/kvm-module-init.html#more" rel="contents">
+              Read more &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://blog.calmisi.cn/post/2018/8/kvm_main.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Calmisi Lee">
+      <meta itemprop="description" content="Pas de regrets">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Calmisi Lee">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/post/2018/8/kvm_main.html" itemprop="url">
+                  kvm源码解析之kvm_main.c
                 </a>
               
             
@@ -402,7 +893,7 @@
                 
                   <span class="post-meta-item-text">Edited on</span>
                 
-                <time title="Modified: 2018-09-16 00:54:21" itemprop="dateModified" datetime="2018-09-16T00:54:21+08:00">2018-09-16</time>
+                <time title="Modified: 2018-09-18 21:48:07" itemprop="dateModified" datetime="2018-09-18T21:48:07+08:00">2018-09-18</time>
               
             
           </span>
@@ -433,7 +924,7 @@
 
           
           
-             <span id="/post/2018/8/kvm源码解析（一），kvm-main-c.html" class="leancloud_visitors" data-flag-title="kvm源码解析（一），KVkvm_main.c">
+             <span id="/post/2018/8/kvm_main.html" class="leancloud_visitors" data-flag-title="kvm源码解析之kvm_main.c">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -493,23 +984,17 @@
 
       
         
-          
-            <p>kvm_main.c中的init函数首先会调用，kvm_arch_init(opaque);</p>
+          <p>kvm_main.c中的init函数首先会调用，kvm_arch_init(opaque);</p>
 <ol>
 <li>kvm_arch_init<br>这时会调用与architecture相关的对应的初始化函数，<br>我们只关心x86平台，所以看对应的arch/x86/kvm/x86.c中的实现：</li>
 </ol>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">kvm_arch_init</span><span class="params">(<span class="keyword">void</span> *opaque)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">int</span> r;</span><br><span class="line">	<span class="comment">//该结构体为与x86平台相关的kvm需要使用的函数的指针集合</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">kvm_x86_ops</span> *<span class="title">ops</span> = <span class="title">opaque</span>;</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">//首先判断该指针是否已经被赋值，即是否已经初始化x86平台相关</span></span><br><span class="line">	<span class="keyword">if</span> (kvm_x86_ops) &#123;</span><br><span class="line">		printk(KERN_ERR <span class="string">"kvm: already loaded the other module\n"</span>);</span><br><span class="line">		r = -EEXIST;</span><br><span class="line">		<span class="keyword">goto</span> out;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//调用x86平台对应的函数实现，检测cpu是否支持KVM</span></span><br><span class="line">	<span class="keyword">if</span> (!ops-&gt;cpu_has_kvm_support()) &#123;</span><br><span class="line">		printk(KERN_ERR <span class="string">"kvm: no hardware support\n"</span>);</span><br><span class="line">		r = -EOPNOTSUPP;</span><br><span class="line">		<span class="keyword">goto</span> out;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> (ops-&gt;disabled_by_bios()) &#123;</span><br><span class="line">		printk(KERN_ERR <span class="string">"kvm: disabled by bios\n"</span>);</span><br><span class="line">		r = -EOPNOTSUPP;</span><br><span class="line">		<span class="keyword">goto</span> out;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	r = -ENOMEM;</span><br><span class="line">	<span class="comment">//为每个CPU建立shared msrs</span></span><br><span class="line">	shared_msrs = alloc_percpu(struct kvm_shared_msrs);</span><br><span class="line">	<span class="keyword">if</span> (!shared_msrs) &#123;</span><br><span class="line">		printk(KERN_ERR <span class="string">"kvm: failed to allocate percpu kvm_shared_msrs\n"</span>);</span><br><span class="line">		<span class="keyword">goto</span> out;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//初始化mmu</span></span><br><span class="line">	r = kvm_mmu_module_init();</span><br><span class="line">	<span class="keyword">if</span> (r)</span><br><span class="line">		<span class="keyword">goto</span> out_free_percpu;</span><br><span class="line"></span><br><span class="line">	kvm_set_mmio_spte_mask();</span><br><span class="line"></span><br><span class="line">	<span class="comment">//注意，这里给kvm_x86_ops赋值，即下次在调用该函数进行x86平台的初始化，则会提示已经加载了与x86平台的其他实现。</span></span><br><span class="line">	kvm_x86_ops = ops;</span><br><span class="line"></span><br><span class="line">	kvm_mmu_set_mask_ptes(PT_USER_MASK, PT_ACCESSED_MASK,</span><br><span class="line">			PT_DIRTY_MASK, PT64_NX_MASK, <span class="number">0</span>,</span><br><span class="line">			PT_PRESENT_MASK, <span class="number">0</span>, sme_me_mask);</span><br><span class="line">	kvm_timer_init();</span><br><span class="line"></span><br><span class="line">	perf_register_guest_info_callbacks(&amp;kvm_guest_cbs);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (boot_cpu_has(X86_FEATURE_XSAVE))</span><br><span class="line">		host_xcr0 = xgetbv(XCR_XFEATURE_ENABLED_MASK);</span><br><span class="line"></span><br><span class="line">	kvm_lapic_init();</span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> CONFIG_X86_64</span></span><br><span class="line">	pvclock_gtod_register_notifier(&amp;pvclock_gtod_notifier);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (hypervisor_is_type(X86_HYPER_MS_HYPERV))</span><br><span class="line">		set_hv_tscchange_cb(kvm_hyperv_tsc_notifier);</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">out_free_percpu:</span><br><span class="line">	free_percpu(shared_msrs);</span><br><span class="line">out:</span><br><span class="line">	<span class="keyword">return</span> r;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<ol start="2">
-<li><p>kvm_irqfd_init()</p>
-</li>
-<li><p>zalloc_cpu_mask_var()</p>
-</li>
-<li><p>kvm_arch_hardware_setup()<br>会调用与architecture相关的hardware setup函数，<br>这里我们看arch/x86/kvm/x86.c</p>
-</li>
-</ol>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">kvm_arch_hardware_setup</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">int</span> r;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//在第1步中，kvm_arch_init()函数已经初始化好了kvm_x86_ops，</span></span><br><span class="line">	<span class="comment">//这里只用调用其hardware_setup()函数，</span></span><br><span class="line">	<span class="comment">//具体的该函数在vmx.c中，其为intel x86平台对vmm的硬件支持的实现。</span></span><br><span class="line">	<span class="comment">//并且kvm模块的入口函数也是在vmx.c中，在vmx.c中有 module_init(vmx_init)，</span></span><br><span class="line">	<span class="comment">//vmx_init()中，调用kvm_main.c中的kvm_arch_init(),即该文档的起始原因。</span></span><br><span class="line">	r = kvm_x86_ops-&gt;hardware_setup();</span><br><span class="line">	<span class="keyword">if</span> (r != <span class="number">0</span>)</span><br><span class="line">		<span class="keyword">return</span> r;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (kvm_has_tsc_control) &#123;</span><br><span class="line">		<span class="comment">/*</span></span><br><span class="line"><span class="comment">		 * Make sure the user can only configure tsc_khz values that</span></span><br><span class="line"><span class="comment">		 * fit into a signed integer.</span></span><br><span class="line"><span class="comment">		 * A min value is not calculated because it will always</span></span><br><span class="line"><span class="comment">		 * be 1 on all machines.</span></span><br><span class="line"><span class="comment">		 */</span></span><br><span class="line">		u64 max = min(<span class="number">0x7fffffff</span>ULL,</span><br><span class="line">			      __scale_tsc(kvm_max_tsc_scaling_ratio, tsc_khz));</span><br><span class="line">		kvm_max_guest_tsc_khz = max;</span><br><span class="line"></span><br><span class="line">		kvm_default_tsc_scaling_ratio = <span class="number">1U</span>LL &lt;&lt; kvm_tsc_scaling_ratio_frac_bits;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	kvm_init_msr_list();</span><br><span class="line">	<span class="comment">//根据 msrs_to_save, emulated_msrs, msr_based_features三个数组中存的值，并查询具体的CPU的支持，并进行更新。</span></span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-          
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/post/2018/8/kvm_main.html#more" rel="contents">
+              Read more &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -2046,433 +2531,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://blog.calmisi.cn/post/2017/9/numactl-of-centos.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Calmisi Lee">
-      <meta itemprop="description" content="Pas de regrets">
-      <meta itemprop="image" content="/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Calmisi Lee">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/post/2017/9/numactl-of-centos.html" itemprop="url">
-                  numactl of centos
-                </a>
-              
-            
-          </h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-
-              
-                
-              
-
-              <time title="Created: 2017-09-06 16:30:34" itemprop="dateCreated datePublished" datetime="2017-09-06T16:30:34+08:00">2017-09-06</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">Edited on</span>
-                
-                <time title="Modified: 2018-09-16 00:54:21" itemprop="dateModified" datetime="2018-09-16T00:54:21+08:00">2018-09-16</time>
-              
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">In</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/post/2017/9/numactl-of-centos.html" class="leancloud_visitors" data-flag-title="numactl of centos">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">Views: </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-symbolscount">
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-file-word-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">Symbols count in article: </span>
-                
-                <span title="Symbols count in article">198</span>
-              
-
-              
-                <span class="post-meta-divider">|</span>
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">Reading time &asymp;</span>
-                
-                <span title="Reading time">1 mins.</span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>今天编译最新的DPDK，出现了没有&lt;numa.h&gt; &lt;numaif.h&gt;等错误，<br>最后上网查，和查看最新的DPDK文档，发现是需要libnuma-devel的库，可是用<br><code>yum install libnuma-devel</code>发现没有这个库。</p>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/post/2017/9/numactl-of-centos.html#more" rel="contents">
-              Read more &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://blog.calmisi.cn/post/2017/8/Xeon-CPU命名规则.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Calmisi Lee">
-      <meta itemprop="description" content="Pas de regrets">
-      <meta itemprop="image" content="/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Calmisi Lee">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/post/2017/8/Xeon-CPU命名规则.html" itemprop="url">
-                  Xeon CPU命名规则
-                </a>
-              
-            
-          </h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-
-              
-                
-              
-
-              <time title="Created: 2017-08-21 16:43:48" itemprop="dateCreated datePublished" datetime="2017-08-21T16:43:48+08:00">2017-08-21</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">Edited on</span>
-                
-                <time title="Modified: 2018-09-16 00:54:21" itemprop="dateModified" datetime="2018-09-16T00:54:21+08:00">2018-09-16</time>
-              
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">In</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/CPU/" itemprop="url" rel="index"><span itemprop="name">CPU</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/post/2017/8/Xeon-CPU命名规则.html" class="leancloud_visitors" data-flag-title="Xeon CPU命名规则">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">Views: </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-symbolscount">
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-file-word-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">Symbols count in article: </span>
-                
-                <span title="Symbols count in article">1.4k</span>
-              
-
-              
-                <span class="post-meta-divider">|</span>
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">Reading time &asymp;</span>
-                
-                <span title="Reading time">1 mins.</span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>我们以新发布的E3-1220来对这个图表进行一个详细解析。</p>
-<p>首先，Intel E3，E5，E7代表了3个不同档次的至强CPU，至强“E系列”的这种命名方式有些类似桌面上的Core i3，i5，i7；<br>比较通俗易懂的解释就是可以对应我们的豪华汽车生产商宝马3系，5系和7系。分别对应好，更好和最好。</p>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/post/2017/8/Xeon-CPU命名规则.html#more" rel="contents">
-              Read more &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2524,7 +2582,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">48</span>
+                    <span class="site-state-item-count">50</span>
                     <span class="site-state-item-name">posts</span>
                   </a>
                 </div>
@@ -2757,7 +2815,7 @@
     
       <span class="post-meta-item-text">Symbols count total: </span>
     
-    <span title="Symbols count total">155k</span>
+    <span title="Symbols count total">169k</span>
   
 
   
@@ -2768,7 +2826,7 @@
     
       <span class="post-meta-item-text">Reading time total &asymp;</span>
     
-    <span title="Reading time total">2:21</span>
+    <span title="Reading time total">2:34</span>
   
 </div>
 
