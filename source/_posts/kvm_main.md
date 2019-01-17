@@ -1,5 +1,5 @@
 ---
-title: kvm源码解析（一），KVkvm_main.c
+title: kvm源码解析之kvm_main.c
 date: 2018-08-30 19:23:11
 tags:
 - KVM
@@ -12,6 +12,8 @@ kvm_main.c中的init函数首先会调用，kvm_arch_init(opaque);
 1. kvm_arch_init
 这时会调用与architecture相关的对应的初始化函数，
 我们只关心x86平台，所以看对应的arch/x86/kvm/x86.c中的实现：
+
+<!-- more -->
 
 ```c
 int kvm_arch_init(void *opaque)
