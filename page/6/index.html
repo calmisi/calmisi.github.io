@@ -339,6 +339,221 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://blog.calmisi.cn/post/2016/10/部署spark调试开发环境.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Calmisi Lee">
+      <meta itemprop="description" content="Pas de regrets">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Calmisi Lee">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/post/2016/10/部署spark调试开发环境.html" itemprop="url">
+                  部署spark调试开发环境
+                </a>
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2016-10-28 21:02:13" itemprop="dateCreated datePublished" datetime="2016-10-28T21:02:13+08:00">2016-10-28</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2018-09-16 00:54:21" itemprop="dateModified" datetime="2018-09-16T00:54:21+08:00">2018-09-16</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Spark/" itemprop="url" rel="index"><span itemprop="name">Spark</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/post/2016/10/部署spark调试开发环境.html" class="leancloud_visitors" data-flag-title="部署spark调试开发环境">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">Views: </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-symbolscount">
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Symbols count in article: </span>
+                
+                <span title="Symbols count in article">6.5k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Reading time &asymp;</span>
+                
+                <span title="Reading time">6 mins.</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p><strong>本文摘取自网络，非本人原创</strong></p>
+<p>记录一下关于 spark 开发的相关环境配置, 以及与 intellij 的集成.</p>
+<p>本文针对的是需要了解 spark 源码 的情况下的开发环境配置. 如果只是需要写 spark job, 而并不想 trace 到源码里面去看运行上下文, 那么有很多资料讲这个的了: 无非是下载 spark 的 jar, 新建一个 scala/python/R 项目, 把这个 jar 设置成依赖就可以开始写了. 具体怎么运行 spark job, 在官方文档中已经写得很清楚了. 本文记录的 不是 后一种情况<br>由于实验室工作需要于是开始学习 spark 的源码. 之前都是东一坨西一块地配置, 好了也不知道为什么, 没好也只会到处找相关 blog, 然后关闭项目再从头 import 试试. 大部分能找到的中文资料还是比较没用, 或者只能干掉一两件事, 于是坐下来好好看了看 maven 的入门文档 (因为 spark 开发组偏向于 maven 做项目管理, 感觉钦定的比较🐵), 从头到尾地把大部分入门 spark 开发的 intellij 配置给手动操作了一遍, 目前算是一篇milestone文档.<br>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/post/2016/10/部署spark调试开发环境.html#more" rel="contents">
+              Read more &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="https://blog.calmisi.cn/post/2016/10/git一些指令的说明.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -588,7 +803,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">51</span>
+                    <span class="site-state-item-count">52</span>
                     <span class="site-state-item-name">posts</span>
                   </a>
                 </div>
@@ -637,7 +852,9 @@
                     
                       
                     
-                    <span class="site-state-item-count">18</span>
+                      
+                    
+                    <span class="site-state-item-count">19</span>
                     <span class="site-state-item-name">categories</span>
                   </a>
                 </div>
@@ -750,7 +967,11 @@
                     
                       
                     
-                    <span class="site-state-item-count">50</span>
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">52</span>
                     <span class="site-state-item-name">tags</span>
                   </a>
                 </div>
@@ -811,7 +1032,7 @@
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; 2015=6 – <span itemprop="copyrightYear">2018</span>
+        <div class="copyright">&copy; 2015=6 – <span itemprop="copyrightYear">2019</span>
   <span class="with-love" id="animate">
     <i class="fa fa-user"></i>
   </span>
@@ -825,7 +1046,7 @@
     
       <span class="post-meta-item-text">Symbols count total: </span>
     
-    <span title="Symbols count total">172k</span>
+    <span title="Symbols count total">180k</span>
   
 
   
@@ -836,7 +1057,7 @@
     
       <span class="post-meta-item-text">Reading time total &asymp;</span>
     
-    <span title="Reading time total">2:36</span>
+    <span title="Reading time total">2:44</span>
   
 </div>
 
@@ -1378,6 +1599,8 @@
 
   
   
+    
+      
     
       
     
