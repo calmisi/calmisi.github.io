@@ -108,25 +108,25 @@
 
 
 
-  <meta name="description" content="以前一直是在windows系统上编译论文，现在想在服务器的centos系统上修改论文终稿，于是就探索了一下。 使用yum安装尝试的第一种方法是yum安装1234yum install texlive-latex#安装texlive-latexyum install texmaker#安装tex文件编辑器 使用yum很方便，当使用texmaker编译之前论文的源文件的时候，提示好多包无法识别，没有办">
-<meta name="keywords" content="Texlive">
+  <meta name="description" content="本文为kvm操作MSR寄存器的第二部分，介绍guest中rdmsr指令的处理过程。之前在（一）中有介绍，如果对guest设置了Use MSR bitmaps VM-execution control bit,那么Read bitmap for low MSRs(0000 0000H - 0000 1FFFH)和Read bitmap for high MSRs(C000 0000H - C000">
+<meta name="keywords" content="kvm,msr">
 <meta property="og:type" content="article">
-<meta property="og:title" content="centos安装与配置原版texlive">
-<meta property="og:url" content="https://blog.calmisi.cn/post/2018/4/centos安装与配置原版texlive.html">
+<meta property="og:title" content="kvm对guest中MSR寄存器的处理（二）-- rdmsr">
+<meta property="og:url" content="https://blog.calmisi.cn/post/2019/1/kvm对guest中MSR寄存器的处理（二）-rdmsr.html">
 <meta property="og:site_name" content="Calmisi Lee">
-<meta property="og:description" content="以前一直是在windows系统上编译论文，现在想在服务器的centos系统上修改论文终稿，于是就探索了一下。 使用yum安装尝试的第一种方法是yum安装1234yum install texlive-latex#安装texlive-latexyum install texmaker#安装tex文件编辑器 使用yum很方便，当使用texmaker编译之前论文的源文件的时候，提示好多包无法识别，没有办">
+<meta property="og:description" content="本文为kvm操作MSR寄存器的第二部分，介绍guest中rdmsr指令的处理过程。之前在（一）中有介绍，如果对guest设置了Use MSR bitmaps VM-execution control bit,那么Read bitmap for low MSRs(0000 0000H - 0000 1FFFH)和Read bitmap for high MSRs(C000 0000H - C000">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2018-09-15T16:54:21.662Z">
+<meta property="og:updated_time" content="2019-01-21T17:00:21.435Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="centos安装与配置原版texlive">
-<meta name="twitter:description" content="以前一直是在windows系统上编译论文，现在想在服务器的centos系统上修改论文终稿，于是就探索了一下。 使用yum安装尝试的第一种方法是yum安装1234yum install texlive-latex#安装texlive-latexyum install texmaker#安装tex文件编辑器 使用yum很方便，当使用texmaker编译之前论文的源文件的时候，提示好多包无法识别，没有办">
+<meta name="twitter:title" content="kvm对guest中MSR寄存器的处理（二）-- rdmsr">
+<meta name="twitter:description" content="本文为kvm操作MSR寄存器的第二部分，介绍guest中rdmsr指令的处理过程。之前在（一）中有介绍，如果对guest设置了Use MSR bitmaps VM-execution control bit,那么Read bitmap for low MSRs(0000 0000H - 0000 1FFFH)和Read bitmap for high MSRs(C000 0000H - C000">
 
 
 
 
 
 
-  <link rel="canonical" href="https://blog.calmisi.cn/post/2018/4/centos安装与配置原版texlive.html"/>
+  <link rel="canonical" href="https://blog.calmisi.cn/post/2019/1/kvm对guest中MSR寄存器的处理（二）-rdmsr.html"/>
 
 
 
@@ -136,7 +136,7 @@
   };
 </script>
 
-  <title>centos安装与配置原版texlive | Calmisi Lee</title>
+  <title>kvm对guest中MSR寄存器的处理（二）-- rdmsr | Calmisi Lee</title>
   
 
 
@@ -340,7 +340,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://blog.calmisi.cn/post/2018/4/centos安装与配置原版texlive.html">
+    <link itemprop="mainEntityOfPage" href="https://blog.calmisi.cn/post/2019/1/kvm对guest中MSR寄存器的处理（二）-rdmsr.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Calmisi Lee">
@@ -357,7 +357,7 @@
 
         
         
-          <h2 class="post-title" itemprop="name headline">centos安装与配置原版texlive
+          <h2 class="post-title" itemprop="name headline">kvm对guest中MSR寄存器的处理（二）-- rdmsr
               
             
           </h2>
@@ -382,7 +382,7 @@
                 
               
 
-              <time title="Created: 2018-04-25 17:22:09" itemprop="dateCreated datePublished" datetime="2018-04-25T17:22:09+08:00">2018-04-25</time>
+              <time title="Created: 2019-01-21 21:31:09" itemprop="dateCreated datePublished" datetime="2019-01-21T21:31:09+08:00">2019-01-21</time>
             
 
             
@@ -399,7 +399,7 @@
                 
                   <span class="post-meta-item-text">Edited on</span>
                 
-                <time title="Modified: 2018-09-16 00:54:21" itemprop="dateModified" datetime="2018-09-16T00:54:21+08:00">2018-09-16</time>
+                <time title="Modified: 2019-01-22 01:00:21" itemprop="dateModified" datetime="2019-01-22T01:00:21+08:00">2019-01-22</time>
               
             
           </span>
@@ -416,7 +416,7 @@
                 <span class="post-meta-item-text">In</span>
               
               
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a></span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/kvm/" itemprop="url" rel="index"><span itemprop="name">kvm</span></a></span>
 
                 
                 
@@ -430,7 +430,7 @@
 
           
           
-             <span id="/post/2018/4/centos安装与配置原版texlive.html" class="leancloud_visitors" data-flag-title="centos安装与配置原版texlive">
+             <span id="/post/2019/1/kvm对guest中MSR寄存器的处理（二）-rdmsr.html" class="leancloud_visitors" data-flag-title="kvm对guest中MSR寄存器的处理（二）-- rdmsr">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -455,7 +455,7 @@
                 
                   <span class="post-meta-item-text">Symbols count in article: </span>
                 
-                <span title="Symbols count in article">1.8k</span>
+                <span title="Symbols count in article">9.8k</span>
               
 
               
@@ -469,7 +469,7 @@
                 
                   <span class="post-meta-item-text">Reading time &asymp;</span>
                 
-                <span title="Reading time">2 mins.</span>
+                <span title="Reading time">9 mins.</span>
               
             </div>
           
@@ -489,44 +489,71 @@
       
 
       
-        <p>以前一直是在windows系统上编译论文，<br>现在想在服务器的centos系统上修改论文终稿，于是就探索了一下。</p>
-<h1 id="使用yum安装"><a href="#使用yum安装" class="headerlink" title="使用yum安装"></a>使用<code>yum</code>安装</h1><p>尝试的第一种方法是<code>yum</code>安装<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">yum install texlive-latex</span><br><span class="line">#安装texlive-latex</span><br><span class="line">yum install texmaker</span><br><span class="line">#安装tex文件编辑器</span><br></pre></td></tr></table></figure></p>
-<p>使用yum很方便，当使用texmaker编译之前论文的源文件的时候，提示好多包无法识别，<br>没有办法，还是觉得像windows那样，安装原版TEXLIVE<br><a id="more"></a></p>
-<h1 id="安装原版texlive"><a href="#安装原版texlive" class="headerlink" title="安装原版texlive"></a>安装原版texlive</h1><ul>
-<li><p>下载原版texlive iso文件<br>下载最新的texlive-2017.iso</p>
-</li>
-<li><p>挂载ISO镜像</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mkdir /mnt/texlive</span><br><span class="line">mount -t iso9660 -o ro,loop,noauto /home/xxx/Downloads/texlive.iso /mnt/texlive</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>安装<br>首先需要安装依赖包，否则不能正确运行install-tl脚本，</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install perl-Digest-MD5 perl-Tk</span><br></pre></td></tr></table></figure>
-<p>然后运行install-tl脚本进行安装</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">./install-tl #以命令行的方式安装</span><br><span class="line">./install-tl -gui  #以图像化界面安装</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>安装完成后卸载镜像文件以及配置PATH</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">umount /mnt/texlive</span><br><span class="line">#编辑/etc/profile,添加</span><br><span class="line"></span><br><span class="line">export MANPATH=$&#123;MANPATH&#125;:/usr/local/texlive/texmf-dist/doc/man</span><br><span class="line">export INFOPATH=$&#123;INFOPATH&#125;:/usr/local/texlive/texmf-dist/doc/info</span><br><span class="line">export PATH=$&#123;PATH&#125;:/usr/local/texlive/bin/x86_64-linux</span><br></pre></td></tr></table></figure>
-</li>
+        <p>本文为kvm操作MSR寄存器的第二部分，介绍guest中rdmsr指令的处理过程。<br>之前在（一）中有介绍，如果对guest设置了<code>Use MSR bitmaps</code> VM-execution control bit,那么Read bitmap for low MSRs(0000 0000H - 0000 1FFFH)和Read bitmap for high MSRs(C000 0000H - C000 1FFFH)范围中的为0的bit对应的地址的MSR在执行rdmsr的时候不会产生VM EXIT。<br>其他情况，运行rdmsr均会触发VM exit,最后会进入vmx.c中的handle_rdmsr()函数。</p>
+<a id="more"></a>
+<h1 id="handle-rdmsr"><a href="#handle-rdmsr" class="headerlink" title="handle_rdmsr"></a>handle_rdmsr</h1><p>如果guest vm exit时的exit reason为31号，即为rdmsr指令产生的vm exit。<br>具体到最后会调用handle_rdmsr()，其函数实现如下。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">handle_rdmsr</span><span class="params">(struct kvm_vcpu *vcpu)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">        u32 ecx = vcpu-&gt;arch.regs[VCPU_REGS_RCX];                                                                                                           </span><br><span class="line">        <span class="class"><span class="keyword">struct</span> <span class="title">msr_data</span> <span class="title">msr_info</span>;</span></span><br><span class="line"></span><br><span class="line">        msr_info.index = ecx; </span><br><span class="line">        msr_info.host_initiated = <span class="literal">false</span>;</span><br><span class="line">        <span class="keyword">if</span> (vmx_get_msr(vcpu, &amp;msr_info)) &#123;</span><br><span class="line">                trace_kvm_msr_read_ex(ecx);</span><br><span class="line">                kvm_inject_gp(vcpu, <span class="number">0</span>);</span><br><span class="line">                <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">        &#125;    </span><br><span class="line"></span><br><span class="line">        trace_kvm_msr_read(ecx, msr_info.data);</span><br><span class="line"></span><br><span class="line">        <span class="comment">/* <span class="doctag">FIXME:</span> handling of bits 32:63 of rax, rdx */</span></span><br><span class="line">        vcpu-&gt;arch.regs[VCPU_REGS_RAX] = msr_info.data &amp; <span class="number">-1u</span>; </span><br><span class="line">        vcpu-&gt;arch.regs[VCPU_REGS_RDX] = (msr_info.data &gt;&gt; <span class="number">32</span>) &amp; <span class="number">-1u</span>; </span><br><span class="line">        <span class="keyword">return</span> kvm_skip_emulated_instruction(vcpu);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<ol>
+<li>从vcpu-&gt;arch.regs[]数组里取出guest的RCX寄存器的时，其存放guest rdmsr指令需要读取的MSR的index.</li>
+<li>然后将需要读取的MSR的index存入msr_info，并设置msr_info.host_initiated = false;</li>
+<li>调用mvx_get_msr(vcpu, &amp;msr_info)在kvm中对guest的rdmsr指令进行模拟；</li>
+<li>如果读取失败，则调用kvm_inject_gp()向guest插入一个#GP；</li>
+<li>如果读取成功，则将模拟rdmsr后的读到的数据data存入vcpu-&gt;arch.regs[RAX]和vpu-&gt;arch.regs[RDX]，然后更改guest_rip跳过这条指令</li>
+<li>当vm entry进入guest后，guest_rip已经指向rdmsr的下一条指令，并且rdmsr读取的值已经正常在GUEST_RAX和GUEST_RDX里面了；</li>
+</ol>
+<blockquote>
+<p><strong>注意其中trace_kvm_msr_read_ex(ecx)和trace_kvm_msr_read(ecx,msr_info.data)是给perf工具的trace用的。我们不讨论这个</strong>。</p>
+</blockquote>
+<h1 id="vmx"><a href="#vmx" class="headerlink" title="vmx"></a>vmx</h1><p>重点是vmx_get_msr()函数，其真正完成了KVM对guest里面的rdmsr指令的模拟。<br>如果其返回0,则表示对rdmsr的模拟是成功的，<br>其返回1，则表示对rdmsr指令的模拟有问题，要向guest插入一个#GP。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br></pre></td><td class="code"><pre><span class="line"> * Reads an msr value (of 'msr_index') into 'pdata'.</span><br><span class="line"> * Returns <span class="number">0</span> on success, non<span class="number">-0</span> otherwise.</span><br><span class="line"> * Assumes vcpu_load() was already called.</span><br><span class="line"> */</span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">vmx_get_msr</span><span class="params">(struct kvm_vcpu *vcpu, struct msr_data *msr_info)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">        <span class="class"><span class="keyword">struct</span> <span class="title">vcpu_vmx</span> *<span class="title">vmx</span> = <span class="title">to_vmx</span>(<span class="title">vcpu</span>);</span></span><br><span class="line">        <span class="class"><span class="keyword">struct</span> <span class="title">shared_msr_entry</span> *<span class="title">msr</span>;</span></span><br><span class="line">        u32 index;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">switch</span> (msr_info-&gt;index) &#123;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> CONFIG_X86_64</span></span><br><span class="line">        <span class="keyword">case</span> MSR_FS_BASE:</span><br><span class="line">                msr_info-&gt;data = vmcs_readl(GUEST_FS_BASE);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> MSR_GS_BASE:</span><br><span class="line">                msr_info-&gt;data = vmcs_readl(GUEST_GS_BASE);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> MSR_KERNEL_GS_BASE:</span><br><span class="line">                msr_info-&gt;data = vmx_read_guest_kernel_gs_base(vmx);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">        <span class="keyword">case</span> MSR_EFER:</span><br><span class="line">                <span class="keyword">return</span> kvm_get_msr_common(vcpu, msr_info);</span><br><span class="line">        <span class="keyword">case</span> MSR_IA32_SPEC_CTRL:</span><br><span class="line">                <span class="keyword">if</span> (!msr_info-&gt;host_initiated &amp;&amp;</span><br><span class="line">                    !guest_cpuid_has(vcpu, X86_FEATURE_SPEC_CTRL))</span><br><span class="line">                        <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">                msr_info-&gt;data = to_vmx(vcpu)-&gt;spec_ctrl;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> MSR_IA32_ARCH_CAPABILITIES:</span><br><span class="line">                <span class="keyword">if</span> (!msr_info-&gt;host_initiated &amp;&amp;</span><br><span class="line">                    !guest_cpuid_has(vcpu, X86_FEATURE_ARCH_CAPABILITIES))</span><br><span class="line">                        <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">                msr_info-&gt;data = to_vmx(vcpu)-&gt;arch_capabilities;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> MSR_IA32_SYSENTER_CS:</span><br><span class="line">                msr_info-&gt;data = vmcs_read32(GUEST_SYSENTER_CS);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> MSR_IA32_SYSENTER_EIP:</span><br><span class="line">                msr_info-&gt;data = vmcs_readl(GUEST_SYSENTER_EIP);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> MSR_IA32_SYSENTER_ESP:</span><br><span class="line">                msr_info-&gt;data = vmcs_readl(GUEST_SYSENTER_ESP);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> MSR_IA32_BNDCFGS:</span><br><span class="line">                <span class="keyword">if</span> (!kvm_mpx_supported() ||</span><br><span class="line">                    (!msr_info-&gt;host_initiated &amp;&amp;</span><br><span class="line">                     !guest_cpuid_has(vcpu, X86_FEATURE_MPX)))</span><br><span class="line">                        <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">                msr_info-&gt;data = vmcs_read64(GUEST_BNDCFGS);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> MSR_IA32_MCG_EXT_CTL:</span><br><span class="line">                <span class="keyword">if</span> (!msr_info-&gt;host_initiated &amp;&amp;</span><br><span class="line">                    !(vmx-&gt;msr_ia32_feature_control &amp;</span><br><span class="line">                      FEATURE_CONTROL_LMCE))</span><br><span class="line">                        <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">                msr_info-&gt;data = vcpu-&gt;arch.mcg_ext_ctl;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> MSR_IA32_FEATURE_CONTROL:</span><br><span class="line">                msr_info-&gt;data = vmx-&gt;msr_ia32_feature_control;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> MSR_IA32_VMX_BASIC ... MSR_IA32_VMX_VMFUNC:</span><br><span class="line">                <span class="keyword">if</span> (!nested_vmx_allowed(vcpu))</span><br><span class="line">                        <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">                <span class="keyword">return</span> vmx_get_vmx_msr(&amp;vmx-&gt;nested.msrs, msr_info-&gt;index,</span><br><span class="line">                                       &amp;msr_info-&gt;data);</span><br><span class="line">        <span class="keyword">case</span> MSR_IA32_XSS:</span><br><span class="line">                <span class="keyword">if</span> (!vmx_xsaves_supported())</span><br><span class="line">                        <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">                msr_info-&gt;data = vcpu-&gt;arch.ia32_xss;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> MSR_IA32_RTIT_CTL:</span><br><span class="line">                <span class="keyword">if</span> (pt_mode != PT_MODE_HOST_GUEST)</span><br><span class="line">                        <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">                msr_info-&gt;data = vmx-&gt;pt_desc.guest.ctl;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> MSR_IA32_RTIT_STATUS:</span><br><span class="line">                <span class="keyword">if</span> (pt_mode != PT_MODE_HOST_GUEST)</span><br><span class="line">                        <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">                msr_info-&gt;data = vmx-&gt;pt_desc.guest.status;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> MSR_IA32_RTIT_CR3_MATCH:</span><br><span class="line">                <span class="keyword">if</span> ((pt_mode != PT_MODE_HOST_GUEST) ||</span><br><span class="line">                        !intel_pt_validate_cap(vmx-&gt;pt_desc.caps,</span><br><span class="line">                                                PT_CAP_cr3_filtering))</span><br><span class="line">                        <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">                msr_info-&gt;data = vmx-&gt;pt_desc.guest.cr3_match;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> MSR_IA32_RTIT_OUTPUT_BASE:</span><br><span class="line">                <span class="keyword">if</span> ((pt_mode != PT_MODE_HOST_GUEST) ||</span><br><span class="line">                        (!intel_pt_validate_cap(vmx-&gt;pt_desc.caps,</span><br><span class="line">                                        PT_CAP_topa_output) &amp;&amp;</span><br><span class="line">                         !intel_pt_validate_cap(vmx-&gt;pt_desc.caps,</span><br><span class="line">                                        PT_CAP_single_range_output)))</span><br><span class="line">                        <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">                msr_info-&gt;data = vmx-&gt;pt_desc.guest.output_base;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> MSR_IA32_RTIT_OUTPUT_MASK:</span><br><span class="line">                <span class="keyword">if</span> ((pt_mode != PT_MODE_HOST_GUEST) ||</span><br><span class="line">                        (!intel_pt_validate_cap(vmx-&gt;pt_desc.caps,</span><br><span class="line">                                        PT_CAP_topa_output) &amp;&amp;</span><br><span class="line">                         !intel_pt_validate_cap(vmx-&gt;pt_desc.caps,</span><br><span class="line">                                        PT_CAP_single_range_output)))</span><br><span class="line">                        <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">                msr_info-&gt;data = vmx-&gt;pt_desc.guest.output_mask;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> MSR_IA32_RTIT_ADDR0_A ... MSR_IA32_RTIT_ADDR3_B:</span><br><span class="line">                index = msr_info-&gt;index - MSR_IA32_RTIT_ADDR0_A;</span><br><span class="line">                <span class="keyword">if</span> ((pt_mode != PT_MODE_HOST_GUEST) ||</span><br><span class="line">                        (index &gt;= <span class="number">2</span> * intel_pt_validate_cap(vmx-&gt;pt_desc.caps,</span><br><span class="line">                                        PT_CAP_num_address_ranges)))</span><br><span class="line">                        <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">                <span class="keyword">if</span> (index % <span class="number">2</span>)</span><br><span class="line">						 msr_info-&gt;data = vmx-&gt;pt_desc.guest.addr_b[index / <span class="number">2</span>];</span><br><span class="line">                <span class="keyword">else</span></span><br><span class="line">                        msr_info-&gt;data = vmx-&gt;pt_desc.guest.addr_a[index / <span class="number">2</span>];</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> MSR_TSC_AUX:</span><br><span class="line">                <span class="keyword">if</span> (!msr_info-&gt;host_initiated &amp;&amp;</span><br><span class="line">                    !guest_cpuid_has(vcpu, X86_FEATURE_RDTSCP))</span><br><span class="line">                        <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">                <span class="comment">/* Otherwise falls through */</span></span><br><span class="line">        <span class="keyword">default</span>:</span><br><span class="line">                msr = find_msr_entry(vmx, msr_info-&gt;index);</span><br><span class="line">                <span class="keyword">if</span> (msr) &#123;</span><br><span class="line">                        msr_info-&gt;data = msr-&gt;data;</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">return</span> kvm_get_msr_common(vcpu, msr_info);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们可以看见，其根据msr_info-&gt;index进行switch进行不同的处理，msr_info-&gt;index的值为guest中执行rdmsr指令是RCX寄存器的值，即为要读的MSR寄存的index。</p>
+<p>在该switch()的实现中，我们可以分为以下几类：</p>
+<ol>
+<li>直接读取vmcs区域中guest MSR区域<ul>
+<li>MSR_FS_BASE (X86_64独有): vmcs_readl(GUEST_FS_BASE)</li>
+<li>MSR_GS_BASE (X86_64独有): vmcs_readl(GUEST_GS_BASE)</li>
+<li>MSR_KERNEL_GS_BASE (X86_64独有，其处理有点特殊，具体看代码): rdmsrl(MSR_KERNEL_GS_BASE, vmx-&gt;msr_guest_kernel_gs_base)</li>
+<li>MSR_IA32_SYSENTER_CS: vmcs_read32(GUEST_SYSENTER_CS)</li>
+<li>MSR_IA32_SYSENTER_RIP: vmcs_readl(GUEST_SYSENTER_EIP)</li>
+<li>MSR_IA32_SYSENTER_ESP: vmcs_readl(GUEST_SYSENTER_ESP)</li>
+<li>MSR_IA32_BNDCFGS: vmcs_read64(GUEST_BNDCFGS)</li>
 </ul>
-<h1 id="安装后配置"><a href="#安装后配置" class="headerlink" title="安装后配置"></a>安装后配置</h1><ul>
-<li>更新源配置<br>配置合适的CTAN源可以加快宏包更新的网速，以中科大的源为例:<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">tlmgr option repository http://mirrors.ustc.edu.cn/CTAN/systems/texlive/tlnet</span><br><span class="line">#之后就可以用tlmgt命令进行网络更新，</span><br><span class="line">#CTAN 上的包更新很频繁，所以即便是最新版的texlive2016，其中也有大量的宏包需要更新（可能包括tlmgr程序本身）</span><br><span class="line">tlmgr update --self --all</span><br></pre></td></tr></table></figure>
 </li>
+<li>读取strcut vcpu_vmx中保存的值<ul>
+<li>MSR_IA32_SPEC_CTRL: vmx-&gt;spec_ctrl;</li>
+<li>MSR_IA32_ARCH_CAPABILITIES: vmx-&gt;arch_capabilities;</li>
+<li>MSR_IA32_FEATURE_CONTROL: vmx-&gt;msr_ia32_feature_control;</li>
+<li>MSR_IA32_RTIT_CTL: vmx-&gt;pt_desc.guest.ctl;</li>
+<li>MSR_IA32_RTIT_STATUS: vmx-&gt;pt_desc.guest.status;</li>
+<li>MSR_IA32_RTIT_CR3_MATCH: vmx-&gt;pt_desc.guest.cr3_match;</li>
+<li>MSR_IA32_RTIT_OUTPUT_BASE: vmx-&gt;pt_desc.guest.output_base;</li>
+<li>MSR_IA32_RTIT_OUTPUT_MASK: vmx-&gt;pt_desc.guest.output_mask;</li>
+<li>MSR_IA32_RTIT_ADDR0_A … MSR_IA32_RTIT_ADDR3_B: </li>
 </ul>
-<ul>
-<li><p>tlmgr 也可以GUI运行</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tlmgr --gui --gui-lang zh_CN</span><br></pre></td></tr></table></figure>
 </li>
-<li><p>字体配置<br>XeTeX 和 LuaTeX 可以直接使用系统字体。<br>然而 texlive 自带的字体并不在系统的字体目录里面。<br>为了让系统可以使用texlive所带的字体，需要进行如下配置。</p>
-<p>将texlive的字体配置文件复制到系统内</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo cp /usr/local/texlive/texmf-var/fonts/conf/texlive-fontconfig.conf /etc/fonts/conf.d/09-texlive.conf</span><br><span class="line">#建议将 /etc/fonts/conf.d/09-texlive.conf包含type1字体的那行删掉，以避免在其它软件中显示成百上千的type1字体，即删掉</span><br><span class="line">&lt;dir&gt;/usr/local/texlive/2016/texmf-dist/fonts/type1&lt;/dir&gt;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>刷新系统字体缓存</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo fc-cache -fsv</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>dummy package 安装<br>texlive2016安装之后需要“告诉”系统texlive相关软件包都安装好了。<br>这样在系统安装依赖于tex的软件（比如R）时就不必重新下载软件仓库中的旧版 texlive 相关软件。<br>也不会造成不同版本 tex 命令的冲突。dummy package 就是解决这样的软件依赖问题的“虚包”。</p>
-<p>dummy package 的制作可以参考<a href="https://www.tug.org/texlive/debian.html#vanilla" target="_blank" rel="noopener">TUG</a>上的官方说明.<br><a href="https://ctan.org/pkg/texlive-dummy-enterprise-linux-7" target="_blank" rel="noopener">这里</a>是RHEL 7系列的dummy package,<br>下载后直接安装即可：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rpm -ivh texlive-dummy-2012a-1.el7.*</span><br></pre></td></tr></table></figure>
-</li>
+<li>读取strcut kvm_vcpu-&gt;arch的值<ul>
+<li>MSR_IA32_MCG_EXT_CTL: vcpu-&gt;arch.mcg_ext_ctrl;</li>
+<li>MSR_IA32_XSS: vcpu-&gt;arch.ia32_xss;</li>
 </ul>
+</li>
+<li>对nested模式中MSR的模拟，会调用vmx_get_vmx_msr<ul>
+<li>MSR_IA32_VMX_BASIC … MSR_IA32_VMX_VMFUNC</li>
+</ul>
+</li>
+<li>调用find_msr_entry(struct vcpu_vmx * vmx, u32 msr)函数，查找对应的MSR在vmx-&gt;guest_msrs[]数组中是否存在。<br>如果存在，则返回vmx-&gt;guest_msrs[]中对应MSR的值; 如果不存在，则到下一类，使用kvm_get_msr_common();<br>保存在vmx-&gt;guest_msrs[]数组中的值，可以参考上一篇文章，kvm对guest中MSR寄存器的处理（一），其根据vmx_msr_index[]数组初始化，其中可能包括的MSR有：<ul>
+<li>MSR_SYSCALL_MASK (X86_64独有), </li>
+<li>MSR_LSTAR (X86_64独有), </li>
+<li>MSR_CSTAR (X86_64独有),</li>
+<li>MSR_EFER (见下一类使用kvm_get_msr_common()), </li>
+<li>MSR_TSC_AUX, </li>
+<li>MSR_STAR</li>
+</ul>
+</li>
+<li>调用<code>kvm_get_msr_common(struct kvm_vcpu * vcpu, struct msr_data * msr_data)</code><ul>
+<li>MSR_EFER</li>
+<li>以及以上5类不包含的MSR</li>
+</ul>
+</li>
+</ol>
 
       
     </div>
@@ -577,7 +604,7 @@
     <strong>Post author:  </strong>Calmisi Lee</li>
   <li class="post-copyright-link">
     <strong>Post link: </strong>
-    <a href="https://blog.calmisi.cn/post/2018/4/centos安装与配置原版texlive.html" title="centos安装与配置原版texlive">https://blog.calmisi.cn/post/2018/4/centos安装与配置原版texlive.html</a>
+    <a href="https://blog.calmisi.cn/post/2019/1/kvm对guest中MSR寄存器的处理（二）-rdmsr.html" title="kvm对guest中MSR寄存器的处理（二）-- rdmsr">https://blog.calmisi.cn/post/2019/1/kvm对guest中MSR寄存器的处理（二）-rdmsr.html</a>
   </li>
   <li class="post-copyright-license">
     <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 4.0</a> unless stating additionally.</li>
@@ -590,7 +617,9 @@
       
         <div class="post-tags">
           
-            <a href="/tags/Texlive/" rel="tag"># Texlive</a>
+            <a href="/tags/kvm/" rel="tag"># kvm</a>
+          
+            <a href="/tags/msr/" rel="tag"># msr</a>
           
         </div>
       
@@ -603,8 +632,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/post/2017/11/NVIDIA-dirver-is-incompatible-with-GNOME-desktop-in-vncserver.html" rel="next" title="NVIDIA dirver is incompatible with GNOME desktop in vncserver">
-                <i class="fa fa-chevron-left"></i> NVIDIA dirver is incompatible with GNOME desktop in vncserver
+              <a href="/post/2019/1/kvm对guest中MSR寄存器的处理.html" rel="next" title="kvm对guest中MSR寄存器的处理">
+                <i class="fa fa-chevron-left"></i> kvm对guest中MSR寄存器的处理
               </a>
             
           </div>
@@ -612,10 +641,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/post/2018/4/Latex编译pdf后的字体嵌入问题.html" rel="prev" title="Latex编译pdf后的字体嵌入问题">
-                Latex编译pdf后的字体嵌入问题 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -912,7 +937,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#使用yum安装"><span class="nav-number">1.</span> <span class="nav-text">使用yum安装</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#安装原版texlive"><span class="nav-number">2.</span> <span class="nav-text">安装原版texlive</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#安装后配置"><span class="nav-number">3.</span> <span class="nav-text">安装后配置</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#handle-rdmsr"><span class="nav-number">1.</span> <span class="nav-text">handle_rdmsr</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#vmx"><span class="nav-number">2.</span> <span class="nav-text">vmx</span></a></li></ol></div>
             
 
           </div>
@@ -1096,7 +1121,7 @@
   
     <script type="text/javascript">
       window.livereOptions = {
-        refer: 'post/2018/4/centos安装与配置原版texlive.html'
+        refer: 'post/2019/1/kvm对guest中MSR寄存器的处理（二）-rdmsr.html'
       };
       (function(d, s) {
         var j, e = d.getElementsByTagName(s)[0];
