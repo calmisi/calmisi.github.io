@@ -109,14 +109,14 @@
 
 
   <meta name="description" content="本文为kvm操作MSR寄存器的第二部分，介绍guest中rdmsr指令的处理过程。之前在（一）中有介绍，如果对guest设置了Use MSR bitmaps VM-execution control bit,那么Read bitmap for low MSRs(0000 0000H - 0000 1FFFH)和Read bitmap for high MSRs(C000 0000H - C000">
-<meta name="keywords" content="kvm,msr">
+<meta name="keywords" content="KVM,msr">
 <meta property="og:type" content="article">
 <meta property="og:title" content="kvm对guest中MSR寄存器的处理（二）-- rdmsr">
 <meta property="og:url" content="https://blog.calmisi.cn/post/2019/1/kvm对guest中MSR寄存器的处理（二）-rdmsr.html">
 <meta property="og:site_name" content="Calmisi Lee">
 <meta property="og:description" content="本文为kvm操作MSR寄存器的第二部分，介绍guest中rdmsr指令的处理过程。之前在（一）中有介绍，如果对guest设置了Use MSR bitmaps VM-execution control bit,那么Read bitmap for low MSRs(0000 0000H - 0000 1FFFH)和Read bitmap for high MSRs(C000 0000H - C000">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2019-01-21T17:00:21.435Z">
+<meta property="og:updated_time" content="2019-01-22T15:21:48.918Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="kvm对guest中MSR寄存器的处理（二）-- rdmsr">
 <meta name="twitter:description" content="本文为kvm操作MSR寄存器的第二部分，介绍guest中rdmsr指令的处理过程。之前在（一）中有介绍，如果对guest设置了Use MSR bitmaps VM-execution control bit,那么Read bitmap for low MSRs(0000 0000H - 0000 1FFFH)和Read bitmap for high MSRs(C000 0000H - C000">
@@ -399,7 +399,7 @@
                 
                   <span class="post-meta-item-text">Edited on</span>
                 
-                <time title="Modified: 2019-01-22 01:00:21" itemprop="dateModified" datetime="2019-01-22T01:00:21+08:00">2019-01-22</time>
+                <time title="Modified: 2019-01-22 23:21:48" itemprop="dateModified" datetime="2019-01-22T23:21:48+08:00">2019-01-22</time>
               
             
           </span>
@@ -416,7 +416,7 @@
                 <span class="post-meta-item-text">In</span>
               
               
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/kvm/" itemprop="url" rel="index"><span itemprop="name">kvm</span></a></span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/KVM/" itemprop="url" rel="index"><span itemprop="name">KVM</span></a></span>
 
                 
                 
@@ -617,7 +617,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/kvm/" rel="tag"># kvm</a>
+            <a href="/tags/KVM/" rel="tag"># KVM</a>
           
             <a href="/tags/msr/" rel="tag"># msr</a>
           
@@ -632,8 +632,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/post/2019/1/kvm对guest中MSR寄存器的处理.html" rel="next" title="kvm对guest中MSR寄存器的处理">
-                <i class="fa fa-chevron-left"></i> kvm对guest中MSR寄存器的处理
+              <a href="/post/2019/1/kvm对guest中MSR寄存器的处理（一）.html" rel="next" title="kvm对guest中MSR寄存器的处理（一）">
+                <i class="fa fa-chevron-left"></i> kvm对guest中MSR寄存器的处理（一）
               </a>
             
           </div>
@@ -768,9 +768,7 @@
                     
                       
                     
-                      
-                    
-                    <span class="site-state-item-count">19</span>
+                    <span class="site-state-item-count">18</span>
                     <span class="site-state-item-name">categories</span>
                   </a>
                 </div>
@@ -885,9 +883,7 @@
                     
                       
                     
-                      
-                    
-                    <span class="site-state-item-count">52</span>
+                    <span class="site-state-item-count">51</span>
                     <span class="site-state-item-name">tags</span>
                   </a>
                 </div>

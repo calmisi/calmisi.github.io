@@ -109,16 +109,16 @@
 
 
   <meta name="description" content="本文介绍kvm中对MSRs相关的处理，包括MSR bitmap, rdmsr和wrmsr相关的trap和处理等。 MSR bitmap如果处理器支持 1-setting of the “Use MSR bitmaps” VM-execution control, 那么VM-execution control fields会包含4个连续的MSR bitmaps的64位的物理地址，每个连续的MSR b">
-<meta name="keywords" content="kvm,msr">
+<meta name="keywords" content="KVM,msr">
 <meta property="og:type" content="article">
-<meta property="og:title" content="kvm对guest中MSR寄存器的处理">
-<meta property="og:url" content="https://blog.calmisi.cn/post/2019/1/kvm对guest中MSR寄存器的处理.html">
+<meta property="og:title" content="kvm对guest中MSR寄存器的处理（一）">
+<meta property="og:url" content="https://blog.calmisi.cn/post/2019/1/kvm对guest中MSR寄存器的处理（一）.html">
 <meta property="og:site_name" content="Calmisi Lee">
 <meta property="og:description" content="本文介绍kvm中对MSRs相关的处理，包括MSR bitmap, rdmsr和wrmsr相关的trap和处理等。 MSR bitmap如果处理器支持 1-setting of the “Use MSR bitmaps” VM-execution control, 那么VM-execution control fields会包含4个连续的MSR bitmaps的64位的物理地址，每个连续的MSR b">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2019-01-20T15:35:28.232Z">
+<meta property="og:updated_time" content="2019-01-22T15:22:00.010Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="kvm对guest中MSR寄存器的处理">
+<meta name="twitter:title" content="kvm对guest中MSR寄存器的处理（一）">
 <meta name="twitter:description" content="本文介绍kvm中对MSRs相关的处理，包括MSR bitmap, rdmsr和wrmsr相关的trap和处理等。 MSR bitmap如果处理器支持 1-setting of the “Use MSR bitmaps” VM-execution control, 那么VM-execution control fields会包含4个连续的MSR bitmaps的64位的物理地址，每个连续的MSR b">
 
 
@@ -126,7 +126,7 @@
 
 
 
-  <link rel="canonical" href="https://blog.calmisi.cn/post/2019/1/kvm对guest中MSR寄存器的处理.html"/>
+  <link rel="canonical" href="https://blog.calmisi.cn/post/2019/1/kvm对guest中MSR寄存器的处理（一）.html"/>
 
 
 
@@ -136,7 +136,7 @@
   };
 </script>
 
-  <title>kvm对guest中MSR寄存器的处理 | Calmisi Lee</title>
+  <title>kvm对guest中MSR寄存器的处理（一） | Calmisi Lee</title>
   
 
 
@@ -340,7 +340,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://blog.calmisi.cn/post/2019/1/kvm对guest中MSR寄存器的处理.html">
+    <link itemprop="mainEntityOfPage" href="https://blog.calmisi.cn/post/2019/1/kvm对guest中MSR寄存器的处理（一）.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Calmisi Lee">
@@ -357,7 +357,7 @@
 
         
         
-          <h2 class="post-title" itemprop="name headline">kvm对guest中MSR寄存器的处理
+          <h2 class="post-title" itemprop="name headline">kvm对guest中MSR寄存器的处理（一）
               
             
           </h2>
@@ -399,7 +399,7 @@
                 
                   <span class="post-meta-item-text">Edited on</span>
                 
-                <time title="Modified: 2019-01-20 23:35:28" itemprop="dateModified" datetime="2019-01-20T23:35:28+08:00">2019-01-20</time>
+                <time title="Modified: 2019-01-22 23:22:00" itemprop="dateModified" datetime="2019-01-22T23:22:00+08:00">2019-01-22</time>
               
             
           </span>
@@ -416,7 +416,7 @@
                 <span class="post-meta-item-text">In</span>
               
               
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/kvm/" itemprop="url" rel="index"><span itemprop="name">kvm</span></a></span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/KVM/" itemprop="url" rel="index"><span itemprop="name">KVM</span></a></span>
 
                 
                 
@@ -430,7 +430,7 @@
 
           
           
-             <span id="/post/2019/1/kvm对guest中MSR寄存器的处理.html" class="leancloud_visitors" data-flag-title="kvm对guest中MSR寄存器的处理">
+             <span id="/post/2019/1/kvm对guest中MSR寄存器的处理（一）.html" class="leancloud_visitors" data-flag-title="kvm对guest中MSR寄存器的处理（一）">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -600,7 +600,7 @@
     <strong>Post author:  </strong>Calmisi Lee</li>
   <li class="post-copyright-link">
     <strong>Post link: </strong>
-    <a href="https://blog.calmisi.cn/post/2019/1/kvm对guest中MSR寄存器的处理.html" title="kvm对guest中MSR寄存器的处理">https://blog.calmisi.cn/post/2019/1/kvm对guest中MSR寄存器的处理.html</a>
+    <a href="https://blog.calmisi.cn/post/2019/1/kvm对guest中MSR寄存器的处理（一）.html" title="kvm对guest中MSR寄存器的处理（一）">https://blog.calmisi.cn/post/2019/1/kvm对guest中MSR寄存器的处理（一）.html</a>
   </li>
   <li class="post-copyright-license">
     <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 4.0</a> unless stating additionally.</li>
@@ -613,7 +613,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/kvm/" rel="tag"># kvm</a>
+            <a href="/tags/KVM/" rel="tag"># KVM</a>
           
             <a href="/tags/msr/" rel="tag"># msr</a>
           
@@ -768,9 +768,7 @@
                     
                       
                     
-                      
-                    
-                    <span class="site-state-item-count">19</span>
+                    <span class="site-state-item-count">18</span>
                     <span class="site-state-item-name">categories</span>
                   </a>
                 </div>
@@ -885,9 +883,7 @@
                     
                       
                     
-                      
-                    
-                    <span class="site-state-item-count">52</span>
+                    <span class="site-state-item-count">51</span>
                     <span class="site-state-item-name">tags</span>
                   </a>
                 </div>
@@ -1121,7 +1117,7 @@
   
     <script type="text/javascript">
       window.livereOptions = {
-        refer: 'post/2019/1/kvm对guest中MSR寄存器的处理.html'
+        refer: 'post/2019/1/kvm对guest中MSR寄存器的处理（一）.html'
       };
       (function(d, s) {
         var j, e = d.getElementsByTagName(s)[0];
