@@ -109,14 +109,14 @@
 
 
   <meta name="description" content="本文为kvm操作MSR寄存器的第二部分，介绍guest中rdmsr指令的处理过程。之前在（一）中有介绍，如果对guest设置了Use MSR bitmaps VM-execution control bit,那么Read bitmap for low MSRs(0000 0000H - 0000 1FFFH)和Read bitmap for high MSRs(C000 0000H - C000">
-<meta name="keywords" content="KVM,msr">
+<meta name="keywords" content="MSR">
 <meta property="og:type" content="article">
 <meta property="og:title" content="kvm对guest中MSR寄存器的处理（二）-- rdmsr">
 <meta property="og:url" content="https://blog.calmisi.cn/post/2019/1/kvm对guest中MSR寄存器的处理（二）-rdmsr.html">
 <meta property="og:site_name" content="Calmisi Lee">
 <meta property="og:description" content="本文为kvm操作MSR寄存器的第二部分，介绍guest中rdmsr指令的处理过程。之前在（一）中有介绍，如果对guest设置了Use MSR bitmaps VM-execution control bit,那么Read bitmap for low MSRs(0000 0000H - 0000 1FFFH)和Read bitmap for high MSRs(C000 0000H - C000">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2019-01-22T15:32:57.263Z">
+<meta property="og:updated_time" content="2019-01-23T12:36:58.438Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="kvm对guest中MSR寄存器的处理（二）-- rdmsr">
 <meta name="twitter:description" content="本文为kvm操作MSR寄存器的第二部分，介绍guest中rdmsr指令的处理过程。之前在（一）中有介绍，如果对guest设置了Use MSR bitmaps VM-execution control bit,那么Read bitmap for low MSRs(0000 0000H - 0000 1FFFH)和Read bitmap for high MSRs(C000 0000H - C000">
@@ -399,7 +399,7 @@
                 
                   <span class="post-meta-item-text">Edited on</span>
                 
-                <time title="Modified: 2019-01-22 23:32:57" itemprop="dateModified" datetime="2019-01-22T23:32:57+08:00">2019-01-22</time>
+                <time title="Modified: 2019-01-23 20:36:58" itemprop="dateModified" datetime="2019-01-23T20:36:58+08:00">2019-01-23</time>
               
             
           </span>
@@ -618,9 +618,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/KVM/" rel="tag"># KVM</a>
-          
-            <a href="/tags/msr/" rel="tag"># msr</a>
+            <a href="/tags/MSR/" rel="tag"># MSR</a>
           
         </div>
       
@@ -642,6 +640,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/post/2019/1/QEMU对MSR的处理（一）.html" rel="prev" title="QEMU对MSR的处理（一）">
+                QEMU对MSR的处理（一） <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -720,7 +722,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">53</span>
+                    <span class="site-state-item-count">55</span>
                     <span class="site-state-item-name">posts</span>
                   </a>
                 </div>
@@ -769,7 +771,9 @@
                     
                       
                     
-                    <span class="site-state-item-count">18</span>
+                      
+                    
+                    <span class="site-state-item-count">19</span>
                     <span class="site-state-item-name">categories</span>
                   </a>
                 </div>
@@ -975,7 +979,7 @@
     
       <span class="post-meta-item-text">Symbols count total: </span>
     
-    <span title="Symbols count total">199k</span>
+    <span title="Symbols count total">208k</span>
   
 
   
@@ -986,7 +990,7 @@
     
       <span class="post-meta-item-text">Reading time total &asymp;</span>
     
-    <span title="Reading time total">3:01</span>
+    <span title="Reading time total">3:09</span>
   
 </div>
 

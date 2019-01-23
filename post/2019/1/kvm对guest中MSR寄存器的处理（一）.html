@@ -109,14 +109,14 @@
 
 
   <meta name="description" content="本文介绍kvm中对MSRs相关的处理，包括MSR bitmap, rdmsr和wrmsr相关的trap和处理等。 MSR bitmap如果处理器支持 1-setting of the “Use MSR bitmaps” VM-execution control, 那么VM-execution control fields会包含4个连续的MSR bitmaps的64位的物理地址，每个连续的MSR b">
-<meta name="keywords" content="KVM,msr">
+<meta name="keywords" content="MSR">
 <meta property="og:type" content="article">
 <meta property="og:title" content="kvm对guest中MSR寄存器的处理（一）">
 <meta property="og:url" content="https://blog.calmisi.cn/post/2019/1/kvm对guest中MSR寄存器的处理（一）.html">
 <meta property="og:site_name" content="Calmisi Lee">
 <meta property="og:description" content="本文介绍kvm中对MSRs相关的处理，包括MSR bitmap, rdmsr和wrmsr相关的trap和处理等。 MSR bitmap如果处理器支持 1-setting of the “Use MSR bitmaps” VM-execution control, 那么VM-execution control fields会包含4个连续的MSR bitmaps的64位的物理地址，每个连续的MSR b">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2019-01-22T15:24:38.780Z">
+<meta property="og:updated_time" content="2019-01-23T12:37:07.998Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="kvm对guest中MSR寄存器的处理（一）">
 <meta name="twitter:description" content="本文介绍kvm中对MSRs相关的处理，包括MSR bitmap, rdmsr和wrmsr相关的trap和处理等。 MSR bitmap如果处理器支持 1-setting of the “Use MSR bitmaps” VM-execution control, 那么VM-execution control fields会包含4个连续的MSR bitmaps的64位的物理地址，每个连续的MSR b">
@@ -399,7 +399,7 @@
                 
                   <span class="post-meta-item-text">Edited on</span>
                 
-                <time title="Modified: 2019-01-22 23:24:38" itemprop="dateModified" datetime="2019-01-22T23:24:38+08:00">2019-01-22</time>
+                <time title="Modified: 2019-01-23 20:37:07" itemprop="dateModified" datetime="2019-01-23T20:37:07+08:00">2019-01-23</time>
               
             
           </span>
@@ -614,9 +614,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/KVM/" rel="tag"># KVM</a>
-          
-            <a href="/tags/msr/" rel="tag"># msr</a>
+            <a href="/tags/MSR/" rel="tag"># MSR</a>
           
         </div>
       
@@ -720,7 +718,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">53</span>
+                    <span class="site-state-item-count">55</span>
                     <span class="site-state-item-name">posts</span>
                   </a>
                 </div>
@@ -769,7 +767,9 @@
                     
                       
                     
-                    <span class="site-state-item-count">18</span>
+                      
+                    
+                    <span class="site-state-item-count">19</span>
                     <span class="site-state-item-name">categories</span>
                   </a>
                 </div>
@@ -975,7 +975,7 @@
     
       <span class="post-meta-item-text">Symbols count total: </span>
     
-    <span title="Symbols count total">199k</span>
+    <span title="Symbols count total">208k</span>
   
 
   
@@ -986,7 +986,7 @@
     
       <span class="post-meta-item-text">Reading time total &asymp;</span>
     
-    <span title="Reading time total">3:01</span>
+    <span title="Reading time total">3:09</span>
   
 </div>
 

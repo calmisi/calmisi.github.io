@@ -108,25 +108,25 @@
 
 
 
-  <meta name="description" content="最近在提交论文的camera ready版本的时候需要在IEEE PDF-eXpress中检测。结果检查结果提示Font Arial, Arial, Italic is not embedded (18x on page 3)问题。就是一些字体没有embedded。">
-<meta name="keywords" content="Latex">
+  <meta name="description" content="msrs_to_save[], emulated_msrs[], msr_based_features[]在x86.c文件中定一个了msrs_to_save[], emulated_msrs[], msr_based_features[]三个保存MSR寄存器index的数组，以及num_msrs_to_save, num_emulated_msrs, num_msr_based_features三">
+<meta name="keywords" content="MSR">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Latex编译pdf后的字体嵌入问题">
-<meta property="og:url" content="https://blog.calmisi.cn/post/2018/4/Latex编译pdf后的字体嵌入问题.html">
+<meta property="og:title" content="kvm对MSR寄存器的处理（三）">
+<meta property="og:url" content="https://blog.calmisi.cn/post/2019/1/kvm对MSR寄存器的处理（三）.html">
 <meta property="og:site_name" content="Calmisi Lee">
-<meta property="og:description" content="最近在提交论文的camera ready版本的时候需要在IEEE PDF-eXpress中检测。结果检查结果提示Font Arial, Arial, Italic is not embedded (18x on page 3)问题。就是一些字体没有embedded。">
+<meta property="og:description" content="msrs_to_save[], emulated_msrs[], msr_based_features[]在x86.c文件中定一个了msrs_to_save[], emulated_msrs[], msr_based_features[]三个保存MSR寄存器index的数组，以及num_msrs_to_save, num_emulated_msrs, num_msr_based_features三">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2018-09-15T16:54:21.639Z">
+<meta property="og:updated_time" content="2019-01-23T13:29:21.274Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Latex编译pdf后的字体嵌入问题">
-<meta name="twitter:description" content="最近在提交论文的camera ready版本的时候需要在IEEE PDF-eXpress中检测。结果检查结果提示Font Arial, Arial, Italic is not embedded (18x on page 3)问题。就是一些字体没有embedded。">
+<meta name="twitter:title" content="kvm对MSR寄存器的处理（三）">
+<meta name="twitter:description" content="msrs_to_save[], emulated_msrs[], msr_based_features[]在x86.c文件中定一个了msrs_to_save[], emulated_msrs[], msr_based_features[]三个保存MSR寄存器index的数组，以及num_msrs_to_save, num_emulated_msrs, num_msr_based_features三">
 
 
 
 
 
 
-  <link rel="canonical" href="https://blog.calmisi.cn/post/2018/4/Latex编译pdf后的字体嵌入问题.html"/>
+  <link rel="canonical" href="https://blog.calmisi.cn/post/2019/1/kvm对MSR寄存器的处理（三）.html"/>
 
 
 
@@ -136,7 +136,7 @@
   };
 </script>
 
-  <title>Latex编译pdf后的字体嵌入问题 | Calmisi Lee</title>
+  <title>kvm对MSR寄存器的处理（三） | Calmisi Lee</title>
   
 
 
@@ -340,7 +340,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://blog.calmisi.cn/post/2018/4/Latex编译pdf后的字体嵌入问题.html">
+    <link itemprop="mainEntityOfPage" href="https://blog.calmisi.cn/post/2019/1/kvm对MSR寄存器的处理（三）.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Calmisi Lee">
@@ -357,7 +357,7 @@
 
         
         
-          <h2 class="post-title" itemprop="name headline">Latex编译pdf后的字体嵌入问题
+          <h2 class="post-title" itemprop="name headline">kvm对MSR寄存器的处理（三）
               
             
           </h2>
@@ -382,24 +382,12 @@
                 
               
 
-              <time title="Created: 2018-04-27 13:54:51" itemprop="dateCreated datePublished" datetime="2018-04-27T13:54:51+08:00">2018-04-27</time>
+              <time title="Created: 2019-01-23 20:53:24 / Modified: 21:29:21" itemprop="dateCreated datePublished" datetime="2019-01-23T20:53:24+08:00">2019-01-23</time>
             
 
             
               
 
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">Edited on</span>
-                
-                <time title="Modified: 2018-09-16 00:54:21" itemprop="dateModified" datetime="2018-09-16T00:54:21+08:00">2018-09-16</time>
               
             
           </span>
@@ -416,7 +404,7 @@
                 <span class="post-meta-item-text">In</span>
               
               
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/LuanQiBaZao/" itemprop="url" rel="index"><span itemprop="name">LuanQiBaZao</span></a></span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/KVM/" itemprop="url" rel="index"><span itemprop="name">KVM</span></a></span>
 
                 
                 
@@ -430,7 +418,7 @@
 
           
           
-             <span id="/post/2018/4/Latex编译pdf后的字体嵌入问题.html" class="leancloud_visitors" data-flag-title="Latex编译pdf后的字体嵌入问题">
+             <span id="/post/2019/1/kvm对MSR寄存器的处理（三）.html" class="leancloud_visitors" data-flag-title="kvm对MSR寄存器的处理（三）">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -455,7 +443,7 @@
                 
                   <span class="post-meta-item-text">Symbols count in article: </span>
                 
-                <span title="Symbols count in article">772</span>
+                <span title="Symbols count in article">7.9k</span>
               
 
               
@@ -469,7 +457,7 @@
                 
                   <span class="post-meta-item-text">Reading time &asymp;</span>
                 
-                <span title="Reading time">1 mins.</span>
+                <span title="Reading time">7 mins.</span>
               
             </div>
           
@@ -489,27 +477,19 @@
       
 
       
-        <p>最近在提交论文的camera ready版本的时候需要在<a href="https://www.pdf-express.org/" target="_blank" rel="noopener">IEEE PDF-eXpress</a>中检测。<br>结果检查结果提示<code>Font Arial, Arial, Italic is not embedded (18x on page 3)</code>问题。<br>就是一些字体没有embedded。</p>
+        <h1 id="msrs-to-save-emulated-msrs-msr-based-features"><a href="#msrs-to-save-emulated-msrs-msr-based-features" class="headerlink" title="msrs_to_save[], emulated_msrs[], msr_based_features[]"></a>msrs_to_save[], emulated_msrs[], msr_based_features[]</h1><p>在x86.c文件中定一个了msrs_to_save[], emulated_msrs[], msr_based_features[]三个保存MSR寄存器index的数组，<br>以及num_msrs_to_save, num_emulated_msrs, num_msr_based_features三个静态全局变量来表示以上三个数组的大小。</p>
 <a id="more"></a>
-<hr>
-<h1 id="产生的原因"><a href="#产生的原因" class="headerlink" title="产生的原因"></a>产生的原因</h1><p>Latex源文件中有PDF格式的图片，<br>在这些PDF格式的图片中，没有嵌入字体（not embedded），<br>所以最终生成的PDF论文会提示字体没有嵌入。</p>
-<ul>
-<li>有可能是用visio生成PDF文件时没有嵌入；</li>
-<li>有可能是matlab生成的<code>.eps</code>格式的文件在Latex编译转化为PDF格式时，没有嵌入；</li>
-</ul>
-<hr>
-<h1 id="查看PDF格式的图片字体嵌入"><a href="#查看PDF格式的图片字体嵌入" class="headerlink" title="查看PDF格式的图片字体嵌入"></a>查看PDF格式的图片字体嵌入</h1><p>可以打开PDF格式的文档，<br><code>文件</code> -&gt;<code>文档属性</code> -&gt; <code>字体</code>，<br>其中就会显示该PDF文档中所用的所有字体了，<br>每一个字体后面，如果注明了<code>embedded(已嵌入)</code>或<code>embedded subset(已嵌入子集)</code>,<br>就说明该字体是嵌入的。</p>
-<hr>
-<h1 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h1><h2 id="如果我们用Latex编译论文时用了matlab生成的-eps的图"><a href="#如果我们用Latex编译论文时用了matlab生成的-eps的图" class="headerlink" title="如果我们用Latex编译论文时用了matlab生成的.eps的图"></a>如果我们用Latex编译论文时用了matlab生成的<code>.eps</code>的图</h2><p> 由于eps文件是ascii文件，里边只是给出字体的名称。<br> 由于matlab图里面默认的是Helvetica字体，<br> 当我们用latex生成pdf时会发现Helvetica字体是没有嵌入的。</p>
+<p>根据KVM的注释，msr_to_save[]数组，会在kvm.ko模块加载的时候，根据实际物理cpu的capabilities来调整；<br>emulated_msrs[]数组的调整依赖于虚拟化的实现，而不是物理CPU feature,所以把它们放在两个数组里面，我们可以通过下一小节的描述看出差别；<br>msr_based_features[]数组存储msr-based features相关的MSR，hypervisor使用这些MSR来查询相关的CPU features。</p>
+<blockquote>
+<p>注意：<br><strong>CPU features enumeration一般是通过CPUID，即通过CPUID指令查询当前的物理CPU是否有某些feature。<br>而MSR则是用来控制某个feature的开关。<br>一般地，先通过CPUID指令具体的一个bit位来查询某个feature是否存在，如果存在，则set/clear MSR的bit来enable/disable这个feature。<br>但是有一部分feature是通过MSR来enumerated的，为MSR-specific features,比如VMX相关的feature, MSR, IA32_ARCH_CAPABILITIES等。<br>即通过MSR的bit来表示CPU是否有某些features。</strong></p>
+</blockquote>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * List of msr numbers which we expose to userspace through KVM_GET_MSRS</span></span><br><span class="line"><span class="comment"> * and KVM_SET_MSRS, and KVM_GET_MSR_INDEX_LIST.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * This list is modified at module load time to reflect the</span></span><br><span class="line"><span class="comment"> * capabilities of the host cpu. This capabilities test skips MSRs that are</span></span><br><span class="line"><span class="comment"> * kvm-specific. Those are put in emulated_msrs; filtering of emulated_msrs</span></span><br><span class="line"><span class="comment"> * may depend on host virtualization features rather than host cpu features.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> u32 msrs_to_save[] = &#123;</span><br><span class="line">        MSR_IA32_SYSENTER_CS, MSR_IA32_SYSENTER_ESP, MSR_IA32_SYSENTER_EIP,</span><br><span class="line">        MSR_STAR,</span><br><span class="line">#ifdef CONFIG_X86_64</span><br><span class="line">        MSR_CSTAR, MSR_KERNEL_GS_BASE, MSR_SYSCALL_MASK, MSR_LSTAR,</span><br><span class="line">#endif</span><br><span class="line">        MSR_IA32_TSC, MSR_IA32_CR_PAT, MSR_VM_HSAVE_PA,</span><br><span class="line">        MSR_IA32_FEATURE_CONTROL, MSR_IA32_BNDCFGS, MSR_TSC_AUX,</span><br><span class="line">        MSR_IA32_SPEC_CTRL, MSR_IA32_ARCH_CAPABILITIES,</span><br><span class="line">        MSR_IA32_RTIT_CTL, MSR_IA32_RTIT_STATUS, MSR_IA32_RTIT_CR3_MATCH,</span><br><span class="line">        MSR_IA32_RTIT_OUTPUT_BASE, MSR_IA32_RTIT_OUTPUT_MASK,</span><br><span class="line">        MSR_IA32_RTIT_ADDR0_A, MSR_IA32_RTIT_ADDR0_B,</span><br><span class="line">        MSR_IA32_RTIT_ADDR1_A, MSR_IA32_RTIT_ADDR1_B,</span><br><span class="line">        MSR_IA32_RTIT_ADDR2_A, MSR_IA32_RTIT_ADDR2_B,</span><br><span class="line">        MSR_IA32_RTIT_ADDR3_A, MSR_IA32_RTIT_ADDR3_B,</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">unsigned</span> num_msrs_to_save;</span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> u32 emulated_msrs[] = &#123;</span><br><span class="line">        MSR_KVM_SYSTEM_TIME, MSR_KVM_WALL_CLOCK,</span><br><span class="line">        MSR_KVM_SYSTEM_TIME_NEW, MSR_KVM_WALL_CLOCK_NEW,</span><br><span class="line">        HV_X64_MSR_GUEST_OS_ID, HV_X64_MSR_HYPERCALL,</span><br><span class="line">        HV_X64_MSR_TIME_REF_COUNT, HV_X64_MSR_REFERENCE_TSC,</span><br><span class="line">        HV_X64_MSR_TSC_FREQUENCY, HV_X64_MSR_APIC_FREQUENCY,</span><br><span class="line">        HV_X64_MSR_CRASH_P0, HV_X64_MSR_CRASH_P1, HV_X64_MSR_CRASH_P2,</span><br><span class="line">        HV_X64_MSR_CRASH_P3, HV_X64_MSR_CRASH_P4, HV_X64_MSR_CRASH_CTL,</span><br><span class="line">        HV_X64_MSR_RESET,</span><br><span class="line">        HV_X64_MSR_VP_INDEX,</span><br><span class="line">        HV_X64_MSR_VP_RUNTIME,</span><br><span class="line">        HV_X64_MSR_SCONTROL,</span><br><span class="line">        HV_X64_MSR_STIMER0_CONFIG,</span><br><span class="line">        HV_X64_MSR_VP_ASSIST_PAGE,</span><br><span class="line">        HV_X64_MSR_REENLIGHTENMENT_CONTROL, HV_X64_MSR_TSC_EMULATION_CONTROL,</span><br><span class="line">        HV_X64_MSR_TSC_EMULATION_STATUS,</span><br><span class="line"></span><br><span class="line">        MSR_KVM_ASYNC_PF_EN, MSR_KVM_STEAL_TIME,</span><br><span class="line">        MSR_KVM_PV_EOI_EN,</span><br><span class="line"></span><br><span class="line">        MSR_IA32_TSC_ADJUST,</span><br><span class="line">        MSR_IA32_TSCDEADLINE,</span><br><span class="line">        MSR_IA32_MISC_ENABLE,</span><br><span class="line">        MSR_IA32_MCG_STATUS,</span><br><span class="line">        MSR_IA32_MCG_CTL,</span><br><span class="line">        MSR_IA32_MCG_EXT_CTL,</span><br><span class="line">        MSR_IA32_SMBASE,</span><br><span class="line">        MSR_SMI_COUNT,</span><br><span class="line">        MSR_PLATFORM_INFO,</span><br><span class="line">        MSR_MISC_FEATURES_ENABLES,</span><br><span class="line">        MSR_AMD64_VIRT_SPEC_CTRL,</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">unsigned</span> num_emulated_msrs;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * List of msr numbers which are used to expose MSR-based features that</span></span><br><span class="line"><span class="comment"> * can be used by a hypervisor to validate requested CPU features.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">static</span> u32 msr_based_features[] = &#123;</span><br><span class="line">        MSR_IA32_VMX_BASIC,</span><br><span class="line">        MSR_IA32_VMX_TRUE_PINBASED_CTLS,</span><br><span class="line">        MSR_IA32_VMX_PINBASED_CTLS,</span><br><span class="line">        MSR_IA32_VMX_TRUE_PROCBASED_CTLS,</span><br><span class="line">        MSR_IA32_VMX_PROCBASED_CTLS,</span><br><span class="line">        MSR_IA32_VMX_TRUE_EXIT_CTLS,</span><br><span class="line">        MSR_IA32_VMX_EXIT_CTLS,</span><br><span class="line">        MSR_IA32_VMX_TRUE_ENTRY_CTLS,</span><br><span class="line">        MSR_IA32_VMX_ENTRY_CTLS,</span><br><span class="line">        MSR_IA32_VMX_MISC,</span><br><span class="line">        MSR_IA32_VMX_CR0_FIXED0,</span><br><span class="line">        MSR_IA32_VMX_CR0_FIXED1,</span><br><span class="line">        MSR_IA32_VMX_CR4_FIXED0,</span><br><span class="line">        MSR_IA32_VMX_CR4_FIXED1,</span><br><span class="line">        MSR_IA32_VMX_VMCS_ENUM,</span><br><span class="line">        MSR_IA32_VMX_PROCBASED_CTLS2,</span><br><span class="line">        MSR_IA32_VMX_EPT_VPID_CAP,</span><br><span class="line">        MSR_IA32_VMX_VMFUNC,</span><br><span class="line"></span><br><span class="line">        MSR_F10H_DECFG,</span><br><span class="line">        MSR_IA32_UCODE_REV,</span><br><span class="line">        MSR_IA32_ARCH_CAPABILITIES,</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">unsigned</span> <span class="keyword">int</span> num_msr_based_features;</span><br></pre></td></tr></table></figure>
+<h1 id="调整msrs-to-save-emulated-msrs-msr-based-features"><a href="#调整msrs-to-save-emulated-msrs-msr-based-features" class="headerlink" title="调整msrs_to_save[], emulated_msrs[], msr_based_features[]"></a>调整msrs_to_save[], emulated_msrs[], msr_based_features[]</h1><p>在加载kvm.ko模块的时候，调用kvm_init() =&gt; kvm_arch_hardware_setup() =&gt; kvm_init_msr_list().<br>在kvm_init_msr_list()函数中,对上面提到的三个数组进行调整。</p>
 <ol>
-<li>将eps文件用 写字板 打开</li>
-<li><p>将字体设置部分：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">%% IncludeResource: font Helvetica</span><br><span class="line">/Helvetica /WindowsLatin1Encoding 120 FMSR</span><br><span class="line">第二行改为</span><br><span class="line">/ArialMT /WindowsLatin1Encoding 120 FMSR</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>保存，然后重新用 Latex 生成 pdf。 </p>
-</li>
+<li>msr_to_save[]:首先调用rdmsr_safe()去验证MSR是否在物理CPU上支持，然后对部分MSR调用具体的虚拟化的kvm_x86_ops来查询对应的MSR是否应该被支持。通过以上两步筛选后，用num_msrs_to_save变量保存过滤后的数组大小。</li>
+<li>emulated_msrs[]:统一调用kvm_x86_ops-&gt;has_emulated_msr()函数来过滤每一个MSR，用num_emulated_msrs来保存过滤后的大小。</li>
+<li>msr_based_features[]:使用kvm_get_msr_feature()来过滤，用num_msr_based_features来保存过滤后的大小。<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">kvm_init_msr_list</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">        u32 dummy[<span class="number">2</span>];</span><br><span class="line">        <span class="keyword">unsigned</span> i, j;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (i = j = <span class="number">0</span>; i &lt; ARRAY_SIZE(msrs_to_save); i++) &#123;</span><br><span class="line">                <span class="keyword">if</span> (rdmsr_safe(msrs_to_save[i], &amp;dummy[<span class="number">0</span>], &amp;dummy[<span class="number">1</span>]) &lt; <span class="number">0</span>)</span><br><span class="line">                        <span class="keyword">continue</span>;</span><br><span class="line"></span><br><span class="line">                <span class="comment">/*</span></span><br><span class="line"><span class="comment">                 * Even MSRs that are valid in the host may not be exposed</span></span><br><span class="line"><span class="comment">                 * to the guests in some cases.</span></span><br><span class="line"><span class="comment">                 */</span></span><br><span class="line">                <span class="keyword">switch</span> (msrs_to_save[i]) &#123;</span><br><span class="line">                <span class="keyword">case</span> MSR_IA32_BNDCFGS:</span><br><span class="line">                        <span class="keyword">if</span> (!kvm_mpx_supported())</span><br><span class="line">                                <span class="keyword">continue</span>;</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                <span class="keyword">case</span> MSR_TSC_AUX:</span><br><span class="line">                        <span class="keyword">if</span> (!kvm_x86_ops-&gt;rdtscp_supported())</span><br><span class="line">                                <span class="keyword">continue</span>;</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                <span class="keyword">case</span> MSR_IA32_RTIT_CTL:</span><br><span class="line">                <span class="keyword">case</span> MSR_IA32_RTIT_STATUS:</span><br><span class="line">                        <span class="keyword">if</span> (!kvm_x86_ops-&gt;pt_supported())</span><br><span class="line">                                <span class="keyword">continue</span>;</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                <span class="keyword">case</span> MSR_IA32_RTIT_CR3_MATCH:</span><br><span class="line">                        <span class="keyword">if</span> (!kvm_x86_ops-&gt;pt_supported() ||</span><br><span class="line">                            !intel_pt_validate_hw_cap(PT_CAP_cr3_filtering))</span><br><span class="line">                                <span class="keyword">continue</span>;</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                <span class="keyword">case</span> MSR_IA32_RTIT_OUTPUT_BASE:</span><br><span class="line">                <span class="keyword">case</span> MSR_IA32_RTIT_OUTPUT_MASK:</span><br><span class="line">                        <span class="keyword">if</span> (!kvm_x86_ops-&gt;pt_supported() ||</span><br><span class="line">                                (!intel_pt_validate_hw_cap(PT_CAP_topa_output) &amp;&amp;</span><br><span class="line">                                 !intel_pt_validate_hw_cap(PT_CAP_single_range_output)))</span><br><span class="line">                                <span class="keyword">continue</span>;</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                <span class="keyword">case</span> MSR_IA32_RTIT_ADDR0_A ... MSR_IA32_RTIT_ADDR3_B: &#123;</span><br><span class="line">                        <span class="keyword">if</span> (!kvm_x86_ops-&gt;pt_supported() ||</span><br><span class="line">                                msrs_to_save[i] - MSR_IA32_RTIT_ADDR0_A &gt;=</span><br><span class="line">                                intel_pt_validate_hw_cap(PT_CAP_num_address_ranges) * <span class="number">2</span>)</span><br><span class="line">                                <span class="keyword">continue</span>;</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">default</span>:</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                <span class="keyword">if</span> (j &lt; i)</span><br><span class="line">                        msrs_to_save[j] = msrs_to_save[i];</span><br><span class="line">                j++;</span><br><span class="line">        &#125;</span><br><span class="line">        num_msrs_to_save = j;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (i = j = <span class="number">0</span>; i &lt; ARRAY_SIZE(emulated_msrs); i++) &#123;</span><br><span class="line">                <span class="keyword">if</span> (!kvm_x86_ops-&gt;has_emulated_msr(emulated_msrs[i]))</span><br><span class="line">                        <span class="keyword">continue</span>;</span><br><span class="line"></span><br><span class="line">                <span class="keyword">if</span> (j &lt; i)</span><br><span class="line">                        emulated_msrs[j] = emulated_msrs[i];</span><br><span class="line">                j++;</span><br><span class="line">        &#125;</span><br><span class="line">        num_emulated_msrs = j;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (i = j = <span class="number">0</span>; i &lt; ARRAY_SIZE(msr_based_features); i++) &#123;</span><br><span class="line">                <span class="class"><span class="keyword">struct</span> <span class="title">kvm_msr_entry</span> <span class="title">msr</span>;</span></span><br><span class="line"></span><br><span class="line">                msr.index = msr_based_features[i];</span><br><span class="line">                <span class="keyword">if</span> (kvm_get_msr_feature(&amp;msr))</span><br><span class="line">                        <span class="keyword">continue</span>;</span><br><span class="line"></span><br><span class="line">                <span class="keyword">if</span> (j &lt; i)</span><br><span class="line">                        msr_based_features[j] = msr_based_features[i];</span><br><span class="line">                j++;</span><br><span class="line">        &#125;</span><br><span class="line">        num_msr_based_features = j;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
 </ol>
-<h2 id="如果是PDF图片本身没有嵌入字体"><a href="#如果是PDF图片本身没有嵌入字体" class="headerlink" title="如果是PDF图片本身没有嵌入字体"></a>如果是PDF图片本身没有嵌入字体</h2><p> 可以用Acrobat修改为常用字体重新编译</p>
 
       
     </div>
@@ -560,7 +540,7 @@
     <strong>Post author:  </strong>Calmisi Lee</li>
   <li class="post-copyright-link">
     <strong>Post link: </strong>
-    <a href="https://blog.calmisi.cn/post/2018/4/Latex编译pdf后的字体嵌入问题.html" title="Latex编译pdf后的字体嵌入问题">https://blog.calmisi.cn/post/2018/4/Latex编译pdf后的字体嵌入问题.html</a>
+    <a href="https://blog.calmisi.cn/post/2019/1/kvm对MSR寄存器的处理（三）.html" title="kvm对MSR寄存器的处理（三）">https://blog.calmisi.cn/post/2019/1/kvm对MSR寄存器的处理（三）.html</a>
   </li>
   <li class="post-copyright-license">
     <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 4.0</a> unless stating additionally.</li>
@@ -573,7 +553,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/Latex/" rel="tag"># Latex</a>
+            <a href="/tags/MSR/" rel="tag"># MSR</a>
           
         </div>
       
@@ -586,8 +566,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/post/2018/4/centos安装与配置原版texlive.html" rel="next" title="centos安装与配置原版texlive">
-                <i class="fa fa-chevron-left"></i> centos安装与配置原版texlive
+              <a href="/post/2019/1/QEMU对MSR的处理（一）.html" rel="next" title="QEMU对MSR的处理（一）">
+                <i class="fa fa-chevron-left"></i> QEMU对MSR的处理（一）
               </a>
             
           </div>
@@ -595,10 +575,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/post/2018/8/re-init-hexo-blog-project-from-github.html" rel="prev" title="re-init hexo-blog project from github">
-                re-init hexo-blog project from github <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -893,7 +869,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#产生的原因"><span class="nav-number">1.</span> <span class="nav-text">产生的原因</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#查看PDF格式的图片字体嵌入"><span class="nav-number">2.</span> <span class="nav-text">查看PDF格式的图片字体嵌入</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#解决方案"><span class="nav-number">3.</span> <span class="nav-text">解决方案</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#如果我们用Latex编译论文时用了matlab生成的-eps的图"><span class="nav-number">3.1.</span> <span class="nav-text">如果我们用Latex编译论文时用了matlab生成的.eps的图</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#如果是PDF图片本身没有嵌入字体"><span class="nav-number">3.2.</span> <span class="nav-text">如果是PDF图片本身没有嵌入字体</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#msrs-to-save-emulated-msrs-msr-based-features"><span class="nav-number">1.</span> <span class="nav-text">msrs_to_save[], emulated_msrs[], msr_based_features[]</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#调整msrs-to-save-emulated-msrs-msr-based-features"><span class="nav-number">2.</span> <span class="nav-text">调整msrs_to_save[], emulated_msrs[], msr_based_features[]</span></a></li></ol></div>
             
 
           </div>
@@ -1077,7 +1053,7 @@
   
     <script type="text/javascript">
       window.livereOptions = {
-        refer: 'post/2018/4/Latex编译pdf后的字体嵌入问题.html'
+        refer: 'post/2019/1/kvm对MSR寄存器的处理（三）.html'
       };
       (function(d, s) {
         var j, e = d.getElementsByTagName(s)[0];
