@@ -116,7 +116,7 @@
 <meta property="og:site_name" content="Calmisi Lee">
 <meta property="og:description" content="msrs_to_save[], emulated_msrs[], msr_based_features[]在x86.c文件中定一个了msrs_to_save[], emulated_msrs[], msr_based_features[]三个保存MSR寄存器index的数组，以及num_msrs_to_save, num_emulated_msrs, num_msr_based_features三">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2019-01-23T13:29:21.274Z">
+<meta property="og:updated_time" content="2019-01-25T11:50:09.208Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="kvm对MSR寄存器的处理（三）">
 <meta name="twitter:description" content="msrs_to_save[], emulated_msrs[], msr_based_features[]在x86.c文件中定一个了msrs_to_save[], emulated_msrs[], msr_based_features[]三个保存MSR寄存器index的数组，以及num_msrs_to_save, num_emulated_msrs, num_msr_based_features三">
@@ -382,12 +382,24 @@
                 
               
 
-              <time title="Created: 2019-01-23 20:53:24 / Modified: 21:29:21" itemprop="dateCreated datePublished" datetime="2019-01-23T20:53:24+08:00">2019-01-23</time>
+              <time title="Created: 2019-01-23 20:53:24" itemprop="dateCreated datePublished" datetime="2019-01-23T20:53:24+08:00">2019-01-23</time>
             
 
             
               
 
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2019-01-25 19:50:09" itemprop="dateModified" datetime="2019-01-25T19:50:09+08:00">2019-01-25</time>
               
             
           </span>
@@ -443,7 +455,7 @@
                 
                   <span class="post-meta-item-text">Symbols count in article: </span>
                 
-                <span title="Symbols count in article">7.9k</span>
+                <span title="Symbols count in article">8.3k</span>
               
 
               
@@ -457,7 +469,7 @@
                 
                   <span class="post-meta-item-text">Reading time &asymp;</span>
                 
-                <span title="Reading time">7 mins.</span>
+                <span title="Reading time">8 mins.</span>
               
             </div>
           
@@ -478,6 +490,12 @@
 
       
         <h1 id="msrs-to-save-emulated-msrs-msr-based-features"><a href="#msrs-to-save-emulated-msrs-msr-based-features" class="headerlink" title="msrs_to_save[], emulated_msrs[], msr_based_features[]"></a>msrs_to_save[], emulated_msrs[], msr_based_features[]</h1><p>在x86.c文件中定一个了msrs_to_save[], emulated_msrs[], msr_based_features[]三个保存MSR寄存器index的数组，<br>以及num_msrs_to_save, num_emulated_msrs, num_msr_based_features三个静态全局变量来表示以上三个数组的大小。</p>
+<blockquote>
+<p><strong>其中msrs_to_save[]和emulated_msrs[]数组合起来为暴露给userspace的MSRs: userspace(QEMU)通过KVM_GET_MSR_INDEX_LIST ioctl获取，并且之后就可以调用KVM_GET_MSRS, KVM_SET_MSRS对这些MSRs进行读写</strong><br><strong>msr_based_features[]数组向userspace传递KVM支持的feature-based MSRs.</strong></p>
+</blockquote>
+<blockquote>
+<p>注意<br><strong>msr_based_features[]数组和前面2个数组不是互斥的。<br>即msr_based_features[]数组中的MSR可以同时属于前面两个数组，但msr_to_save[]和emulated_msrs[]是互斥的。</strong></p>
+</blockquote>
 <a id="more"></a>
 <p>根据KVM的注释，msr_to_save[]数组，会在kvm.ko模块加载的时候，根据实际物理cpu的capabilities来调整；<br>emulated_msrs[]数组的调整依赖于虚拟化的实现，而不是物理CPU feature,所以把它们放在两个数组里面，我们可以通过下一小节的描述看出差别；<br>msr_based_features[]数组存储msr-based features相关的MSR，hypervisor使用这些MSR来查询相关的CPU features。</p>
 <blockquote>
@@ -487,7 +505,7 @@
 <h1 id="调整msrs-to-save-emulated-msrs-msr-based-features"><a href="#调整msrs-to-save-emulated-msrs-msr-based-features" class="headerlink" title="调整msrs_to_save[], emulated_msrs[], msr_based_features[]"></a>调整msrs_to_save[], emulated_msrs[], msr_based_features[]</h1><p>在加载kvm.ko模块的时候，调用kvm_init() =&gt; kvm_arch_hardware_setup() =&gt; kvm_init_msr_list().<br>在kvm_init_msr_list()函数中,对上面提到的三个数组进行调整。</p>
 <ol>
 <li>msr_to_save[]:首先调用rdmsr_safe()去验证MSR是否在物理CPU上支持，然后对部分MSR调用具体的虚拟化的kvm_x86_ops来查询对应的MSR是否应该被支持。通过以上两步筛选后，用num_msrs_to_save变量保存过滤后的数组大小。</li>
-<li>emulated_msrs[]:统一调用kvm_x86_ops-&gt;has_emulated_msr()函数来过滤每一个MSR，用num_emulated_msrs来保存过滤后的大小。</li>
+<li>emulated_msrs[]:统一调用kvm_x86_ops-&gt;has_emulated_msr()函数来过滤每一个MSR，用num_emulated_msrs来保存过滤后的大小;<strong>由于是kvm-specific MSR，与hardware无关，基本上这些MSR都支持。</strong></li>
 <li>msr_based_features[]:使用kvm_get_msr_feature()来过滤，用num_msr_based_features来保存过滤后的大小。<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">kvm_init_msr_list</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">        u32 dummy[<span class="number">2</span>];</span><br><span class="line">        <span class="keyword">unsigned</span> i, j;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (i = j = <span class="number">0</span>; i &lt; ARRAY_SIZE(msrs_to_save); i++) &#123;</span><br><span class="line">                <span class="keyword">if</span> (rdmsr_safe(msrs_to_save[i], &amp;dummy[<span class="number">0</span>], &amp;dummy[<span class="number">1</span>]) &lt; <span class="number">0</span>)</span><br><span class="line">                        <span class="keyword">continue</span>;</span><br><span class="line"></span><br><span class="line">                <span class="comment">/*</span></span><br><span class="line"><span class="comment">                 * Even MSRs that are valid in the host may not be exposed</span></span><br><span class="line"><span class="comment">                 * to the guests in some cases.</span></span><br><span class="line"><span class="comment">                 */</span></span><br><span class="line">                <span class="keyword">switch</span> (msrs_to_save[i]) &#123;</span><br><span class="line">                <span class="keyword">case</span> MSR_IA32_BNDCFGS:</span><br><span class="line">                        <span class="keyword">if</span> (!kvm_mpx_supported())</span><br><span class="line">                                <span class="keyword">continue</span>;</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                <span class="keyword">case</span> MSR_TSC_AUX:</span><br><span class="line">                        <span class="keyword">if</span> (!kvm_x86_ops-&gt;rdtscp_supported())</span><br><span class="line">                                <span class="keyword">continue</span>;</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                <span class="keyword">case</span> MSR_IA32_RTIT_CTL:</span><br><span class="line">                <span class="keyword">case</span> MSR_IA32_RTIT_STATUS:</span><br><span class="line">                        <span class="keyword">if</span> (!kvm_x86_ops-&gt;pt_supported())</span><br><span class="line">                                <span class="keyword">continue</span>;</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                <span class="keyword">case</span> MSR_IA32_RTIT_CR3_MATCH:</span><br><span class="line">                        <span class="keyword">if</span> (!kvm_x86_ops-&gt;pt_supported() ||</span><br><span class="line">                            !intel_pt_validate_hw_cap(PT_CAP_cr3_filtering))</span><br><span class="line">                                <span class="keyword">continue</span>;</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                <span class="keyword">case</span> MSR_IA32_RTIT_OUTPUT_BASE:</span><br><span class="line">                <span class="keyword">case</span> MSR_IA32_RTIT_OUTPUT_MASK:</span><br><span class="line">                        <span class="keyword">if</span> (!kvm_x86_ops-&gt;pt_supported() ||</span><br><span class="line">                                (!intel_pt_validate_hw_cap(PT_CAP_topa_output) &amp;&amp;</span><br><span class="line">                                 !intel_pt_validate_hw_cap(PT_CAP_single_range_output)))</span><br><span class="line">                                <span class="keyword">continue</span>;</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                <span class="keyword">case</span> MSR_IA32_RTIT_ADDR0_A ... MSR_IA32_RTIT_ADDR3_B: &#123;</span><br><span class="line">                        <span class="keyword">if</span> (!kvm_x86_ops-&gt;pt_supported() ||</span><br><span class="line">                                msrs_to_save[i] - MSR_IA32_RTIT_ADDR0_A &gt;=</span><br><span class="line">                                intel_pt_validate_hw_cap(PT_CAP_num_address_ranges) * <span class="number">2</span>)</span><br><span class="line">                                <span class="keyword">continue</span>;</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">default</span>:</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                <span class="keyword">if</span> (j &lt; i)</span><br><span class="line">                        msrs_to_save[j] = msrs_to_save[i];</span><br><span class="line">                j++;</span><br><span class="line">        &#125;</span><br><span class="line">        num_msrs_to_save = j;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (i = j = <span class="number">0</span>; i &lt; ARRAY_SIZE(emulated_msrs); i++) &#123;</span><br><span class="line">                <span class="keyword">if</span> (!kvm_x86_ops-&gt;has_emulated_msr(emulated_msrs[i]))</span><br><span class="line">                        <span class="keyword">continue</span>;</span><br><span class="line"></span><br><span class="line">                <span class="keyword">if</span> (j &lt; i)</span><br><span class="line">                        emulated_msrs[j] = emulated_msrs[i];</span><br><span class="line">                j++;</span><br><span class="line">        &#125;</span><br><span class="line">        num_emulated_msrs = j;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (i = j = <span class="number">0</span>; i &lt; ARRAY_SIZE(msr_based_features); i++) &#123;</span><br><span class="line">                <span class="class"><span class="keyword">struct</span> <span class="title">kvm_msr_entry</span> <span class="title">msr</span>;</span></span><br><span class="line"></span><br><span class="line">                msr.index = msr_based_features[i];</span><br><span class="line">                <span class="keyword">if</span> (kvm_get_msr_feature(&amp;msr))</span><br><span class="line">                        <span class="keyword">continue</span>;</span><br><span class="line"></span><br><span class="line">                <span class="keyword">if</span> (j &lt; i)</span><br><span class="line">                        msr_based_features[j] = msr_based_features[i];</span><br><span class="line">                j++;</span><br><span class="line">        &#125;</span><br><span class="line">        num_msr_based_features = j;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
 </ol>
 
@@ -576,6 +594,10 @@
 
           <div class="post-nav-prev post-nav-item">
             
+              <a href="/post/2019/1/kvm对guest中MSR寄存器的处理（四）-wrmsr.html" rel="prev" title="kvm对guest中MSR寄存器的处理（四）-- wrmsr">
+                kvm对guest中MSR寄存器的处理（四）-- wrmsr <i class="fa fa-chevron-right"></i>
+              </a>
+            
           </div>
         </div>
       
@@ -653,7 +675,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">55</span>
+                    <span class="site-state-item-count">57</span>
                     <span class="site-state-item-name">posts</span>
                   </a>
                 </div>
@@ -910,7 +932,7 @@
     
       <span class="post-meta-item-text">Symbols count total: </span>
     
-    <span title="Symbols count total">208k</span>
+    <span title="Symbols count total">215k</span>
   
 
   
@@ -921,7 +943,7 @@
     
       <span class="post-meta-item-text">Reading time total &asymp;</span>
     
-    <span title="Reading time total">3:09</span>
+    <span title="Reading time total">3:15</span>
   
 </div>
 

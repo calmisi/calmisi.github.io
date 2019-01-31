@@ -108,18 +108,18 @@
 
 
 
-  <meta name="description" content="在kvm-all.c里面的kvm_init()函数，会调用kvm_arch_init()函数，  kvm_get_supported_msrs(); kvm_get_supported_feature_msrs();  1. kvm_get_supported_msrs() QEMU会使用kvm_ioctl(KVM_GET_MSR_INDEX_LIST)，然后KVM会返回当前kvm模块支持的msr">
+  <meta name="description" content="在kvm-all.c里面的kvm_init()函数，会调用kvm_arch_init()函数，  kvm_get_supported_msrs(); kvm_get_supported_feature_msrs();">
 <meta name="keywords" content="MSR">
 <meta property="og:type" content="article">
 <meta property="og:title" content="QEMU对MSR的处理（一）">
 <meta property="og:url" content="https://blog.calmisi.cn/post/2019/1/QEMU对MSR的处理（一）.html">
 <meta property="og:site_name" content="Calmisi Lee">
-<meta property="og:description" content="在kvm-all.c里面的kvm_init()函数，会调用kvm_arch_init()函数，  kvm_get_supported_msrs(); kvm_get_supported_feature_msrs();  1. kvm_get_supported_msrs() QEMU会使用kvm_ioctl(KVM_GET_MSR_INDEX_LIST)，然后KVM会返回当前kvm模块支持的msr">
+<meta property="og:description" content="在kvm-all.c里面的kvm_init()函数，会调用kvm_arch_init()函数，  kvm_get_supported_msrs(); kvm_get_supported_feature_msrs();">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2019-01-23T15:14:32.418Z">
+<meta property="og:updated_time" content="2019-01-31T15:29:14.322Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="QEMU对MSR的处理（一）">
-<meta name="twitter:description" content="在kvm-all.c里面的kvm_init()函数，会调用kvm_arch_init()函数，  kvm_get_supported_msrs(); kvm_get_supported_feature_msrs();  1. kvm_get_supported_msrs() QEMU会使用kvm_ioctl(KVM_GET_MSR_INDEX_LIST)，然后KVM会返回当前kvm模块支持的msr">
+<meta name="twitter:description" content="在kvm-all.c里面的kvm_init()函数，会调用kvm_arch_init()函数，  kvm_get_supported_msrs(); kvm_get_supported_feature_msrs();">
 
 
 
@@ -382,12 +382,24 @@
                 
               
 
-              <time title="Created: 2019-01-23 20:36:22 / Modified: 23:14:32" itemprop="dateCreated datePublished" datetime="2019-01-23T20:36:22+08:00">2019-01-23</time>
+              <time title="Created: 2019-01-23 20:36:22" itemprop="dateCreated datePublished" datetime="2019-01-23T20:36:22+08:00">2019-01-23</time>
             
 
             
               
 
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2019-01-31 23:29:14" itemprop="dateModified" datetime="2019-01-31T23:29:14+08:00">2019-01-31</time>
               
             
           </span>
@@ -443,7 +455,7 @@
                 
                   <span class="post-meta-item-text">Symbols count in article: </span>
                 
-                <span title="Symbols count in article">1.4k</span>
+                <span title="Symbols count in article">1.9k</span>
               
 
               
@@ -457,7 +469,7 @@
                 
                   <span class="post-meta-item-text">Reading time &asymp;</span>
                 
-                <span title="Reading time">1 mins.</span>
+                <span title="Reading time">2 mins.</span>
               
             </div>
           
@@ -482,6 +494,7 @@
 <li>kvm_get_supported_msrs();</li>
 <li>kvm_get_supported_feature_msrs();</li>
 </ol>
+<a id="more"></a>
 <h1 id="1-kvm-get-supported-msrs"><a href="#1-kvm-get-supported-msrs" class="headerlink" title="1. kvm_get_supported_msrs()"></a>1. kvm_get_supported_msrs()</h1><ol>
 <li>QEMU会使用kvm_ioctl(KVM_GET_MSR_INDEX_LIST)，然后KVM会返回当前kvm模块支持的msr_to_save[]数组和emulated_msr[]数组（<a href="kvm对MSR寄存器的处理（三）.html">参见KVM对MSR寄存器的处理（三）</a>）给QEMU。</li>
 <li>但QEMU并不保存这些MSR的内容，而是根据返回的支持的MSR来设置一些全局的静态变量来表示是否有对应的MSR。</li>
@@ -502,7 +515,17 @@
 <li>依次遍历kvm_feature_msrs中每一个MSR，找到目标index所对应的MSR，如果在kvm_feature_msrs中没有，那么直接return 0。</li>
 <li>到了这一步，说明需要查询的feature MSR存在，即KVM支持；那么调用kvm_ioctl(KVM_GET_MSRS)获取该MSR的值。</li>
 </ol>
-<h1 id="4-x86-cpu-get-supported-feature-word-FeatureWord-w-bool-migratable-only"><a href="#4-x86-cpu-get-supported-feature-word-FeatureWord-w-bool-migratable-only" class="headerlink" title="4. x86_cpu_get_supported_feature_word(FeatureWord w, bool migratable_only)"></a>4. x86_cpu_get_supported_feature_word(FeatureWord w, bool migratable_only)</h1>
+<h1 id="4-x86-cpu-get-supported-feature-word-FeatureWord-w-bool-migratable-only"><a href="#4-x86-cpu-get-supported-feature-word-FeatureWord-w-bool-migratable-only" class="headerlink" title="4. x86_cpu_get_supported_feature_word(FeatureWord w, bool migratable_only)"></a>4. x86_cpu_get_supported_feature_word(FeatureWord w, bool migratable_only)</h1><p>第一个参数FeatureWord w为枚举变量，该函数会根据w，取出静态全局数组Static FeatureWordInfo feature_word_info[FEATURE_WORDS]中对应的FeatureWordInfo条目。<br>然后判断该FeatureWordInfo-&gt;type是CPUID_FEATURE_WORD还是MSR_FEATURE_WORD,然后调用不同的函数来更新对应的FeatureWordInfo.</p>
+<ul>
+<li>CPUID_FEATURE_WORD<br>会调用kvm_arch_get_supported_cpuid(kvm_state, wi-&gt;cpuid.eax, wi-&gt;cpuid.ecx, wi-&gt;cpuid.reg);</li>
+</ul>
+<ol>
+<li>在该函数首先调用get_supported_cpuid()函数，查询KVM支持哪些CPUID。</li>
+</ol>
+<ul>
+<li>MSR_FEATURE_WORD<br>会调用kvm_arch_get_supported_msr_feature(kvm_state, wi-&gt;msr.index);</li>
+</ul>
+
       
     </div>
 
@@ -669,7 +692,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">55</span>
+                    <span class="site-state-item-count">57</span>
                     <span class="site-state-item-name">posts</span>
                   </a>
                 </div>
@@ -926,7 +949,7 @@
     
       <span class="post-meta-item-text">Symbols count total: </span>
     
-    <span title="Symbols count total">208k</span>
+    <span title="Symbols count total">215k</span>
   
 
   
@@ -937,7 +960,7 @@
     
       <span class="post-meta-item-text">Reading time total &asymp;</span>
     
-    <span title="Reading time total">3:09</span>
+    <span title="Reading time total">3:15</span>
   
 </div>
 
