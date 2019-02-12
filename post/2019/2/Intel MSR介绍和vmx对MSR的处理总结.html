@@ -1,0 +1,1685 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222"/>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2"/>
+
+<link rel="stylesheet" href="/css/main.css?v=7.0.0"/>
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/8.jpg?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/8.jpg?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.ico?v=7.0.0">
+
+
+  <link rel="mask-icon" href="/images/8.jpg?v=7.0.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.0.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="[TOC] MSR寄存器的介绍The scope of an MSR defines the set of processors that access the same MSR with RDMSR and WRMSR.Thread-scope MSRs are unique to every logical processor; Core-scope MSRs are shared by th">
+<meta name="keywords" content="MSR">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Intel MSR介绍和vmx对MSR的处理总结">
+<meta property="og:url" content="https://blog.calmisi.cn/post/2019/2/Intel MSR介绍和vmx对MSR的处理总结.html">
+<meta property="og:site_name" content="Calmisi Lee">
+<meta property="og:description" content="[TOC] MSR寄存器的介绍The scope of an MSR defines the set of processors that access the same MSR with RDMSR and WRMSR.Thread-scope MSRs are unique to every logical processor; Core-scope MSRs are shared by th">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2019-02-02T01:48:00.854Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Intel MSR介绍和vmx对MSR的处理总结">
+<meta name="twitter:description" content="[TOC] MSR寄存器的介绍The scope of an MSR defines the set of processors that access the same MSR with RDMSR and WRMSR.Thread-scope MSRs are unique to every logical processor; Core-scope MSRs are shared by th">
+
+
+
+
+
+
+  <link rel="canonical" href="https://blog.calmisi.cn/post/2019/2/Intel MSR介绍和vmx对MSR的处理总结.html"/>
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Intel MSR介绍和vmx对MSR的处理总结 | Calmisi Lee</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Calmisi Lee</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <h1 class="site-subtitle" itemprop="description">Never like what you think.</h1>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br/>Home</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br/>Archives</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br/>Tags</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br/>Categories</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br/>About</a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br/>Search</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="Searching..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://blog.calmisi.cn/post/2019/2/Intel MSR介绍和vmx对MSR的处理总结.html"/>
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Calmisi Lee"/>
+      <meta itemprop="description" content="Pas de regrets"/>
+      <meta itemprop="image" content="/images/avatar.jpg"/>
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Calmisi Lee"/>
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">Intel MSR介绍和vmx对MSR的处理总结
+
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2019-02-01 18:59:29" itemprop="dateCreated datePublished" datetime="2019-02-01T18:59:29+08:00">2019-02-01</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2019-02-02 09:48:00" itemprop="dateModified" datetime="2019-02-02T09:48:00+08:00">2019-02-02</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/KVM/" itemprop="url" rel="index"><span itemprop="name">KVM</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+            <span id="/post/2019/2/Intel MSR介绍和vmx对MSR的处理总结.html" class="leancloud_visitors" data-flag-title="Intel MSR介绍和vmx对MSR的处理总结">
+              <span class="post-meta-divider">|</span>
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Views: </span>
+              
+                <span class="leancloud-visitors-count"></span>
+            </span>
+          
+
+          
+
+          
+            <div class="post-symbolscount">
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Symbols count in article: </span>
+                
+                <span title="Symbols count in article">15k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Reading time &asymp;</span>
+                
+                <span title="Reading time">14 mins.</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>[TOC]</p>
+<h1 id="MSR寄存器的介绍"><a href="#MSR寄存器的介绍" class="headerlink" title="MSR寄存器的介绍"></a>MSR寄存器的介绍</h1><p>The scope of an MSR defines the set of processors that access the same MSR with RDMSR and WRMSR.<br>Thread-scope MSRs are unique to every logical processor; Core-scope MSRs are shared by the threads in the same core; similarly for module-scope, die-scope, and package-scope.<br>When a processor package contains a single die, die-scope and package-scope are synonymous. When a package contains multiple die, they are distinct。<br>MSR寄存器的作用域可以是thread，即单个超线程，可以是每个core有单独的，也可以是一个die共用，还是是整个package。<br><a id="more"></a></p>
+<h2 id="Architectural-MSRs"><a href="#Architectural-MSRs" class="headerlink" title="Architectural MSRs"></a>Architectural MSRs</h2><p>A subset of MSRs and associated bit fields, which do not change on future processor generations, are now considered architectural MSRs. 这些architectural MSRs都有<code>IA32_</code>前缀。</p>
+<h2 id="wrmsr指令："><a href="#wrmsr指令：" class="headerlink" title="wrmsr指令："></a>wrmsr指令：</h2><p>wrmsr指令将EDX:EAX的值写入由ECX指定的64-bit的MSR寄存器中。<br>其中EDX写入MSR的高32位，EAX写入MSR的低32位。RAX,RCX,RDX的高32位都被忽略。<br><!-- more --></p>
+<ol>
+<li>该指令只能在CPL = 0 执行，否则会产生#GP;</li>
+<li>如果往Reserved or unimplemented MSR地址写，也会产生一个#GP</li>
+<li>undefined or reserved bits in an MSR should be set to values previously read,否则会产生#GP；</li>
+<li>The CPUID instruction should be used to determine whether MSRs are suppoted (CPUID.01H:EDX[5]=1) before using this instruction.<br>CPUID.01H:EDX[5]=1表示支持rdmsr/wrmsr指令。</li>
+</ol>
+<h2 id="rdmsr指令："><a href="#rdmsr指令：" class="headerlink" title="rdmsr指令："></a>rdmsr指令：</h2><p>rdmsr指令将由ECX指定的64-bit的MSR寄存器的值读取到EDX:EAX。<br>其中高32位写入EDX,低32位写入EAX。RAX,RCX,RDX的高32位都被忽略。<br>If fewer than 64 bits are implemented in the MSR being read, the values returned to EDX:EAX in unimplemented bit locations are undefined。</p>
+<ol>
+<li>该指令只能在CPL = 0 或 real-address mode执行，否则会产生#GP;</li>
+<li>如果ECX为一个reserved or unimplemented MSR的index,也会产生一个#GP;</li>
+<li>The CPUID instruction should be used to determine whether MSRs are suppoted (CPUID.01H:EDX[5]=1) before using this instruction.</li>
+</ol>
+<h2 id="VMM对MSR寄存器的处理"><a href="#VMM对MSR寄存器的处理" class="headerlink" title="VMM对MSR寄存器的处理"></a>VMM对MSR寄存器的处理</h2><p>理论上，guest中MSR寄存器的值应该完全独立host,但是物理硬件只有一份，即guest和host分时复用这些MSR寄存器硬件。<br>所以正确的做法就是，当vm entry的时候，把host中MSR寄存器的值存起来，加载guest MSR寄存器的值。当vm exit的时候，把guest中MSR寄存器的值都存起来，加载host MSR寄存器的值。</p>
+<p>然后就涉及到guest中执行rdmsr和wrmsr指令的问题。<br>如果在VM entry/exit时将guest和host的MSR全部都切换，那么就可以在guest执行这两个指令的时候不用vm exit，直接访问硬件。<br>可是这里涉及到VMM对guest的模拟，不能直接让guest访问硬件MSR。比如：</p>
+<ol>
+<li>某个MSR的bit位置1表示启用某个功能，现在不想让guest使用这个功能，那么就必须在guest写这个MSR的时候，trap出来，VMM做相应的处理；</li>
+<li>某个MSR是read only的，kernel会读取其中某个bit来决定是否有某个功能，现在VMM不想让guest有这个功能，那么在rdmsr该MSR时如果直接读物理硬件，就可以读到有这个feature，而是应该trap出来，VMM返回给guest一个假的值，告诉它没有这个功能。</li>
+</ol>
+<p>所以，下一节<a href="#Intel-VMCS中对MSR的支持">Intel VMCS中对MSR的支持</a>中提到的第3点：<strong>MSR bitmap</strong>。<br>其可以控制rdmsr和wrmsr指令是否会触发vm exit。如果不触发vm exit，那么可以直接访问hardware；如果触发vm exit，那么会trap出来到vmm，进行指令的模拟。<br>关于MSR bitmap的具体介绍可以参考<a href="kvm对guest中MSR寄存器的处理（一）.html">kvm对guest中MSR寄存器的处理（一）</a>。本文后面的章节<a href="#2-Use-MSR-bitmaps和MSR-bitmap-address">Use MSR bitmaps和MSR-bitmap address</a>具体分析了KVM中如何使用MSR bitmap，在KVM中默认是启用MSR bitmap的（如果host cpu支持），并且除了<code>MSR_IA32_TSC</code>、<code>MSR_FS_BASE</code>、 <code>MSR_GS_BASE</code>、 <code>MSR_KERNEL_GS_BASE</code>、 <code>MSR_IA32_SYSENTER_CS</code>、 <code>MSR_IA32_SYSENTER_ESP</code>、 <code>MSR_IA32_SYSENTER_EIP</code>之外，其他的MSR在rdmsr/wrmsr时都会vm exit到KVM。<br>那么在KVM中大多数的MSR都会从guest trap出去，KVM需要对rdmsr/wrmsr进行模拟。<br>现在假设情况是这样的，在创建VM的时候，由于没有VM entry进入到guest过。KVM需要给guset MSRs设置默认值，然后第一次VM entry到guest，此时MSR中会load KVM给guest设置的默认值，并将host的值保存起来（这个过程可以使用CPU提供的硬件load/store,也可以KVM软件实现）；然后CPU给guest运行，当guest发生vm exit时，又会把guest的MSRs都保存起来，并load host MSRs的值。</p>
+<blockquote>
+<p>注意：<br>在KVM的代码中，其vcpu_vmx, vcpu_vmx-&gt;arch等cpu的结构体中都有域直接记录guest的相关MSR的值，这个方便KVM直接获取MSR的值。<br>所以在vm entry/vm exit的时候，要将这些域里面的值load到MSR,或者将MSR的值store到这些域。如果采用硬件辅助VMCS guest state或者vm-entry msr-store），这将这些值写到对应的VMCS区域中；其他没有使用硬件辅助的，则需要KVM自己在vm entry/vm exit的时候把guest/host MSR的值写到对应的MSR中。</p>
+</blockquote>
+<p>所以下面就得分情况讨论：</p>
+<ul>
+<li>MSR是只读的：在VM entry/ VM exit的时候，不用切换host/guest的值，因为其不能写。所以只用在KVM中相关的结构（e.g., vcpu_vmx-&gt;, vcpu_vmx-&gt;arch-&gt;）中软件维持其值，当guest rdmsr时，trap出来返回kvm 模拟的值。这里需要注意：当host有某个feature的是，可以返回给guest没有这个feature；反过来的话，就需要KVM模拟这个feature。</li>
+<li>MSR是读写的：在VM entry/ VM exit的时候，就需要切换host/guest的值，即需要将guest/host的MSRs的值写到物理的MSR中去。</li>
+</ul>
+<hr>
+<h1 id="Intel-VMCS中对MSR的支持"><a href="#Intel-VMCS中对MSR的支持" class="headerlink" title="Intel VMCS中对MSR的支持"></a>Intel VMCS中对MSR的支持</h1><p>VMCS的data域可以分为Guest-state area, Host-state area, VM-execution control fields, VM-exit control fields, VM-entry control fields, VM-exit information fields.<br>其中与MSR相关的有以下这些：</p>
+<ol>
+<li>Guest-state area -&gt; Guest Register State -&gt; following MSRs</li>
+<li>Host-state are -&gt; following MSRs</li>
+<li>VM-execution control fields -&gt; Primary processor-based vm-exectuion controls.use MSR bitmaps(bit 28)<br>VM-execution control fields -&gt; MSR-bitmap address</li>
+<li>VM-exit Control fields -&gt; VM-exit controls.Save debug controls(bit 2)<br>VM-exit Control fields -&gt; VM-exit controls.Load IA32_PERF_GLOBAL_CTRL(bit 12)<br>VM-exit Control fields -&gt; VM-exit controls.Save IA32_PAT(bit 18)<br>VM-exit Control fields -&gt; VM-exit controls.Load IA32_PAT(bit 19)<br>VM-exit Control fields -&gt; VM-exit controls.Save IA32_EFER(bit20)<br>VM-exit Control fields -&gt; VM-exit controls.Load IA32_EFER(bit21)<br>VM-exit Control fields -&gt; VM-exit controls.Clear IA32_BNDCFGS(bit23)</li>
+<li>VM-entry Control fileds -&gt; VM-entry controls.Load debug controls(bit 2)<br>VM-entry Control fileds -&gt; VM-entry controls.Load IA32_PERF_GLOBAL_CTRL(bit 13)<br>VM-entry Control fileds -&gt; VM-entry controls.Load IA32_PAT(bit 14)<br>VM-entry Control fileds -&gt; VM-entry controls.Load IA32_EFER(bit 15)<br>VM-entry Control fileds -&gt; VM-entry controls.Load IA32_BNDCFGS(bit 16)</li>
+<li>VM-exit Control fields -&gt; VM-exit MSR-store count<br>VM-exit Control fields -&gt; VM-exit MSR-store address<br>VM-exit Control fields -&gt; VM-exit MSR-load count<br>VM-exit Control fields -&gt; VM-exit MSR-load address</li>
+<li>VM-entry Control fileds -&gt; VM-entry MSR-load count<br>VM-entry Control fileds -&gt; VM-entry MSR-load address</li>
+</ol>
+<p>以上列了7点。其中1，2，4，5是相关的。<br>1，2表示VMCS中有特定的几个MSR寄存器的存储区域，4,5表示可以控制硬件自动将相关的MSR存在对应的MSR区域，不需要软件VMM来保存。<br>3为msr bitmap,用来控制rdmsr/wrmsr指令在操作具体的MSR时是否会产生VM exit。<br>6,7 提供了硬件保存host/guest的MSR的能力。</p>
+<hr>
+<h2 id="1-Guest-state-area和Host-state-area和VM-exit-controls和VM-entry-controls"><a href="#1-Guest-state-area和Host-state-area和VM-exit-controls和VM-entry-controls" class="headerlink" title="1. Guest-state area和Host-state area和VM-exit controls和VM-entry controls"></a>1. Guest-state area和Host-state area和VM-exit controls和VM-entry controls</h2><p>在Guest-state和Host-state区域分别会保存一些特殊的MSR寄存器，具体如下：</p>
+<p>Guest Register State        Host Register State<br>IA32_DEBUGCTL<br>IA32_SYSENTER_CS        IA32_SYSENTER<br>IA32_SYSENTER_ESP        IA32_SYSENTER_ESP<br>IA32_SYSENTER_EIP        IA32_SYSENTER_EIP<br>IA32_PERF_GLOBAL_CTRL(<em>)    IA32_PERF_GLOBAL_CTRL(</em>)<br>IA32_PAT(<em>)            IA32_PAT(</em>)<br>IA32_EFER(<em>)            IA32_EFER(</em>)<br>IA32_BNDCFGS(*)</p>
+<blockquote>
+<p>注意：<br>Guest-state中，<br>IA32_PERF_GLOBAL_CTRL只有在 VM-entry control.load IA32_PERF_GLOBAL_CTRL 可以设置为1时，才存在这个域。<br>IA32_PAT只有在 VM-entry control.load IA32_PAT || VM-exit control.save IA32_PAT 可以设置为1时，才存在这个域。<br>IA32_EFER只有在 VM-entry control.load IA32_EFER || VM-exit control.save IA32_EFER 可以设置为1时，才存在这个域。<br>IA32_BNDCFGS只有 VM-entry control.load IA32_BNDCFGS || VM-exit control.clear IA32_BNDCFGS 可以设置为1时，才存在这个域。</p>
+<p>Host-state中，<br>IA32_PERF_GLOBAL_CTRL 只有在VM-exit control.load IA32_PERF_GLOBAL_CRTL 可以设置为1时，才存在这个域。<br>IA32_PAT 只有在VM-exit control.load IA32_PAT 可以设置为1时，才存在这个域。<br>IA32_EFER 只有在VM-exit control.load IA32_EFER 可以设置1时，才存在这个域。</p>
+</blockquote>
+<hr>
+<h2 id="2-Use-MSR-bitmaps和MSR-bitmap-address"><a href="#2-Use-MSR-bitmaps和MSR-bitmap-address" class="headerlink" title="2. Use MSR bitmaps和MSR-bitmap address"></a>2. Use MSR bitmaps和MSR-bitmap address</h2><h3 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h3><p>请参考<a href="kvm对guest中MSR寄存器的处理（一）.html">MSR bitmap</a>的第一节。<br>其控制rdmsr/wrmsr指令是否会触发VM exit,即控制guest是直接读写hardware上的MSR，还是VM exit到KVM，让KVM来模拟。</p>
+<h3 id="KVM中的实现"><a href="#KVM中的实现" class="headerlink" title="KVM中的实现 "></a>KVM中的实现<span id="kvm-msr-bitmap"> </span></h3><p>KVM会调用vmx_create_vcpu()函数来创建vcpu，在该函数中会调用<code>alloc_loaded_vmcs(&amp;vmx-&gt;vmcs01)</code>为该vcpu创建loaded_vmcs结构。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">alloc_loaded_vmcs</span><span class="params">(struct loaded_vmcs *loaded_vmcs)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    loaded_vmcs-&gt;vmcs = alloc_vmcs(<span class="literal">false</span>);</span><br><span class="line">    <span class="keyword">if</span> (!loaded_vmcs-&gt;vmcs)</span><br><span class="line">        <span class="keyword">return</span> -ENOMEM;</span><br><span class="line"></span><br><span class="line">    loaded_vmcs-&gt;shadow_vmcs = <span class="literal">NULL</span>;</span><br><span class="line">    loaded_vmcs_init(loaded_vmcs);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (cpu_has_vmx_msr_bitmap()) &#123;</span><br><span class="line">        loaded_vmcs-&gt;msr_bitmap = (<span class="keyword">unsigned</span> <span class="keyword">long</span> *)__get_free_page(GFP_KERNEL);</span><br><span class="line">        <span class="keyword">if</span> (!loaded_vmcs-&gt;msr_bitmap)</span><br><span class="line">            <span class="keyword">goto</span> out_vmcs;</span><br><span class="line">        <span class="built_in">memset</span>(loaded_vmcs-&gt;msr_bitmap, <span class="number">0xff</span>, PAGE_SIZE);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (IS_ENABLED(CONFIG_HYPERV) &amp;&amp;</span><br><span class="line">            static_branch_unlikely(&amp;enable_evmcs) &amp;&amp;</span><br><span class="line">            (ms_hyperv.nested_features &amp; HV_X64_NESTED_MSR_BITMAP)) &#123;</span><br><span class="line">            <span class="class"><span class="keyword">struct</span> <span class="title">hv_enlightened_vmcs</span> *<span class="title">evmcs</span> =</span></span><br><span class="line"><span class="class">                (<span class="title">struct</span> <span class="title">hv_enlightened_vmcs</span> *)<span class="title">loaded_vmcs</span>-&gt;<span class="title">vmcs</span>;</span></span><br><span class="line"></span><br><span class="line">            evmcs-&gt;hv_enlightenments_control.msr_bitmap = <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">memset</span>(&amp;loaded_vmcs-&gt;host_state, <span class="number">0</span>, <span class="keyword">sizeof</span>(struct vmcs_host_state));</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">out_vmcs:</span><br><span class="line">    free_loaded_vmcs(loaded_vmcs);</span><br><span class="line">    <span class="keyword">return</span> -ENOMEM;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<ol>
+<li>在该函数中首先调用alloc_vmcs()为该vcpu创建vmcs结构；</li>
+<li>设置loaded_vmcs-&gt;shadow_vmcs为NULL;</li>
+<li>调用loaded_vmcs_init(loaded_vmcs);</li>
+<li><strong>如果当前的cpu支持msr bitmap特性，那么为该loaded_vmcs结构申请一个4k的内存页，作为该vcpu的msr bitmap, 并设置该msr bitmap为全1</strong>;</li>
+<li>将loaded_vmcs-&gt;host_state置0；</li>
+</ol>
+<p>可以看到alloc_loaded_vmcs函数中分配的msr bitmap是全1的。也就是说，所有MSR的read和write都会触发VM EXIT。</p>
+<blockquote>
+<p><strong>注意<br>想要rdmsr/wrmsr不触发VM exit,那么需要以下3个条件同时满足：<br>1.use bitmap;<br>2.该MSR在0000 0000H - 0001 FFFFH或者C000 0000H - C000 1FFFFH这个范围<br>3.该MSR对应的bitmap为0</strong></p>
+</blockquote>
+<p>然后在vmx_create_vcpu()函数中执行了<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">msr_bitmap = vmx-&gt;vmcs01.msr_bitmap;</span><br><span class="line">   vmx_disable_intercept_for_msr(msr_bitmap, MSR_IA32_TSC, MSR_TYPE_R);</span><br><span class="line">   vmx_disable_intercept_for_msr(msr_bitmap, MSR_FS_BASE, MSR_TYPE_RW);</span><br><span class="line">   vmx_disable_intercept_for_msr(msr_bitmap, MSR_GS_BASE, MSR_TYPE_RW);</span><br><span class="line">   vmx_disable_intercept_for_msr(msr_bitmap, MSR_KERNEL_GS_BASE, MSR_TYPE_RW);</span><br><span class="line">   vmx_disable_intercept_for_msr(msr_bitmap, MSR_IA32_SYSENTER_CS, MSR_TYPE_RW);</span><br><span class="line">   vmx_disable_intercept_for_msr(msr_bitmap, MSR_IA32_SYSENTER_ESP, MSR_TYPE_RW);</span><br><span class="line">   vmx_disable_intercept_for_msr(msr_bitmap, MSR_IA32_SYSENTER_EIP, MSR_TYPE_RW);</span><br><span class="line">   vmx-&gt;msr_bitmap_mode = <span class="number">0</span>;</span><br></pre></td></tr></table></figure></p>
+<p>即取消了<code>MSR_IA32_TSC</code> read时候的trap（即不产生VM EXIT）；<br>取消了<code>MSR_FS_BASE</code>、 <code>MSR_GS_BASE</code>、 <code>MSR_KERNEL_GS_BASE</code>、 <code>MSR_IA32_SYSENTER_CS</code>、 <code>MSR_IA32_SYSENTER_ESP</code>、 <code>MSR_IA32_SYSENTER_EIP</code>, read和write时候的trap；<br>并设置vmx-&gt;msr_bitmap_mode = 0;</p>
+<p>然后调用了vmx_vcpu_setup()函数，在该函数中，执行了以下：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">vmx_vcpu_setup</span><span class="params">(struct vcpu_vmx *vmx)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    ...</span><br><span class="line">    <span class="keyword">if</span> (cpu_has_vmx_msr_bitmap())</span><br><span class="line">        vmcs_write64(MSR_BITMAP, __pa(vmx-&gt;vmcs01.msr_bitmap));</span><br><span class="line">	...</span><br></pre></td></tr></table></figure></p>
+<p>将申请的bitmap的物理写入对应的VMCS域，并且在vmx_setup_vmcs_config()函数中默认是把primary vm-execution control.usr msr bitmap(bit 28)置上的。<br>所以只要CPU支持<code>Use MSR bitmap</code>特性，KVM就会使用该特性，并且除了上述的7个MSR外，其他MSR的rdmsr/wrmsr指令都会产生VM EXIT。</p>
+<hr>
+<h2 id="3-MSR-store-load"><a href="#3-MSR-store-load" class="headerlink" title="3. MSR store/load"></a>3. MSR store/load</h2><h3 id="定义-1"><a href="#定义-1" class="headerlink" title="定义"></a>定义</h3><p>在VM-exit control fields域中，有VM-exit MSR-store count(32 bits)和VM-exit MSR-store address(64 bits)。<br>VM-exit MSR-store count 指定在VM exit需要保存的MSR的数量。（intel推荐该数量不要超过512）<br>VM-exit MSR-store address 指定VM-exit MSR-store area的物理地址。该area一个entries表，其中每个表项16 Bytes,表项的数目由VM-exit MSR-store count指定。注意，当VM-exit MSR-store count不为0时，该address必须为 16-byte对齐。<br>表项的结构如下图：</p>
+<p>同理，VM-exit MSR-load count/VM-exit MSR-load address以及VM-entry MSR-load count/VM-entry MSR-load address。</p>
+<blockquote>
+<p><strong>注意<br>可以发现VM exit的时候，有MSR load和store；而在VM entry的时候，只有MSR load。<br>即VM exit的时候，可以设置硬件load host的MSR，以及store guest的MSR。<br>当VM entry的时候，只能设置硬件 load guest的MSR，却不会自动store host的MSR(即需要软件KVM来保存)。</strong></p>
+<p><strong>其实，我们只需要两个区域，即两个address。一个保存host MSR, 一个保存guest MSR。<br>当VM exit时，将guest MSRs store到guest区域，从host区域load host MSRs。<br>当VM entry时，将host MSRs store到host区域，从guet区域load guest MSRs。<br>将VM-exit MSR-store address和VM-entry MSR-load address指向 guest MSR区域,并设置好相应的MSR count那么硬件会自动的保存和加载guest的MSR;<br>将VM-exit MSR-load address指向host MSR区域，并设置好相应的MSR count,硬件会自动加载host MSRs，只是需要软件在VM entry的时候手动保存host的MSR值到 host MSR区域。<br>KVM是怎么处理的，请看下一小节。
+</strong></p>
+</blockquote>
+<h3 id="KVM中的实现-1"><a href="#KVM中的实现-1" class="headerlink" title="KVM中的实现"></a>KVM中的实现</h3><p>在vmx_vcpu_setup()函数中，<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">vmcs_write32(VM_EXIT_MSR_STORE_COUNT, <span class="number">0</span>);</span><br><span class="line">vmcs_write32(VM_EXIT_MSR_LOAD_COUNT, <span class="number">0</span>);</span><br><span class="line">vmcs_write64(VM_EXIT_MSR_LOAD_ADDR, __pa(vmx-&gt;msr_autoload.host.val));</span><br><span class="line">vmcs_write32(VM_ENTRY_MSR_LOAD_COUNT, <span class="number">0</span>);</span><br><span class="line">vmcs_write64(VM_ENTRY_MSR_LOAD_ADDR, __pa(vmx-&gt;msr_autoload.guest.val));</span><br></pre></td></tr></table></figure></p>
+<p>可以看到，只初始化了VM-exit MSR-load address为vmx-&gt;msr_autoload.host.val 和VM-entry MSR-load address为msr_autoload.guest.val。表明KVM只要硬件在VM exit/VM entry的时候自动load host/guest的MSR值，对MSR的保存，KVM自己以软件的方式实现。<br>其中vmx-&gt;msr_autoload结构体中包含两个vmx_msrs的结构体分别表示vm entry时需要autoload的guest MSRs区域；以及vm exit时需要autoload的host MSRs区域。<br>注意，KVM中定义NR_AUTOLOAD_MSRS为8，即只能用这种方法处理8个MSRs。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">vcpu_vmx</span> &#123;</span></span><br><span class="line">	...</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">msr_autolaod</span> &#123;</span></span><br><span class="line">		<span class="class"><span class="keyword">struct</span> <span class="title">vmx_msrs</span> <span class="title">guest</span>;</span></span><br><span class="line">		<span class="class"><span class="keyword">struct</span> <span class="title">vmx_msrs</span> <span class="title">host</span>;</span></span><br><span class="line">	&#125; msr_autoload;</span><br><span class="line">	...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> NR_AUTOLOAD_MSRS 8</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">vmx_msrs</span> &#123;</span></span><br><span class="line">	<span class="keyword">unsigned</span> <span class="keyword">int</span> nr;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">vmx_msr_entry</span> <span class="title">val</span>[<span class="title">NR_AUTOLOAD_MSRS</span>];</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">vmx_msr_entry</span> &#123;</span></span><br><span class="line">	u32 index;</span><br><span class="line">	u32 reserved;</span><br><span class="line">	u64 value;</span><br><span class="line">&#125; __aligned(<span class="number">16</span>);</span><br></pre></td></tr></table></figure></p>
+<p>可以看到在vmx_vcpu_setup()函数，已经设置好了VM entry和VM exit时，需要自动load的guest/host MSR的address,后面需要做的，就是：<br>往address中添加需要自动load的msr的entry条目，以及更新MSR-load count VMCS域。<br>具体地，该功能通过add_atomic_switch_msr()函数实现，具体如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">add_atomic_switch_msr</span><span class="params">(struct vcpu_vmx *vmx, <span class="keyword">unsigned</span> msr,</span></span></span><br><span class="line"><span class="function"><span class="params">                  u64 guest_val, u64 host_val, <span class="keyword">bool</span> entry_only)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i, j = <span class="number">0</span>;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">msr_autoload</span> *<span class="title">m</span> = &amp;<span class="title">vmx</span>-&gt;<span class="title">msr_autoload</span>;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">switch</span> (msr) &#123;</span><br><span class="line">    <span class="keyword">case</span> MSR_EFER:</span><br><span class="line">        <span class="keyword">if</span> (cpu_has_load_ia32_efer()) &#123;</span><br><span class="line">            add_atomic_switch_msr_special(vmx,</span><br><span class="line">                    VM_ENTRY_LOAD_IA32_EFER,</span><br><span class="line">                    VM_EXIT_LOAD_IA32_EFER,</span><br><span class="line">                    GUEST_IA32_EFER,</span><br><span class="line">                    HOST_IA32_EFER,</span><br><span class="line">                    guest_val, host_val);</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">case</span> MSR_CORE_PERF_GLOBAL_CTRL:</span><br><span class="line">        <span class="keyword">if</span> (cpu_has_load_perf_global_ctrl()) &#123;</span><br><span class="line">            add_atomic_switch_msr_special(vmx,</span><br><span class="line">                    VM_ENTRY_LOAD_IA32_PERF_GLOBAL_CTRL,</span><br><span class="line">                    VM_EXIT_LOAD_IA32_PERF_GLOBAL_CTRL,</span><br><span class="line">                    GUEST_IA32_PERF_GLOBAL_CTRL,</span><br><span class="line">                    HOST_IA32_PERF_GLOBAL_CTRL,</span><br><span class="line">                    guest_val, host_val);</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">case</span> MSR_IA32_PEBS_ENABLE:</span><br><span class="line">        <span class="comment">/* PEBS needs a quiescent period after being disabled (to write</span></span><br><span class="line"><span class="comment">         * a record).  Disabling PEBS through VMX MSR swapping doesn't</span></span><br><span class="line"><span class="comment">         * provide that period, so a CPU could write host's record into</span></span><br><span class="line"><span class="comment">         * guest's memory.</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        wrmsrl(MSR_IA32_PEBS_ENABLE, <span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    i = find_msr(&amp;m-&gt;guest, msr);</span><br><span class="line">    <span class="keyword">if</span> (!entry_only)</span><br><span class="line">        j = find_msr(&amp;m-&gt;host, msr);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (i == NR_AUTOLOAD_MSRS || j == NR_AUTOLOAD_MSRS) &#123;</span><br><span class="line">        printk_once(KERN_WARNING <span class="string">"Not enough msr switch entries. "</span></span><br><span class="line">                <span class="string">"Can't add msr %x\n"</span>, msr);</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (i &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        i = m-&gt;guest.nr++;</span><br><span class="line">        vmcs_write32(VM_ENTRY_MSR_LOAD_COUNT, m-&gt;guest.nr);</span><br><span class="line">    &#125;</span><br><span class="line">    m-&gt;guest.val[i].index = msr;</span><br><span class="line">    m-&gt;guest.val[i].value = guest_val;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (entry_only)</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (j &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        j = m-&gt;host.nr++;</span><br><span class="line">        vmcs_write32(VM_EXIT_MSR_LOAD_COUNT, m-&gt;host.nr);</span><br><span class="line">    &#125;</span><br><span class="line">    m-&gt;host.val[j].index = msr;</span><br><span class="line">    m-&gt;host.val[j].value = host_val;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>该函数传入的参数：</p>
+<ol>
+<li>vmx: 当前vcpu的vcpu_vmx指针</li>
+<li>msr: 需要设置的MSR的index</li>
+<li>guest_val: 需要设置的MSR在guest中的值</li>
+<li>host_val: 需要设置的MSR在host中的值</li>
+<li>entry_only: 是不是只需要设置VM entry的自动load guest的值到hardware MSR中。</li>
+</ol>
+<p>具体地，我们先忽略switch对特殊的MSR的处理，看下面的部分。</p>
+<ol>
+<li>首先获取该MSR在guest区域的entry号i，以及如果！entry_only时，该MSR在host区域的entry号j；</li>
+<li>判断i和j是否超出NR_AUTOLOAD_MSRS的限制，如果超过了，则内核输出warning,并直接返回；（此处是一个bug，i不会等于NR_AUTOLOAD_MSRS,需要提交一个patch）</li>
+<li>如果i &lt; 0，则说明该MSR不在auto load的guest区域，则可以将该MSR加入autoload的guest区域，具体地，<br>将vmx-&gt;msr_autoload.guest.nr++,并更新vmcs中 VM-entry MSR-load count；</li>
+<li>如果i &gt;0 &amp;&amp; i &lt; NR_AUTOLOAD_MSRS,则说明该MSR已经在msr_autoload.guest.val中，则只用更新其值，<br>将该MSR 保存到vmx-&gt;msr_autoload.guest.val[i]中.</li>
+<li>如果entry_only则直接返回，如果不是，则同3.4步更新autoload的host区域。</li>
+</ol>
+<p>下面我们来看switch中特殊的处理。</p>
+<ol>
+<li>如果是MSR_EFER：如果启用了vm-entry和vm exit control中的load_efe功能，那么步使用msr-load功能，在guest state和host state有专门的区域存这个值。<br>会调用add_atomic_switch_msr_special()来处理。具体地，会设置VMCS中guest state和host state中相关的MSR区域，并且置上VMCS中相关的控制位。<br>这里对MSR_EFER也有特殊的处理，即如果是更新HOST MSR_EFER,则不执行更新。</li>
+<li>如果是MSR_CORE_PERF_GLOBAL_CRTL.同上。</li>
+<li>如果是MSR_IA32_PEBS_ENABLE: 需要先将host上的该功能disable一段时间，具体为什么我没研究。</li>
+<li>根据前面在host state, guest state的分析，MSR_IA32_PAT应该也在case里面，但是不在，可见KVM有特殊处理，目前我还没研究。</li>
+</ol>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div></div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>Donate</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechat_pay.jpg" alt="Calmisi Lee WeChat Pay"/>
+        <p>WeChat Pay</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/ali_pay.jpg" alt="Calmisi Lee Alipay"/>
+        <p>Alipay</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/MSR/" rel="tag"># MSR</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/post/2019/1/QEMU对MSR的处理（二）.html" rel="next" title="QEMU对MSR的处理（二）">
+                <i class="fa fa-chevron-left"></i> QEMU对MSR的处理（二）
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8zOTc5MS8xNjMxOA=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Calmisi Lee"/>
+            
+              <p class="site-author-name" itemprop="name">Calmisi Lee</p>
+              <p class="site-description motion-element" itemprop="description">Pas de regrets</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">58</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">17</span>
+                    <span class="site-state-item-name">categories</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">48</span>
+                    <span class="site-state-item-name">tags</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/calmisi" title="GitHub &rarr; https://github.com/calmisi" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="mailto:calmisi@163.com" title="E-Mail &rarr; mailto:calmisi@163.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#MSR寄存器的介绍"><span class="nav-number">1.</span> <span class="nav-text">MSR寄存器的介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Architectural-MSRs"><span class="nav-number">1.1.</span> <span class="nav-text">Architectural MSRs</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#wrmsr指令："><span class="nav-number">1.2.</span> <span class="nav-text">wrmsr指令：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#rdmsr指令："><span class="nav-number">1.3.</span> <span class="nav-text">rdmsr指令：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#VMM对MSR寄存器的处理"><span class="nav-number">1.4.</span> <span class="nav-text">VMM对MSR寄存器的处理</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Intel-VMCS中对MSR的支持"><span class="nav-number">2.</span> <span class="nav-text">Intel VMCS中对MSR的支持</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Guest-state-area和Host-state-area和VM-exit-controls和VM-entry-controls"><span class="nav-number">2.1.</span> <span class="nav-text">1. Guest-state area和Host-state area和VM-exit controls和VM-entry controls</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Use-MSR-bitmaps和MSR-bitmap-address"><span class="nav-number">2.2.</span> <span class="nav-text">2. Use MSR bitmaps和MSR-bitmap address</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#定义"><span class="nav-number">2.2.1.</span> <span class="nav-text">定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#KVM中的实现"><span class="nav-number">2.2.2.</span> <span class="nav-text">KVM中的实现 </span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-MSR-store-load"><span class="nav-number">2.3.</span> <span class="nav-text">3. MSR store/load</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#定义-1"><span class="nav-number">2.3.1.</span> <span class="nav-text">定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#KVM中的实现-1"><span class="nav-number">2.3.2.</span> <span class="nav-text">KVM中的实现</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">  <a href="http://www.miitbeian.gov.cn" rel="noopener" target="_blank"> </a>&copy; 2015.6 – <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Calmisi Lee</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Symbols count total: </span>
+    
+    <span title="Symbols count total">230k</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Reading time total &asymp;</span>
+    
+    <span title="Reading time total">3:29</span>
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.0.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=7.0.0"></script>
+
+  <script src="/js/src/motion.js?v=7.0.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/affix.js?v=7.0.0"></script>
+
+  <script src="/js/src/schemes/pisces.js?v=7.0.0"></script>
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=7.0.0"></script>
+<script src="/js/src/post-details.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  
+    <script>
+  window.livereOptions = {
+    refer: 'post/2019/2/Intel MSR介绍和vmx对MSR的处理总结.html'
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+</script>
+
+  
+
+
+  
+
+  <script>
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+  
+  <script>
+    
+    function addCount(Counter) {
+      var $visitors = $('.leancloud_visitors');
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+
+      Counter('get', '/classes/Counter', { where: JSON.stringify({ url }) })
+        .done(function({ results }) {
+          if (results.length > 0) {
+            var counter = results[0];
+            
+              var $element = $(document.getElementById(url));
+              $element.find('.leancloud-visitors-count').text(counter.time + 1);
+            
+            Counter('put', '/classes/Counter/' + counter.objectId, JSON.stringify({ time: { '__op': 'Increment', 'amount': 1 } }))
+            
+              .fail(function ({ responseJSON }) {
+                console.log(`Failed to save Visitor num, with error message: ${responseJSON.error}`);
+              })
+          } else {
+            
+              var $element = $(document.getElementById(url));
+              $element.find('.leancloud-visitors-count').text('Counter not initialized! More info at console err msg.');
+              console.error('ATTENTION! LeanCloud counter has security bug, see how to solve it here: https://github.com/theme-next/hexo-leancloud-counter-security. \n However, you can still use LeanCloud without security, by setting `security` option to `false`.');
+            
+          }
+        })
+        .fail(function ({ responseJSON }) {
+          console.log(`LeanCloud Counter Error: ${responseJSON.code} ${responseJSON.error}`);
+        });
+    }
+    
+
+    $(function() {
+      $.get('https://app-router.leancloud.cn/2/route?appId=' + 'tf4TRbjrkONfr7VekxlWI8Py-gzGzoHsz')
+        .done(function({ api_server }) {
+          var Counter = function(method, url, data) {
+            return $.ajax({
+              method: method,
+              url: 'https://' + api_server + '/1.1' + url,
+              headers: {
+                'X-LC-Id': 'tf4TRbjrkONfr7VekxlWI8Py-gzGzoHsz',
+                'X-LC-Key': '5c1wL7zY6VY7oLzi5xaCIu5x',
+                'Content-Type': 'application/json',
+              },
+              data: data
+            });
+          };
+          
+            addCount(Counter);
+          
+        });
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  <style>
+    .copy-btn {
+      display: inline-block;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 20px;
+      color: #333;
+      white-space: nowrap;
+      vertical-align: middle;
+      cursor: pointer;
+      background-color: #eee;
+      background-image: linear-gradient(#fcfcfc, #eee);
+      border: 1px solid #d5d5d5;
+      border-radius: 3px;
+      user-select: none;
+      outline: 0;
+    }
+
+    .highlight-wrap .copy-btn {
+      transition: opacity .3s ease-in-out;
+      opacity: 0;
+      padding: 2px 6px;
+      position: absolute;
+      right: 4px;
+      top: 8px;
+    }
+
+    .highlight-wrap:hover .copy-btn,
+    .highlight-wrap .copy-btn:focus {
+      opacity: 1
+    }
+
+    .highlight-wrap {
+      position: relative;
+    }
+  </style>
+  <script>
+    $('.highlight').each(function(i, e) {
+      var $wrap = $('<div>').addClass('highlight-wrap');
+      $(e).after($wrap);
+      $wrap.append($('<button>').addClass('copy-btn').append('Copy').on('click', function(e) {
+        var code = $(this).parent().find('.code').find('.line').map(function(i, e) {
+          return $(e).text();
+        }).toArray().join('\n');
+        var ta = document.createElement('textarea');
+        var range = document.createRange(); //For Chrome
+        var sel = window.getSelection(); //For Chrome
+        var yPosition = window.pageYOffset || document.documentElement.scrollTop;
+        ta.style.top = yPosition + 'px'; //Prevent page scroll
+        ta.style.position = 'absolute';
+        ta.style.opacity = '0';
+        ta.value = code;
+        ta.textContent = code; //For FireFox
+        ta.contentEditable = true;
+        ta.readOnly = false;
+        document.body.appendChild(ta);
+        range.selectNode(ta);
+        sel.removeAllRanges();
+        sel.addRange(range);
+        ta.setSelectionRange(0, code.length);
+        var result = document.execCommand('copy');
+        
+          if (result) $(this).text('Copied');
+          else $(this).text('Copy failed');
+        
+        ta.blur(); //For iOS
+        $(this).blur();
+      })).on('mouseleave', function(e) {
+        var $b = $(this).find('.copy-btn');
+        setTimeout(function() {
+          $b.text('Copy');
+        }, 300);
+      }).append(e);
+    })
+  </script>
+
+
+  
+
+</body>
+</html>
