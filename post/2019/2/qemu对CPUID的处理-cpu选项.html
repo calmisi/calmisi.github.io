@@ -96,25 +96,24 @@
 
 
 
-  <meta name="description" content="在kvm-all.c里面的kvm_init()函数，会调用kvm_arch_init()函数，  kvm_get_supported_msrs(); kvm_get_supported_feature_msrs();">
-<meta name="keywords" content="MSR">
+  <meta name="description" content="本文介绍当使用-cpu参数指令cpu model后(不论是-cpu host或者-cpu IceLake等)，QEMU是如何根据不同的cpu model来设置CPUID features的。关于-cpu参数的工作原理，可以参考qemu中cpu model（cpu type）的设置">
 <meta property="og:type" content="article">
-<meta property="og:title" content="QEMU对MSR的处理（一）">
-<meta property="og:url" content="https://blog.calmisi.cn/post/2019/1/QEMU对MSR的处理（一）.html">
+<meta property="og:title" content="qemu对CPUID的处理:-cpu选项">
+<meta property="og:url" content="https://blog.calmisi.cn/post/2019/2/qemu对CPUID的处理-cpu选项.html">
 <meta property="og:site_name" content="Calmisi Lee">
-<meta property="og:description" content="在kvm-all.c里面的kvm_init()函数，会调用kvm_arch_init()函数，  kvm_get_supported_msrs(); kvm_get_supported_feature_msrs();">
+<meta property="og:description" content="本文介绍当使用-cpu参数指令cpu model后(不论是-cpu host或者-cpu IceLake等)，QEMU是如何根据不同的cpu model来设置CPUID features的。关于-cpu参数的工作原理，可以参考qemu中cpu model（cpu type）的设置">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2019-01-31T15:29:14.322Z">
+<meta property="og:updated_time" content="2019-02-17T12:58:40.244Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="QEMU对MSR的处理（一）">
-<meta name="twitter:description" content="在kvm-all.c里面的kvm_init()函数，会调用kvm_arch_init()函数，  kvm_get_supported_msrs(); kvm_get_supported_feature_msrs();">
+<meta name="twitter:title" content="qemu对CPUID的处理:-cpu选项">
+<meta name="twitter:description" content="本文介绍当使用-cpu参数指令cpu model后(不论是-cpu host或者-cpu IceLake等)，QEMU是如何根据不同的cpu model来设置CPUID features的。关于-cpu参数的工作原理，可以参考qemu中cpu model（cpu type）的设置">
 
 
 
 
 
 
-  <link rel="canonical" href="https://blog.calmisi.cn/post/2019/1/QEMU对MSR的处理（一）.html"/>
+  <link rel="canonical" href="https://blog.calmisi.cn/post/2019/2/qemu对CPUID的处理-cpu选项.html"/>
 
 
 
@@ -124,7 +123,7 @@
   };
 </script>
 
-  <title>QEMU对MSR的处理（一） | Calmisi Lee</title>
+  <title>qemu对CPUID的处理:-cpu选项 | Calmisi Lee</title>
   
 
 
@@ -375,7 +374,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://blog.calmisi.cn/post/2019/1/QEMU对MSR的处理（一）.html"/>
+    <link itemprop="mainEntityOfPage" href="https://blog.calmisi.cn/post/2019/2/qemu对CPUID的处理-cpu选项.html"/>
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Calmisi Lee"/>
@@ -392,7 +391,7 @@
 
         
         
-          <h2 class="post-title" itemprop="name headline">QEMU对MSR的处理（一）
+          <h2 class="post-title" itemprop="name headline">qemu对CPUID的处理:-cpu选项
 
               
             
@@ -418,24 +417,12 @@
                 
               
 
-              <time title="Created: 2019-01-23 20:36:22" itemprop="dateCreated datePublished" datetime="2019-01-23T20:36:22+08:00">2019-01-23</time>
+              <time title="Created: 2019-02-17 23:16:29 / Modified: 20:58:40" itemprop="dateCreated datePublished" datetime="2019-02-17T23:16:29+08:00">2019-02-17</time>
             
 
             
               
 
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">Edited on</span>
-                
-                <time title="Modified: 2019-01-31 23:29:14" itemprop="dateModified" datetime="2019-01-31T23:29:14+08:00">2019-01-31</time>
               
             
           </span>
@@ -467,7 +454,7 @@
 
           
           
-            <span id="/post/2019/1/QEMU对MSR的处理（一）.html" class="leancloud_visitors" data-flag-title="QEMU对MSR的处理（一）">
+            <span id="/post/2019/2/qemu对CPUID的处理-cpu选项.html" class="leancloud_visitors" data-flag-title="qemu对CPUID的处理:-cpu选项">
               <span class="post-meta-divider">|</span>
               <span class="post-meta-item-icon">
                 <i class="fa fa-eye"></i>
@@ -492,7 +479,7 @@
                 
                   <span class="post-meta-item-text">Symbols count in article: </span>
                 
-                <span title="Symbols count in article">1.9k</span>
+                <span title="Symbols count in article">5.6k</span>
               
 
               
@@ -506,7 +493,7 @@
                 
                   <span class="post-meta-item-text">Reading time &asymp;</span>
                 
-                <span title="Reading time">2 mins.</span>
+                <span title="Reading time">5 mins.</span>
               
             </div>
           
@@ -526,42 +513,11 @@
       
 
       
-        <p>在kvm-all.c里面的kvm_init()函数，<br>会调用kvm_arch_init()函数，</p>
-<ol>
-<li>kvm_get_supported_msrs();</li>
-<li>kvm_get_supported_feature_msrs();</li>
-</ol>
-<a id="more"></a>
-<h1 id="1-kvm-get-supported-msrs"><a href="#1-kvm-get-supported-msrs" class="headerlink" title="1. kvm_get_supported_msrs()"></a>1. kvm_get_supported_msrs()</h1><ol>
-<li>QEMU会使用kvm_ioctl(KVM_GET_MSR_INDEX_LIST)，然后KVM会返回当前kvm模块支持的msr_to_save[]数组和emulated_msr[]数组（<a href="kvm对MSR寄存器的处理（三）.html">参见KVM对MSR寄存器的处理（三）</a>）给QEMU。</li>
-<li>但QEMU并不保存这些MSR的内容，而是根据返回的支持的MSR来设置一些全局的静态变量来表示是否有对应的MSR。</li>
-<li>如has_msr_star, has_msr_hsave_pa, … , has_msr_arch_capabs等，这里QEMU是记录其关心的MSR，应该有部分KVM返回的MSR是没有用的（本人没有统计）。</li>
-</ol>
-<h1 id="2-kvm-get-supported-feature-msrs"><a href="#2-kvm-get-supported-feature-msrs" class="headerlink" title="2. kvm_get_supported_feature_msrs()"></a>2. kvm_get_supported_feature_msrs()</h1><ol>
-<li>QEMU首先kvm_check_extension(KVM_CAP_GET_MSR_FEATURES)来查询KVM是否支持查询KVM_GET_MSR_FEATURE_INDEX_LIST;</li>
-<li>然后调用kvm_ioctl(KVM_GET_MSR_FEATURE_INDEX_LIST)获取kvm的msr_based_features[]数组的大小；</li>
-<li>然后为全局变量kvm_feature_msrs申请对需要的空间来存储从KVM获得msr_based_features[]数组；</li>
-<li>并再一次调用kvm_ioctl(KVM_GET_MSR_FEATURE_INDEX_LIST)，最后将获取的msr_based_features[]数组存到全局变量kvm_feature_msrs变量中。</li>
-</ol>
-<blockquote>
-<p>注意：<br><strong>我们可以看到，kvm_get_supported_msrs()获取到相应的msr数组后，没有保存对应的index,而是取其需要的msr来设置对应的全局标志变量,不一定会用到所有的KVM返回的MSR；<br>而kvm_get_supported_feature_msrs()会获取KVM的msr_based_features[]数组，并且不做过滤，直接保存。</strong></p>
-</blockquote>
-<h1 id="3-kvm-arch-get-supported-msr-feature-KVMState-s-uint32-t-index"><a href="#3-kvm-arch-get-supported-msr-feature-KVMState-s-uint32-t-index" class="headerlink" title="3. kvm_arch_get_supported_msr_feature(KVMState *s, uint32_t index)"></a>3. kvm_arch_get_supported_msr_feature(KVMState *s, uint32_t index)</h1><p>该函数负责向KVM获取指定的feature MSR的值。</p>
-<ol>
-<li>检查全局变量kvm_feature_msrs是否为NULL，即为上一小节中kvm_get_supported_feature_msrs()初始化的；如果为NULL，则说明host不支持feature MSRs;那么直接return 0。</li>
-<li>依次遍历kvm_feature_msrs中每一个MSR，找到目标index所对应的MSR，如果在kvm_feature_msrs中没有，那么直接return 0。</li>
-<li>到了这一步，说明需要查询的feature MSR存在，即KVM支持；那么调用kvm_ioctl(KVM_GET_MSRS)获取该MSR的值。</li>
-</ol>
-<h1 id="4-x86-cpu-get-supported-feature-word-FeatureWord-w-bool-migratable-only"><a href="#4-x86-cpu-get-supported-feature-word-FeatureWord-w-bool-migratable-only" class="headerlink" title="4. x86_cpu_get_supported_feature_word(FeatureWord w, bool migratable_only)"></a>4. x86_cpu_get_supported_feature_word(FeatureWord w, bool migratable_only)</h1><p>第一个参数FeatureWord w为枚举变量，该函数会根据w，取出静态全局数组Static FeatureWordInfo feature_word_info[FEATURE_WORDS]中对应的FeatureWordInfo条目。<br>然后判断该FeatureWordInfo-&gt;type是CPUID_FEATURE_WORD还是MSR_FEATURE_WORD,然后调用不同的函数来更新对应的FeatureWordInfo.</p>
-<ul>
-<li>CPUID_FEATURE_WORD<br>会调用kvm_arch_get_supported_cpuid(kvm_state, wi-&gt;cpuid.eax, wi-&gt;cpuid.ecx, wi-&gt;cpuid.reg);</li>
-</ul>
-<ol>
-<li>在该函数首先调用get_supported_cpuid()函数，查询KVM支持哪些CPUID。</li>
-</ol>
-<ul>
-<li>MSR_FEATURE_WORD<br>会调用kvm_arch_get_supported_msr_feature(kvm_state, wi-&gt;msr.index);</li>
-</ul>
+        <p>本文介绍当使用<code>-cpu</code>参数指令cpu model后(不论是<code>-cpu host</code>或者<code>-cpu IceLake</code>等)，QEMU是如何根据不同的cpu model来设置CPUID features的。<br>关于<code>-cpu</code>参数的工作原理，可以参考<a href="qemu中cpu_model的设置.html">qemu中cpu model（cpu type）的设置</a><br><a id="more"></a></p>
+<h1 id="x86-cpu-load-def"><a href="#x86-cpu-load-def" class="headerlink" title="x86_cpu_load_def()"></a>x86_cpu_load_def()</h1><p>在target/i386/cpu.c中定义<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">const</span> TypeInfo x86_cpu_type_info = &#123;</span><br><span class="line">    .name = TYPE_X86_CPU,</span><br><span class="line">    .parent = TYPE_CPU,</span><br><span class="line">    .instance_size = <span class="keyword">sizeof</span>(X86CPU),</span><br><span class="line">    .instance_init = x86_cpu_initfn,                                                                                                                     </span><br><span class="line">    .abstract = <span class="literal">true</span>,</span><br><span class="line">    .class_size = <span class="keyword">sizeof</span>(X86CPUClass),</span><br><span class="line">    .class_init = x86_cpu_common_class_init,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<p>可以看到x86 CPU的instance_init句柄是x86_cpu_initfn()函数，下面我们来看该函数的实现。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">x86_cpu_initfn</span><span class="params">(Object *obj)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    CPUState *cs = CPU(obj);</span><br><span class="line">    X86CPU *cpu = X86_CPU(obj);</span><br><span class="line">    X86CPUClass *xcc = X86_CPU_GET_CLASS(obj);</span><br><span class="line">    CPUX86State *env = &amp;cpu-&gt;env;</span><br><span class="line">    FeatureWord w;</span><br><span class="line"></span><br><span class="line">    cs-&gt;env_ptr = env;</span><br><span class="line"></span><br><span class="line">    object_property_add(obj, <span class="string">"family"</span>, <span class="string">"int"</span>,</span><br><span class="line">                        x86_cpuid_version_get_family,</span><br><span class="line">                        x86_cpuid_version_set_family, <span class="literal">NULL</span>, <span class="literal">NULL</span>, <span class="literal">NULL</span>);</span><br><span class="line">    object_property_add(obj, <span class="string">"model"</span>, <span class="string">"int"</span>,</span><br><span class="line">                        x86_cpuid_version_get_model,</span><br><span class="line">                        x86_cpuid_version_set_model, <span class="literal">NULL</span>, <span class="literal">NULL</span>, <span class="literal">NULL</span>);</span><br><span class="line">    object_property_add(obj, <span class="string">"stepping"</span>, <span class="string">"int"</span>,</span><br><span class="line">                        x86_cpuid_version_get_stepping,</span><br><span class="line">                        x86_cpuid_version_set_stepping, <span class="literal">NULL</span>, <span class="literal">NULL</span>, <span class="literal">NULL</span>);</span><br><span class="line">    object_property_add_str(obj, <span class="string">"vendor"</span>,</span><br><span class="line">                            x86_cpuid_get_vendor,</span><br><span class="line">                            x86_cpuid_set_vendor, <span class="literal">NULL</span>);</span><br><span class="line">    object_property_add_str(obj, <span class="string">"model-id"</span>,</span><br><span class="line">                            x86_cpuid_get_model_id,</span><br><span class="line">                            x86_cpuid_set_model_id, <span class="literal">NULL</span>);</span><br><span class="line">    object_property_add(obj, <span class="string">"tsc-frequency"</span>, <span class="string">"int"</span>,</span><br><span class="line">                        x86_cpuid_get_tsc_freq,</span><br><span class="line">                        x86_cpuid_set_tsc_freq, <span class="literal">NULL</span>, <span class="literal">NULL</span>, <span class="literal">NULL</span>);</span><br><span class="line">    object_property_add(obj, <span class="string">"feature-words"</span>, <span class="string">"X86CPUFeatureWordInfo"</span>,</span><br><span class="line">                        x86_cpu_get_feature_words,</span><br><span class="line">                        <span class="literal">NULL</span>, <span class="literal">NULL</span>, (<span class="keyword">void</span> *)env-&gt;features, <span class="literal">NULL</span>);</span><br><span class="line">    object_property_add(obj, <span class="string">"filtered-features"</span>, <span class="string">"X86CPUFeatureWordInfo"</span>,</span><br><span class="line">                        x86_cpu_get_feature_words,</span><br><span class="line">                        <span class="literal">NULL</span>, <span class="literal">NULL</span>, (<span class="keyword">void</span> *)cpu-&gt;filtered_features, <span class="literal">NULL</span>);</span><br><span class="line"></span><br><span class="line">    object_property_add(obj, <span class="string">"crash-information"</span>, <span class="string">"GuestPanicInformation"</span>,</span><br><span class="line">                        x86_cpu_get_crash_info_qom, <span class="literal">NULL</span>, <span class="literal">NULL</span>, <span class="literal">NULL</span>, <span class="literal">NULL</span>);</span><br><span class="line"></span><br><span class="line">    cpu-&gt;hyperv_spinlock_attempts = HYPERV_SPINLOCK_NEVER_RETRY;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (w = <span class="number">0</span>; w &lt; FEATURE_WORDS; w++) &#123;</span><br><span class="line">        <span class="keyword">int</span> bitnr;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (bitnr = <span class="number">0</span>; bitnr &lt; <span class="number">32</span>; bitnr++) &#123;</span><br><span class="line">            x86_cpu_register_feature_bit_props(cpu, w, bitnr);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    object_property_add_alias(obj, <span class="string">"sse3"</span>, obj, <span class="string">"pni"</span>, &amp;error_abort);</span><br><span class="line">    object_property_add_alias(obj, <span class="string">"pclmuldq"</span>, obj, <span class="string">"pclmulqdq"</span>, &amp;error_abort);</span><br><span class="line">    object_property_add_alias(obj, <span class="string">"sse4-1"</span>, obj, <span class="string">"sse4.1"</span>, &amp;error_abort);</span><br><span class="line">    object_property_add_alias(obj, <span class="string">"sse4-2"</span>, obj, <span class="string">"sse4.2"</span>, &amp;error_abort);</span><br><span class="line">    object_property_add_alias(obj, <span class="string">"xd"</span>, obj, <span class="string">"nx"</span>, &amp;error_abort);</span><br><span class="line">    object_property_add_alias(obj, <span class="string">"ffxsr"</span>, obj, <span class="string">"fxsr-opt"</span>, &amp;error_abort);</span><br><span class="line">    object_property_add_alias(obj, <span class="string">"i64"</span>, obj, <span class="string">"lm"</span>, &amp;error_abort);</span><br><span class="line"></span><br><span class="line">    object_property_add_alias(obj, <span class="string">"ds_cpl"</span>, obj, <span class="string">"ds-cpl"</span>, &amp;error_abort);</span><br><span class="line">    object_property_add_alias(obj, <span class="string">"tsc_adjust"</span>, obj, <span class="string">"tsc-adjust"</span>, &amp;error_abort);</span><br><span class="line">    object_property_add_alias(obj, <span class="string">"fxsr_opt"</span>, obj, <span class="string">"fxsr-opt"</span>, &amp;error_abort);</span><br><span class="line">    object_property_add_alias(obj, <span class="string">"lahf_lm"</span>, obj, <span class="string">"lahf-lm"</span>, &amp;error_abort);</span><br><span class="line">    object_property_add_alias(obj, <span class="string">"cmp_legacy"</span>, obj, <span class="string">"cmp-legacy"</span>, &amp;error_abort);</span><br><span class="line">    object_property_add_alias(obj, <span class="string">"nodeid_msr"</span>, obj, <span class="string">"nodeid-msr"</span>, &amp;error_abort);</span><br><span class="line">    object_property_add_alias(obj, <span class="string">"perfctr_core"</span>, obj, <span class="string">"perfctr-core"</span>, &amp;error_abort);</span><br><span class="line">    object_property_add_alias(obj, <span class="string">"perfctr_nb"</span>, obj, <span class="string">"perfctr-nb"</span>, &amp;error_abort);</span><br><span class="line">    object_property_add_alias(obj, <span class="string">"kvm_nopiodelay"</span>, obj, <span class="string">"kvm-nopiodelay"</span>, &amp;error_abort);</span><br><span class="line">    object_property_add_alias(obj, <span class="string">"kvm_mmu"</span>, obj, <span class="string">"kvm-mmu"</span>, &amp;error_abort);</span><br><span class="line">    object_property_add_alias(obj, <span class="string">"kvm_asyncpf"</span>, obj, <span class="string">"kvm-asyncpf"</span>, &amp;error_abort);</span><br><span class="line">    object_property_add_alias(obj, <span class="string">"kvm_steal_time"</span>, obj, <span class="string">"kvm-steal-time"</span>, &amp;error_abort);</span><br><span class="line">    object_property_add_alias(obj, <span class="string">"kvm_pv_eoi"</span>, obj, <span class="string">"kvm-pv-eoi"</span>, &amp;error_abort);</span><br><span class="line">    object_property_add_alias(obj, <span class="string">"kvm_pv_unhalt"</span>, obj, <span class="string">"kvm-pv-unhalt"</span>, &amp;error_abort);</span><br><span class="line">    object_property_add_alias(obj, <span class="string">"svm_lock"</span>, obj, <span class="string">"svm-lock"</span>, &amp;error_abort);</span><br><span class="line">    object_property_add_alias(obj, <span class="string">"nrip_save"</span>, obj, <span class="string">"nrip-save"</span>, &amp;error_abort);</span><br><span class="line">    object_property_add_alias(obj, <span class="string">"tsc_scale"</span>, obj, <span class="string">"tsc-scale"</span>, &amp;error_abort);</span><br><span class="line">    object_property_add_alias(obj, <span class="string">"vmcb_clean"</span>, obj, <span class="string">"vmcb-clean"</span>, &amp;error_abort);</span><br><span class="line">    object_property_add_alias(obj, <span class="string">"pause_filter"</span>, obj, <span class="string">"pause-filter"</span>, &amp;error_abort);</span><br><span class="line">    object_property_add_alias(obj, <span class="string">"sse4_1"</span>, obj, <span class="string">"sse4.1"</span>, &amp;error_abort);</span><br><span class="line">    object_property_add_alias(obj, <span class="string">"sse4_2"</span>, obj, <span class="string">"sse4.2"</span>, &amp;error_abort);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (xcc-&gt;cpu_def) &#123;</span><br><span class="line">        x86_cpu_load_def(cpu, xcc-&gt;cpu_def, &amp;error_abort);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>可以看到在函数的最后调用了x86_cpu_load_def(cpu, xcc-&gt;cpu_def, &amp;error_abort)函数，在x86_cpu_load_def()函数中有for循环：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">x86_cpu_load_def</span><span class="params">(X86CPU *cpu, X86CPUDefinition *def, Error **errp)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	...</span><br><span class="line">	<span class="keyword">for</span> (w = <span class="number">0</span>; w &lt; FEATURE_WORDS; w++) &#123;</span><br><span class="line">		env-&gt;features[w] = def-&gt;features[w];</span><br><span class="line">	&#125;</span><br><span class="line">	...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>会使用def-&gt;features[]数组来初始化env-&gt;features[]数组。</p>
 
       
     </div>
@@ -612,12 +568,6 @@
 
     <footer class="post-footer">
       
-        <div class="post-tags">
-          
-            <a href="/tags/MSR/" rel="tag"># MSR</a>
-          
-        </div>
-      
 
       
       
@@ -627,8 +577,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/post/2019/1/kvm对guest中MSR寄存器的处理（二）-rdmsr.html" rel="next" title="kvm对guest中MSR寄存器的处理（二）-- rdmsr">
-                <i class="fa fa-chevron-left"></i> kvm对guest中MSR寄存器的处理（二）-- rdmsr
+              <a href="/post/2019/2/qemu中cpu_model的设置.html" rel="next" title="qemu中cpu model（cpu type）的设置">
+                <i class="fa fa-chevron-left"></i> qemu中cpu model（cpu type）的设置
               </a>
             
           </div>
@@ -636,10 +586,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/post/2019/1/kvm对MSR寄存器的处理（三）.html" rel="prev" title="kvm对MSR寄存器的处理（三）">
-                kvm对MSR寄存器的处理（三） <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -718,7 +664,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">58</span>
+                    <span class="site-state-item-count">60</span>
                     <span class="site-state-item-name">posts</span>
                   </a>
                 </div>
@@ -936,7 +882,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1-kvm-get-supported-msrs"><span class="nav-number">1.</span> <span class="nav-text">1. kvm_get_supported_msrs()</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-kvm-get-supported-feature-msrs"><span class="nav-number">2.</span> <span class="nav-text">2. kvm_get_supported_feature_msrs()</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3-kvm-arch-get-supported-msr-feature-KVMState-s-uint32-t-index"><span class="nav-number">3.</span> <span class="nav-text">3. kvm_arch_get_supported_msr_feature(KVMState *s, uint32_t index)</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#4-x86-cpu-get-supported-feature-word-FeatureWord-w-bool-migratable-only"><span class="nav-number">4.</span> <span class="nav-text">4. x86_cpu_get_supported_feature_word(FeatureWord w, bool migratable_only)</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#x86-cpu-load-def"><span class="nav-number">1.</span> <span class="nav-text">x86_cpu_load_def()</span></a></li></ol></div>
             
 
           </div>
@@ -977,7 +923,7 @@
     
       <span class="post-meta-item-text">Symbols count total: </span>
     
-    <span title="Symbols count total">230k</span>
+    <span title="Symbols count total">249k</span>
   
 
   
@@ -988,7 +934,7 @@
     
       <span class="post-meta-item-text">Reading time total &asymp;</span>
     
-    <span title="Reading time total">3:29</span>
+    <span title="Reading time total">3:47</span>
   
 </div>
 
@@ -1109,7 +1055,7 @@
   
     <script>
   window.livereOptions = {
-    refer: 'post/2019/1/QEMU对MSR的处理（一）.html'
+    refer: 'post/2019/2/qemu对CPUID的处理-cpu选项.html'
   };
   (function(d, s) {
     var j, e = d.getElementsByTagName(s)[0];
