@@ -374,7 +374,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://blog.calmisi.cn/post/2019/2/qemu对CPUID的处理-cpu选项.html"/>
+    <link itemprop="mainEntityOfPage" href="https://blog.calmisi.cn/post/2019/2/kernel对CPUID所能枚举的features的处理.html"/>
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Calmisi Lee"/>
@@ -394,7 +394,7 @@
           <h2 class="post-title" itemprop="name headline">
                 
                 
-                <a href="/post/2019/2/qemu对CPUID的处理-cpu选项.html" class="post-title-link" itemprop="url">qemu对CPUID的处理:-cpu选项</a>
+                <a href="/post/2019/2/kernel对CPUID所能枚举的features的处理.html" class="post-title-link" itemprop="url">kernel对CPUID所能枚举的features的处理</a>
               
             
           </h2>
@@ -419,12 +419,230 @@
                 
               
 
-              <time title="Created: 2019-02-17 23:16:29 / Modified: 20:58:40" itemprop="dateCreated datePublished" datetime="2019-02-17T23:16:29+08:00">2019-02-17</time>
+              <time title="Created: 2019-02-18 22:20:53 / Modified: 22:23:36" itemprop="dateCreated datePublished" datetime="2019-02-18T22:20:53+08:00">2019-02-18</time>
             
 
             
               
 
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Kernel/" itemprop="url" rel="index"><span itemprop="name">Kernel</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+            <span id="/post/2019/2/kernel对CPUID所能枚举的features的处理.html" class="leancloud_visitors" data-flag-title="kernel对CPUID所能枚举的features的处理">
+              <span class="post-meta-divider">|</span>
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Views: </span>
+              
+                <span class="leancloud-visitors-count"></span>
+            </span>
+          
+
+          
+
+          
+            <div class="post-symbolscount">
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Symbols count in article: </span>
+                
+                <span title="Symbols count in article">8.4k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Reading time &asymp;</span>
+                
+                <span title="Reading time">8 mins.</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>本文介绍Linux kernel是如何读取CPU支持哪些cpu features,并是如何将<code>CPUID</code>指令查询的cpu features保存到<code>boot_cpu_data.x86_capabilities</code>结构中的。</p>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/post/2019/2/kernel对CPUID所能枚举的features的处理.html#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://blog.calmisi.cn/post/2019/2/qemu对CPUID的处理.html"/>
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Calmisi Lee"/>
+      <meta itemprop="description" content="Pas de regrets"/>
+      <meta itemprop="image" content="/images/avatar.jpg"/>
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Calmisi Lee"/>
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/post/2019/2/qemu对CPUID的处理.html" class="post-title-link" itemprop="url">qemu对CPUID的处理</a>
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2019-02-17 23:16:29" itemprop="dateCreated datePublished" datetime="2019-02-17T23:16:29+08:00">2019-02-17</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2019-02-18 22:18:14" itemprop="dateModified" datetime="2019-02-18T22:18:14+08:00">2019-02-18</time>
               
             
           </span>
@@ -456,7 +674,7 @@
 
           
           
-            <span id="/post/2019/2/qemu对CPUID的处理-cpu选项.html" class="leancloud_visitors" data-flag-title="qemu对CPUID的处理:-cpu选项">
+            <span id="/post/2019/2/qemu对CPUID的处理.html" class="leancloud_visitors" data-flag-title="qemu对CPUID的处理">
               <span class="post-meta-divider">|</span>
               <span class="post-meta-item-icon">
                 <i class="fa fa-eye"></i>
@@ -481,7 +699,7 @@
                 
                   <span class="post-meta-item-text">Symbols count in article: </span>
                 
-                <span title="Symbols count in article">5.6k</span>
+                <span title="Symbols count in article">17k</span>
               
 
               
@@ -495,7 +713,7 @@
                 
                   <span class="post-meta-item-text">Reading time &asymp;</span>
                 
-                <span title="Reading time">5 mins.</span>
+                <span title="Reading time">15 mins.</span>
               
             </div>
           
@@ -520,7 +738,7 @@
           <!--noindex-->
           
             <div class="post-button text-center">
-              <a class="btn" href="/post/2019/2/qemu对CPUID的处理-cpu选项.html#more" rel="contents">
+              <a class="btn" href="/post/2019/2/qemu对CPUID的处理.html#more" rel="contents">
                 Read more &raquo;
               </a>
             </div>
@@ -2297,218 +2515,11 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://blog.calmisi.cn/post/2018/10/size-of-segment.html"/>
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Calmisi Lee"/>
-      <meta itemprop="description" content="Pas de regrets"/>
-      <meta itemprop="image" content="/images/avatar.jpg"/>
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Calmisi Lee"/>
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/post/2018/10/size-of-segment.html" class="post-title-link" itemprop="url">size of segment</a>
-              
-            
-          </h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-
-              
-                
-              
-
-              <time title="Created: 2018-10-28 15:23:53 / Modified: 15:29:27" itemprop="dateCreated datePublished" datetime="2018-10-28T15:23:53+08:00">2018-10-28</time>
-            
-
-            
-              
-
-              
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">In</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Intel-SDM/" itemprop="url" rel="index"><span itemprop="name">Intel-SDM</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-            
-          
-
-          
-          
-            <span id="/post/2018/10/size-of-segment.html" class="leancloud_visitors" data-flag-title="size of segment">
-              <span class="post-meta-divider">|</span>
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Views: </span>
-              
-                <span class="leancloud-visitors-count"></span>
-            </span>
-          
-
-          
-
-          
-            <div class="post-symbolscount">
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-file-word-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">Symbols count in article: </span>
-                
-                <span title="Symbols count in article">2.7k</span>
-              
-
-              
-                <span class="post-meta-divider">|</span>
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">Reading time &asymp;</span>
-                
-                <span title="Reading time">2 mins.</span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h1 id="在segment-descriptor中，高4个bytes-4-7bytes-的bit-22为D-B字段。"><a href="#在segment-descriptor中，高4个bytes-4-7bytes-的bit-22为D-B字段。" class="headerlink" title="在segment descriptor中，高4个bytes(4-7bytes)的bit 22为D/B字段。"></a>在segment descriptor中，高4个bytes(4-7bytes)的bit 22为D/B字段。</h1><p>（this flag should always be set to 1 for 32-bit code and data segments and 0 for 16-bit code and data segments）</p>
-<img src="/post/2018/10/size-of-segment/segment_descriptor.JPG" title="segment descriptor">
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/post/2018/10/size-of-segment.html#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-      
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
   <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="Next page"></i></a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="Next page"></i></a>
   </nav>
 
 
@@ -2555,7 +2566,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">60</span>
+                    <span class="site-state-item-count">61</span>
                     <span class="site-state-item-name">posts</span>
                   </a>
                 </div>
@@ -2602,7 +2613,9 @@
                     
                       
                     
-                    <span class="site-state-item-count">17</span>
+                      
+                    
+                    <span class="site-state-item-count">18</span>
                     <span class="site-state-item-name">categories</span>
                   </a>
                 </div>
@@ -2711,7 +2724,9 @@
                     
                       
                     
-                    <span class="site-state-item-count">48</span>
+                      
+                    
+                    <span class="site-state-item-count">49</span>
                     <span class="site-state-item-name">tags</span>
                   </a>
                 </div>
@@ -2797,7 +2812,7 @@
     
       <span class="post-meta-item-text">Symbols count total: </span>
     
-    <span title="Symbols count total">249k</span>
+    <span title="Symbols count total">269k</span>
   
 
   
@@ -2808,7 +2823,7 @@
     
       <span class="post-meta-item-text">Reading time total &asymp;</span>
     
-    <span title="Reading time total">3:47</span>
+    <span title="Reading time total">4:04</span>
   
 </div>
 

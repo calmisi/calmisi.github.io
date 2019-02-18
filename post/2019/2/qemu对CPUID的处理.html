@@ -1,0 +1,1612 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222"/>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2"/>
+
+<link rel="stylesheet" href="/css/main.css?v=7.0.0"/>
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/8.jpg?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/8.jpg?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.ico?v=7.0.0">
+
+
+  <link rel="mask-icon" href="/images/8.jpg?v=7.0.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.0.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="本文介绍当使用-cpu参数指令cpu model后(不论是-cpu host或者-cpu IceLake等)，QEMU是如何根据不同的cpu model来设置CPUID features的。关于-cpu参数的工作原理，可以参考qemu中cpu model（cpu type）的设置">
+<meta property="og:type" content="article">
+<meta property="og:title" content="qemu对CPUID的处理">
+<meta property="og:url" content="https://blog.calmisi.cn/post/2019/2/qemu对CPUID的处理.html">
+<meta property="og:site_name" content="Calmisi Lee">
+<meta property="og:description" content="本文介绍当使用-cpu参数指令cpu model后(不论是-cpu host或者-cpu IceLake等)，QEMU是如何根据不同的cpu model来设置CPUID features的。关于-cpu参数的工作原理，可以参考qemu中cpu model（cpu type）的设置">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2019-02-18T14:18:14.258Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="qemu对CPUID的处理">
+<meta name="twitter:description" content="本文介绍当使用-cpu参数指令cpu model后(不论是-cpu host或者-cpu IceLake等)，QEMU是如何根据不同的cpu model来设置CPUID features的。关于-cpu参数的工作原理，可以参考qemu中cpu model（cpu type）的设置">
+
+
+
+
+
+
+  <link rel="canonical" href="https://blog.calmisi.cn/post/2019/2/qemu对CPUID的处理.html"/>
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>qemu对CPUID的处理 | Calmisi Lee</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Calmisi Lee</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <h1 class="site-subtitle" itemprop="description">Never like what you think.</h1>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br/>Home</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br/>Archives</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br/>Tags</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br/>Categories</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br/>About</a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br/>Search</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="Searching..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://blog.calmisi.cn/post/2019/2/qemu对CPUID的处理.html"/>
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Calmisi Lee"/>
+      <meta itemprop="description" content="Pas de regrets"/>
+      <meta itemprop="image" content="/images/avatar.jpg"/>
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Calmisi Lee"/>
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">qemu对CPUID的处理
+
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2019-02-17 23:16:29" itemprop="dateCreated datePublished" datetime="2019-02-17T23:16:29+08:00">2019-02-17</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2019-02-18 22:18:14" itemprop="dateModified" datetime="2019-02-18T22:18:14+08:00">2019-02-18</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/QEMU/" itemprop="url" rel="index"><span itemprop="name">QEMU</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+            <span id="/post/2019/2/qemu对CPUID的处理.html" class="leancloud_visitors" data-flag-title="qemu对CPUID的处理">
+              <span class="post-meta-divider">|</span>
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Views: </span>
+              
+                <span class="leancloud-visitors-count"></span>
+            </span>
+          
+
+          
+
+          
+            <div class="post-symbolscount">
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Symbols count in article: </span>
+                
+                <span title="Symbols count in article">17k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Reading time &asymp;</span>
+                
+                <span title="Reading time">15 mins.</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>本文介绍当使用<code>-cpu</code>参数指令cpu model后(不论是<code>-cpu host</code>或者<code>-cpu IceLake</code>等)，QEMU是如何根据不同的cpu model来设置CPUID features的。<br>关于<code>-cpu</code>参数的工作原理，可以参考<a href="qemu中cpu_model的设置.html">qemu中cpu model（cpu type）的设置</a><br><a id="more"></a></p>
+<h1 id="QEMU-Feature"><a href="#QEMU-Feature" class="headerlink" title="QEMU Feature"></a>QEMU Feature</h1><p>关于x86的CPU，有CPUID指令可以查询CPU支持哪些feature。QEMU作为模拟器，在模拟CPU的时候，就涉及到如何表示x86 CPU的这些feature。</p>
+<blockquote>
+<p>在linux系统中，可以通过<code>lscpu</code>命令查看当前CPU支持哪些features(即<code>lscpu</code>命令输出的Flags，或者直接查看<code>/proc/cpuinfo</code>中的flags)，这些flags即表示当前CPU支持哪些features。<br>通常这些feature，可以通过<code>CPUID</code>指令查询指定leaf_subleaf_E(A/B/C/D)X中某一个bit来表示当前CPU是否支持某个feature。<br>后来出现了feature-based MSR,即MSR中不同bit也可以表示是否支持某个feature。<br>在QEMU中对这些feature的不同索引定义为<code>FeatureWord</code>，每个<code>FeatureWord</code>可以是CPUID(leaf_subleaf_E(A/B/C/D)X)或者MSR。并且用<code>enum FeatureWord</code>表示x86平台总共支持的FeatureWord数。<br>在QEMU中，target/i386/cpu.c文件中<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* CPUID feature words */</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">enum</span> FeatureWord &#123;</span><br><span class="line">    FEAT_1_EDX,         <span class="comment">/* CPUID[1].EDX */</span></span><br><span class="line">    FEAT_1_ECX,         <span class="comment">/* CPUID[1].ECX */</span></span><br><span class="line">    FEAT_7_0_EBX,       <span class="comment">/* CPUID[EAX=7,ECX=0].EBX */</span></span><br><span class="line">    FEAT_7_0_ECX,       <span class="comment">/* CPUID[EAX=7,ECX=0].ECX */</span></span><br><span class="line">    FEAT_7_0_EDX,       <span class="comment">/* CPUID[EAX=7,ECX=0].EDX */</span></span><br><span class="line">    FEAT_8000_0001_EDX, <span class="comment">/* CPUID[8000_0001].EDX */</span></span><br><span class="line">    FEAT_8000_0001_ECX, <span class="comment">/* CPUID[8000_0001].ECX */</span></span><br><span class="line">    FEAT_8000_0007_EDX, <span class="comment">/* CPUID[8000_0007].EDX */</span></span><br><span class="line">    FEAT_8000_0008_EBX, <span class="comment">/* CPUID[8000_0008].EBX */</span></span><br><span class="line">    FEAT_C000_0001_EDX, <span class="comment">/* CPUID[C000_0001].EDX */</span></span><br><span class="line">    FEAT_KVM,           <span class="comment">/* CPUID[4000_0001].EAX (KVM_CPUID_FEATURES) */</span></span><br><span class="line">    FEAT_KVM_HINTS,     <span class="comment">/* CPUID[4000_0001].EDX */</span></span><br><span class="line">    FEAT_HYPERV_EAX,    <span class="comment">/* CPUID[4000_0003].EAX */</span></span><br><span class="line">    FEAT_HYPERV_EBX,    <span class="comment">/* CPUID[4000_0003].EBX */</span></span><br><span class="line">    FEAT_HYPERV_EDX,    <span class="comment">/* CPUID[4000_0003].EDX */</span></span><br><span class="line">    FEAT_HV_RECOMM_EAX, <span class="comment">/* CPUID[4000_0004].EAX */</span></span><br><span class="line">    FEAT_HV_NESTED_EAX, <span class="comment">/* CPUID[4000_000A].EAX */</span></span><br><span class="line">    FEAT_SVM,           <span class="comment">/* CPUID[8000_000A].EDX */</span></span><br><span class="line">    FEAT_XSAVE,         <span class="comment">/* CPUID[EAX=0xd,ECX=1].EAX */</span></span><br><span class="line">    FEAT_6_EAX,         <span class="comment">/* CPUID[6].EAX */</span></span><br><span class="line">    FEAT_XSAVE_COMP_LO, <span class="comment">/* CPUID[EAX=0xd,ECX=0].EAX */</span></span><br><span class="line">    FEAT_XSAVE_COMP_HI, <span class="comment">/* CPUID[EAX=0xd,ECX=0].EDX */</span></span><br><span class="line">    FEAT_ARCH_CAPABILITIES,</span><br><span class="line">    FEATURE_WORDS,</span><br><span class="line">&#125; FeatureWord;</span><br></pre></td></tr></table></figure></p>
+</blockquote>
+<p>然后在QEMU中定义了<code>feature_word_info[]</code>数组，其表示了每个FeatureWord中有效的bit位有哪些，分别表示哪个feature等信息。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> FeatureWordInfo feature_word_info[FEATURE_WORDS] = &#123;</span><br><span class="line">	[FEAT_1_EDX] = &#123;</span><br><span class="line">		...</span><br><span class="line">	&#125;,</span><br><span class="line">	[FEAT_1_ECX] = &#123;</span><br><span class="line">		...</span><br><span class="line">	&#125;,</span><br><span class="line">	...</span><br><span class="line">	[FEAT_ARCH_CAPABILITIES] = &#123;</span><br><span class="line">		...</span><br><span class="line">	&#125;,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<h1 id="How-to-load-and-filter-CPUID-data"><a href="#How-to-load-and-filter-CPUID-data" class="headerlink" title="How to load and filter CPUID data"></a>How to load and filter CPUID data</h1><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/***** Steps involved on loading and filtering CPUID data</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * When initializing and realizing a CPU object, the steps</span></span><br><span class="line"><span class="comment"> * involved in setting up CPUID data are:</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * 1) Loading CPU model definition (X86CPUDefinition). This is</span></span><br><span class="line"><span class="comment"> *    implemented by x86_cpu_load_def() and should be completely</span></span><br><span class="line"><span class="comment"> *    transparent, as it is done automatically by instance_init.</span></span><br><span class="line"><span class="comment"> *    No code should need to look at X86CPUDefinition structs</span></span><br><span class="line"><span class="comment"> *    outside instance_init.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * 2) CPU expansion. This is done by realize before CPUID</span></span><br><span class="line"><span class="comment"> *    filtering, and will make sure host/accelerator data is</span></span><br><span class="line"><span class="comment"> *    loaded for CPU models that depend on host capabilities</span></span><br><span class="line"><span class="comment"> *    (e.g. "host"). Done by x86_cpu_expand_features().</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * 3) CPUID filtering. This initializes extra data related to</span></span><br><span class="line"><span class="comment"> *    CPUID, and checks if the host supports all capabilities</span></span><br><span class="line"><span class="comment"> *    required by the CPU. Runnability of a CPU model is</span></span><br><span class="line"><span class="comment"> *    determined at this step. Done by x86_cpu_filter_features().</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * Some operations don't require all steps to be performed.</span></span><br><span class="line"><span class="comment"> * More precisely:</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * - CPU instance creation (instance_init) will run only CPU</span></span><br><span class="line"><span class="comment"> *   model loading. CPU expansion can't run at instance_init-time</span></span><br><span class="line"><span class="comment"> *   because host/accelerator data may be not available yet.</span></span><br><span class="line"><span class="comment"> * - CPU realization will perform both CPU model expansion and CPUID</span></span><br><span class="line"><span class="comment"> *   filtering, and return an error in case one of them fails.</span></span><br><span class="line"><span class="comment"> * - query-cpu-definitions needs to run all 3 steps. It needs</span></span><br><span class="line"><span class="comment"> *   to run CPUID filtering, as the 'unavailable-features'</span></span><br><span class="line"><span class="comment"> *   field is set based on the filtering results.</span></span><br><span class="line"><span class="comment"> * - The query-cpu-model-expansion QMP command only needs to run</span></span><br><span class="line"><span class="comment"> *   CPU model loading and CPU expansion. It should not filter</span></span><br><span class="line"><span class="comment"> *   any CPUID data based on host capabilities.</span></span><br><span class="line"><span class="comment"> */</span></span><br></pre></td></tr></table></figure>
+<h1 id="1-Load-CPU-model-definition"><a href="#1-Load-CPU-model-definition" class="headerlink" title="1) Load CPU model definition"></a>1) Load CPU model definition</h1><p>仅存在于使用<code>-cpu</code>指定了特定了特定的CPU model的情况。</p>
+<h2 id="instance-init"><a href="#instance-init" class="headerlink" title="instance_init"></a>instance_init</h2><p>在上一篇文章<a href="qemu中cpu_model的设置.html">qemu中cpu model（cpu type）的设置</a>中提到了5类CPU TYPE:</p>
+<ol>
+<li><code>x86_64-cpu</code>:<br>parent = cpu;<br>instance_init = <code>x86_cpu_initfn</code>;<br>class_init = <code>x86_cpu_common_class_init</code>;</li>
+<li><code>max-x86_64-cpu</code>:<br>parent = x86_64-cpu;<br>instance_init = <code>max_x86_cpu_initfn</code>;<br>class_init = <code>max_x86_cpu_class_init</code>;</li>
+<li><code>base-x86_64-cpu</code>:<br>parent = x86_64-cpu<br>instance_init = parent.instance_init(<code>x86_cpu_initfn</code>);<br>class_init = <code>x86_cpu_base_class_init</code>;</li>
+<li><code>host--x86_64-cpu</code>:<br>parent = max-x86_64-cpu;<br>instance_init = parent.instance_init(<code>max_x86_cpu_initfn</code>);<br>class_init = <code>host_x86_cpu_class_init</code>;</li>
+<li><code>(cpu model)-x86_64-cpu</code>:<br>parent = x86_64-cpu;<br>instance_init = parent.instance_init(<code>x86_cpu_initfn</code>);<br>class_init = <code>x86_cpu_cpudef_class_init</code>;</li>
+</ol>
+<h2 id="x86-cpu-initfn"><a href="#x86-cpu-initfn" class="headerlink" title="x86_cpu_initfn"></a>x86_cpu_initfn</h2><p><code>x86_64-cpu</code>、<code>base-x86_64-cpu</code>、<code>(cpu model)-x86_64-cpu</code>会调用<code>x86_cpu_initfn()</code>作为instance_init。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">x86_cpu_initfn</span><span class="params">(Object *obj)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    CPUState *cs = CPU(obj);</span><br><span class="line">    X86CPU *cpu = X86_CPU(obj);</span><br><span class="line">    X86CPUClass *xcc = X86_CPU_GET_CLASS(obj);</span><br><span class="line">    CPUX86State *env = &amp;cpu-&gt;env;</span><br><span class="line">    FeatureWord w;</span><br><span class="line"></span><br><span class="line">    cs-&gt;env_ptr = env; </span><br><span class="line"></span><br><span class="line">    object_property_add(obj, <span class="string">"family"</span>, <span class="string">"int"</span>,</span><br><span class="line">                        x86_cpuid_version_get_family,</span><br><span class="line">                        x86_cpuid_version_set_family, <span class="literal">NULL</span>, <span class="literal">NULL</span>, <span class="literal">NULL</span>);</span><br><span class="line">    object_property_add(obj, <span class="string">"model"</span>, <span class="string">"int"</span>,</span><br><span class="line">                        x86_cpuid_version_get_model,</span><br><span class="line">                        x86_cpuid_version_set_model, <span class="literal">NULL</span>, <span class="literal">NULL</span>, <span class="literal">NULL</span>);</span><br><span class="line">    object_property_add(obj, <span class="string">"stepping"</span>, <span class="string">"int"</span>,</span><br><span class="line">                        x86_cpuid_version_get_stepping,</span><br><span class="line">                        x86_cpuid_version_set_stepping, <span class="literal">NULL</span>, <span class="literal">NULL</span>, <span class="literal">NULL</span>);</span><br><span class="line">    object_property_add_str(obj, <span class="string">"vendor"</span>,</span><br><span class="line">                            x86_cpuid_get_vendor,</span><br><span class="line">                            x86_cpuid_set_vendor, <span class="literal">NULL</span>);</span><br><span class="line">    object_property_add_str(obj, <span class="string">"model-id"</span>,</span><br><span class="line">                            x86_cpuid_get_model_id,</span><br><span class="line">                            x86_cpuid_set_model_id, <span class="literal">NULL</span>);</span><br><span class="line">    object_property_add(obj, <span class="string">"tsc-frequency"</span>, <span class="string">"int"</span>,</span><br><span class="line">                        x86_cpuid_get_tsc_freq,</span><br><span class="line">                        x86_cpuid_set_tsc_freq, <span class="literal">NULL</span>, <span class="literal">NULL</span>, <span class="literal">NULL</span>);</span><br><span class="line">    object_property_add(obj, <span class="string">"feature-words"</span>, <span class="string">"X86CPUFeatureWordInfo"</span>,</span><br><span class="line">                        x86_cpu_get_feature_words,</span><br><span class="line">                        <span class="literal">NULL</span>, <span class="literal">NULL</span>, (<span class="keyword">void</span> *)env-&gt;features, <span class="literal">NULL</span>);</span><br><span class="line">    object_property_add(obj, <span class="string">"filtered-features"</span>, <span class="string">"X86CPUFeatureWordInfo"</span>,</span><br><span class="line">                        x86_cpu_get_feature_words,</span><br><span class="line">                        <span class="literal">NULL</span>, <span class="literal">NULL</span>, (<span class="keyword">void</span> *)cpu-&gt;filtered_features, <span class="literal">NULL</span>);</span><br><span class="line"></span><br><span class="line">    object_property_add(obj, <span class="string">"crash-information"</span>, <span class="string">"GuestPanicInformation"</span>,</span><br><span class="line">                        x86_cpu_get_crash_info_qom, <span class="literal">NULL</span>, <span class="literal">NULL</span>, <span class="literal">NULL</span>, <span class="literal">NULL</span>);</span><br><span class="line"></span><br><span class="line">    cpu-&gt;hyperv_spinlock_attempts = HYPERV_SPINLOCK_NEVER_RETRY;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (w = <span class="number">0</span>; w &lt; FEATURE_WORDS; w++) &#123;</span><br><span class="line">        <span class="keyword">int</span> bitnr;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (bitnr = <span class="number">0</span>; bitnr &lt; <span class="number">32</span>; bitnr++) &#123;</span><br><span class="line">            x86_cpu_register_feature_bit_props(cpu, w, bitnr);</span><br><span class="line">        &#125;    </span><br><span class="line">    &#125;    </span><br><span class="line"></span><br><span class="line">    object_property_add_alias(obj, <span class="string">"sse3"</span>, obj, <span class="string">"pni"</span>, &amp;error_abort);</span><br><span class="line">    object_property_add_alias(obj, <span class="string">"pclmuldq"</span>, obj, <span class="string">"pclmulqdq"</span>, &amp;error_abort);</span><br><span class="line">    object_property_add_alias(obj, <span class="string">"sse4-1"</span>, obj, <span class="string">"sse4.1"</span>, &amp;error_abort);</span><br><span class="line">    object_property_add_alias(obj, <span class="string">"sse4-2"</span>, obj, <span class="string">"sse4.2"</span>, &amp;error_abort);</span><br><span class="line">    object_property_add_alias(obj, <span class="string">"xd"</span>, obj, <span class="string">"nx"</span>, &amp;error_abort);</span><br><span class="line">    object_property_add_alias(obj, <span class="string">"ffxsr"</span>, obj, <span class="string">"fxsr-opt"</span>, &amp;error_abort);</span><br><span class="line">    object_property_add_alias(obj, <span class="string">"i64"</span>, obj, <span class="string">"lm"</span>, &amp;error_abort);</span><br><span class="line"></span><br><span class="line">    object_property_add_alias(obj, <span class="string">"ds_cpl"</span>, obj, <span class="string">"ds-cpl"</span>, &amp;error_abort);</span><br><span class="line">    object_property_add_alias(obj, <span class="string">"tsc_adjust"</span>, obj, <span class="string">"tsc-adjust"</span>, &amp;error_abort);</span><br><span class="line">    object_property_add_alias(obj, <span class="string">"fxsr_opt"</span>, obj, <span class="string">"fxsr-opt"</span>, &amp;error_abort);</span><br><span class="line">    object_property_add_alias(obj, <span class="string">"lahf_lm"</span>, obj, <span class="string">"lahf-lm"</span>, &amp;error_abort);</span><br><span class="line">    object_property_add_alias(obj, <span class="string">"cmp_legacy"</span>, obj, <span class="string">"cmp-legacy"</span>, &amp;error_abort);</span><br><span class="line">    object_property_add_alias(obj, <span class="string">"nodeid_msr"</span>, obj, <span class="string">"nodeid-msr"</span>, &amp;error_abort);</span><br><span class="line">    object_property_add_alias(obj, <span class="string">"perfctr_core"</span>, obj, <span class="string">"perfctr-core"</span>, &amp;error_abort);</span><br><span class="line">    object_property_add_alias(obj, <span class="string">"perfctr_nb"</span>, obj, <span class="string">"perfctr-nb"</span>, &amp;error_abort);</span><br><span class="line">    object_property_add_alias(obj, <span class="string">"kvm_nopiodelay"</span>, obj, <span class="string">"kvm-nopiodelay"</span>, &amp;error_abort);</span><br><span class="line">    object_property_add_alias(obj, <span class="string">"kvm_mmu"</span>, obj, <span class="string">"kvm-mmu"</span>, &amp;error_abort);</span><br><span class="line">    object_property_add_alias(obj, <span class="string">"kvm_asyncpf"</span>, obj, <span class="string">"kvm-asyncpf"</span>, &amp;error_abort);</span><br><span class="line">    object_property_add_alias(obj, <span class="string">"kvm_steal_time"</span>, obj, <span class="string">"kvm-steal-time"</span>, &amp;error_abort);</span><br><span class="line">    object_property_add_alias(obj, <span class="string">"kvm_pv_eoi"</span>, obj, <span class="string">"kvm-pv-eoi"</span>, &amp;error_abort);</span><br><span class="line">    object_property_add_alias(obj, <span class="string">"kvm_pv_unhalt"</span>, obj, <span class="string">"kvm-pv-unhalt"</span>, &amp;error_abort);</span><br><span class="line">    object_property_add_alias(obj, <span class="string">"svm_lock"</span>, obj, <span class="string">"svm-lock"</span>, &amp;error_abort);</span><br><span class="line">    object_property_add_alias(obj, <span class="string">"nrip_save"</span>, obj, <span class="string">"nrip-save"</span>, &amp;error_abort);</span><br><span class="line">    object_property_add_alias(obj, <span class="string">"tsc_scale"</span>, obj, <span class="string">"tsc-scale"</span>, &amp;error_abort);</span><br><span class="line">    object_property_add_alias(obj, <span class="string">"vmcb_clean"</span>, obj, <span class="string">"vmcb-clean"</span>, &amp;error_abort);</span><br><span class="line">    object_property_add_alias(obj, <span class="string">"pause_filter"</span>, obj, <span class="string">"pause-filter"</span>, &amp;error_abort);</span><br><span class="line">    object_property_add_alias(obj, <span class="string">"sse4_1"</span>, obj, <span class="string">"sse4.1"</span>, &amp;error_abort);</span><br><span class="line">    object_property_add_alias(obj, <span class="string">"sse4_2"</span>, obj, <span class="string">"sse4.2"</span>, &amp;error_abort);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (xcc-&gt;cpu_def) &#123;</span><br><span class="line">        x86_cpu_load_def(cpu, xcc-&gt;cpu_def, &amp;error_abort);</span><br><span class="line">    &#125;    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>可以看到在函数的最后调用了x86_cpu_load_def(cpu, xcc-&gt;cpu_def, &amp;error_abort)函数，在x86_cpu_load_def()函数中有for循环：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">x86_cpu_load_def</span><span class="params">(X86CPU *cpu, X86CPUDefinition *def, Error **errp)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	...</span><br><span class="line">	<span class="keyword">for</span> (w = <span class="number">0</span>; w &lt; FEATURE_WORDS; w++) &#123;</span><br><span class="line">		env-&gt;features[w] = def-&gt;features[w];</span><br><span class="line">	&#125;</span><br><span class="line">	...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>会使用def-&gt;features[]数组来初始化env-&gt;features[]数组。</p>
+<h1 id="2-CPU-expansion"><a href="#2-CPU-expansion" class="headerlink" title="2) CPU expansion"></a>2) CPU expansion</h1><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* Expand CPU configuration data, based on configured features</span></span><br><span class="line"><span class="comment"> * and host/accelerator capabilities when appropriate.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">x86_cpu_expand_features</span><span class="params">(X86CPU *cpu, Error **errp)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    CPUX86State *env = &amp;cpu-&gt;env;</span><br><span class="line">    FeatureWord w;</span><br><span class="line">    GList *l;</span><br><span class="line">    Error *local_err = <span class="literal">NULL</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/*<span class="doctag">TODO:</span> Now cpu-&gt;max_features doesn't overwrite features</span></span><br><span class="line"><span class="comment">     * set using QOM properties, and we can convert</span></span><br><span class="line"><span class="comment">     * plus_features &amp; minus_features to global properties</span></span><br><span class="line"><span class="comment">     * inside x86_cpu_parse_featurestr() too.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">if</span> (cpu-&gt;max_features) &#123;</span><br><span class="line">        <span class="keyword">for</span> (w = <span class="number">0</span>; w &lt; FEATURE_WORDS; w++) &#123;</span><br><span class="line">            <span class="comment">/* Override only features that weren't set explicitly</span></span><br><span class="line"><span class="comment">             * by the user.</span></span><br><span class="line"><span class="comment">             */</span></span><br><span class="line">            env-&gt;features[w] |=</span><br><span class="line">                x86_cpu_get_supported_feature_word(w, cpu-&gt;migratable) &amp;</span><br><span class="line">                ~env-&gt;user_features[w] &amp; \</span><br><span class="line">                ~feature_word_info[w].no_autoenable_flags;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (l = plus_features; l; l = l-&gt;next) &#123;</span><br><span class="line">        <span class="keyword">const</span> <span class="keyword">char</span> *prop = l-&gt;data;</span><br><span class="line">        object_property_set_bool(OBJECT(cpu), <span class="literal">true</span>, prop, &amp;local_err);</span><br><span class="line">        <span class="keyword">if</span> (local_err) &#123;</span><br><span class="line">            <span class="keyword">goto</span> out;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (l = minus_features; l; l = l-&gt;next) &#123;</span><br><span class="line">        <span class="keyword">const</span> <span class="keyword">char</span> *prop = l-&gt;data;</span><br><span class="line">        object_property_set_bool(OBJECT(cpu), <span class="literal">false</span>, prop, &amp;local_err);</span><br><span class="line">        <span class="keyword">if</span> (local_err) &#123;</span><br><span class="line">            <span class="keyword">goto</span> out;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!kvm_enabled() || !cpu-&gt;expose_kvm) &#123;</span><br><span class="line">        env-&gt;features[FEAT_KVM] = <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    x86_cpu_enable_xsave_components(cpu);</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* CPUID[EAX=7,ECX=0].EBX always increased level automatically: */</span></span><br><span class="line">    x86_cpu_adjust_feat_level(cpu, FEAT_7_0_EBX);</span><br><span class="line">    <span class="keyword">if</span> (cpu-&gt;full_cpuid_auto_level) &#123;</span><br><span class="line">        x86_cpu_adjust_feat_level(cpu, FEAT_1_EDX);</span><br><span class="line">        x86_cpu_adjust_feat_level(cpu, FEAT_1_ECX);</span><br><span class="line">        x86_cpu_adjust_feat_level(cpu, FEAT_6_EAX);</span><br><span class="line">        x86_cpu_adjust_feat_level(cpu, FEAT_7_0_ECX);</span><br><span class="line">        x86_cpu_adjust_feat_level(cpu, FEAT_8000_0001_EDX);</span><br><span class="line">        x86_cpu_adjust_feat_level(cpu, FEAT_8000_0001_ECX);</span><br><span class="line">        x86_cpu_adjust_feat_level(cpu, FEAT_8000_0007_EDX);</span><br><span class="line">        x86_cpu_adjust_feat_level(cpu, FEAT_8000_0008_EBX);</span><br><span class="line">        x86_cpu_adjust_feat_level(cpu, FEAT_C000_0001_EDX);</span><br><span class="line">        x86_cpu_adjust_feat_level(cpu, FEAT_SVM);</span><br><span class="line">        x86_cpu_adjust_feat_level(cpu, FEAT_XSAVE);</span><br><span class="line">        <span class="comment">/* SVM requires CPUID[0x8000000A] */</span></span><br><span class="line">        <span class="keyword">if</span> (env-&gt;features[FEAT_8000_0001_ECX] &amp; CPUID_EXT3_SVM) &#123;</span><br><span class="line">            x86_cpu_adjust_level(cpu, &amp;env-&gt;cpuid_min_xlevel, <span class="number">0x8000000A</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">/* SEV requires CPUID[0x8000001F] */</span></span><br><span class="line">        <span class="keyword">if</span> (sev_enabled()) &#123;</span><br><span class="line">            x86_cpu_adjust_level(cpu, &amp;env-&gt;cpuid_min_xlevel, <span class="number">0x8000001F</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Set cpuid_*level* based on cpuid_min_*level, if not explicitly set */</span></span><br><span class="line">    <span class="keyword">if</span> (env-&gt;cpuid_level == UINT32_MAX) &#123;</span><br><span class="line">        env-&gt;cpuid_level = env-&gt;cpuid_min_level;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (env-&gt;cpuid_xlevel == UINT32_MAX) &#123;</span><br><span class="line">        env-&gt;cpuid_xlevel = env-&gt;cpuid_min_xlevel;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (env-&gt;cpuid_xlevel2 == UINT32_MAX) &#123;</span><br><span class="line">        env-&gt;cpuid_xlevel2 = env-&gt;cpuid_min_xlevel2;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">out:</span><br><span class="line">    <span class="keyword">if</span> (local_err != <span class="literal">NULL</span>) &#123;</span><br><span class="line">        error_propagate(errp, local_err);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在代码的第17行开始的for循环中，针对每一个FeatureWord，设置env-&gt;feature[w]为<code>x86_cpu_get_supported_feature_word(w, cpu-&gt;migratable) &amp; ~env-&gt;user_features[w] &amp; ~feature_word_info[w].no_autoenable_flags</code>:</p>
+<ul>
+<li><code>x86_cpu_get_supported_feature_word(w, cpu-&gt;migratable)</code>:QEMU会调用<code>kvm_arch_get_supported_cpuid()</code>或者<code>kvm_arch_get_supported_msr_features()</code>向KVM查询支持的feature_word。<br>然后根据cpu-&gt;migrable进行进一步处理，如果cpu-&gt;migrable为true,则将刚才获取的feature_word &amp; feature_word_migratable;其feature_word_migratable为对应的FeatureWord中migratable_flags表示的bit位和FeatureWord.feat_names[i]有效并且不为unmigratable_flags的bit位（<strong>即为对应的FeatureWord.feat_names[]中有效bits去掉unmigratable的bits</strong>）。</li>
+<li>~env-&gt;user_features[w]: 去掉env-&gt;user_features[w]bit</li>
+<li>~feature_word_info[w].no_autoenable_flags; 取消对应的FeatureWord中不自动enable的bit.<br>由上面3个组成的FeatureWord于CPU Model中的env-&gt;features[w]相于，进行expand。</li>
+</ul>
+<p>然后根据<code>plus_features[]</code>数组和<code>minus_features[]</code>数组进行进一步的调整。<br>最后更新env-&gt;cpuid_level。</p>
+<h1 id="3-CPUID-filtering"><a href="#3-CPUID-filtering" class="headerlink" title="3) CPUID filtering"></a>3) CPUID filtering</h1><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * Finishes initialization of CPUID data, filters CPU feature</span></span><br><span class="line"><span class="comment"> * words based on host availability of each feature.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * Returns: 0 if all flags are supported by the host, non-zero otherwise.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">x86_cpu_filter_features</span><span class="params">(X86CPU *cpu)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    CPUX86State *env = &amp;cpu-&gt;env;</span><br><span class="line">    FeatureWord w;</span><br><span class="line">    <span class="keyword">int</span> rv = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (w = <span class="number">0</span>; w &lt; FEATURE_WORDS; w++) &#123;</span><br><span class="line">        <span class="keyword">uint32_t</span> host_feat =</span><br><span class="line">            x86_cpu_get_supported_feature_word(w, <span class="literal">false</span>);</span><br><span class="line">        <span class="keyword">uint32_t</span> requested_features = env-&gt;features[w];</span><br><span class="line">        env-&gt;features[w] &amp;= host_feat;</span><br><span class="line">        cpu-&gt;filtered_features[w] = requested_features &amp; ~env-&gt;features[w];</span><br><span class="line">        <span class="keyword">if</span> (cpu-&gt;filtered_features[w]) &#123;</span><br><span class="line">            rv = <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> ((env-&gt;features[FEAT_7_0_EBX] &amp; CPUID_7_0_EBX_INTEL_PT) &amp;&amp;</span><br><span class="line">        kvm_enabled()) &#123;</span><br><span class="line">        KVMState *s = CPU(cpu)-&gt;kvm_state;</span><br><span class="line">        <span class="keyword">uint32_t</span> eax_0 = kvm_arch_get_supported_cpuid(s, <span class="number">0x14</span>, <span class="number">0</span>, R_EAX);</span><br><span class="line">        <span class="keyword">uint32_t</span> ebx_0 = kvm_arch_get_supported_cpuid(s, <span class="number">0x14</span>, <span class="number">0</span>, R_EBX);</span><br><span class="line">        <span class="keyword">uint32_t</span> ecx_0 = kvm_arch_get_supported_cpuid(s, <span class="number">0x14</span>, <span class="number">0</span>, R_ECX);</span><br><span class="line">        <span class="keyword">uint32_t</span> eax_1 = kvm_arch_get_supported_cpuid(s, <span class="number">0x14</span>, <span class="number">1</span>, R_EAX);</span><br><span class="line">        <span class="keyword">uint32_t</span> ebx_1 = kvm_arch_get_supported_cpuid(s, <span class="number">0x14</span>, <span class="number">1</span>, R_EBX);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (!eax_0 ||</span><br><span class="line">           ((ebx_0 &amp; INTEL_PT_MINIMAL_EBX) != INTEL_PT_MINIMAL_EBX) ||</span><br><span class="line">           ((ecx_0 &amp; INTEL_PT_MINIMAL_ECX) != INTEL_PT_MINIMAL_ECX) ||</span><br><span class="line">           ((eax_1 &amp; INTEL_PT_MTC_BITMAP) != INTEL_PT_MTC_BITMAP) ||</span><br><span class="line">           ((eax_1 &amp; INTEL_PT_ADDR_RANGES_NUM_MASK) &lt;</span><br><span class="line">                                           INTEL_PT_ADDR_RANGES_NUM) ||</span><br><span class="line">           ((ebx_1 &amp; (INTEL_PT_PSB_BITMAP | INTEL_PT_CYCLE_BITMAP)) !=</span><br><span class="line">                (INTEL_PT_PSB_BITMAP | INTEL_PT_CYCLE_BITMAP)) ||</span><br><span class="line">           (ecx_0 &amp; INTEL_PT_IP_LIP)) &#123;</span><br><span class="line">            <span class="comment">/*</span></span><br><span class="line"><span class="comment">             * Processor Trace capabilities aren't configurable, so if the</span></span><br><span class="line"><span class="comment">             * host can't emulate the capabilities we report on</span></span><br><span class="line"><span class="comment">             * cpu_x86_cpuid(), intel-pt can't be enabled on the current host.</span></span><br><span class="line"><span class="comment">             */</span></span><br><span class="line">            env-&gt;features[FEAT_7_0_EBX] &amp;= ~CPUID_7_0_EBX_INTEL_PT;</span><br><span class="line">            cpu-&gt;filtered_features[FEAT_7_0_EBX] |= CPUID_7_0_EBX_INTEL_PT;</span><br><span class="line">            rv = <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> rv;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>第15行查询KVM物理host支持的该FeatureWord的值（并且不去掉unmigratable的bit）;<br>第17行根据物理host支持的FeatureWord更新env-&gt;features[w]；<br>第18行设置cpu-&gt;filtered_features[w]为被物理Host过滤掉的feature,即物理平台不支持的feature.<br>第24行开始为对Intel PT feature的特殊处理。</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div></div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>Donate</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechat_pay.jpg" alt="Calmisi Lee WeChat Pay"/>
+        <p>WeChat Pay</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/ali_pay.jpg" alt="Calmisi Lee Alipay"/>
+        <p>Alipay</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/post/2019/2/qemu中cpu_model的设置.html" rel="next" title="qemu中cpu model（cpu type）的设置">
+                <i class="fa fa-chevron-left"></i> qemu中cpu model（cpu type）的设置
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/post/2019/2/kernel对CPUID所能枚举的features的处理.html" rel="prev" title="kernel对CPUID所能枚举的features的处理">
+                kernel对CPUID所能枚举的features的处理 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8zOTc5MS8xNjMxOA=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Calmisi Lee"/>
+            
+              <p class="site-author-name" itemprop="name">Calmisi Lee</p>
+              <p class="site-description motion-element" itemprop="description">Pas de regrets</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">61</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">18</span>
+                    <span class="site-state-item-name">categories</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">49</span>
+                    <span class="site-state-item-name">tags</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/calmisi" title="GitHub &rarr; https://github.com/calmisi" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="mailto:calmisi@163.com" title="E-Mail &rarr; mailto:calmisi@163.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#QEMU-Feature"><span class="nav-number">1.</span> <span class="nav-text">QEMU Feature</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#How-to-load-and-filter-CPUID-data"><span class="nav-number">2.</span> <span class="nav-text">How to load and filter CPUID data</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#1-Load-CPU-model-definition"><span class="nav-number">3.</span> <span class="nav-text">1) Load CPU model definition</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#instance-init"><span class="nav-number">3.1.</span> <span class="nav-text">instance_init</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#x86-cpu-initfn"><span class="nav-number">3.2.</span> <span class="nav-text">x86_cpu_initfn</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-CPU-expansion"><span class="nav-number">4.</span> <span class="nav-text">2) CPU expansion</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3-CPUID-filtering"><span class="nav-number">5.</span> <span class="nav-text">3) CPUID filtering</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">  <a href="http://www.miitbeian.gov.cn" rel="noopener" target="_blank"> </a>&copy; 2015.6 – <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Calmisi Lee</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Symbols count total: </span>
+    
+    <span title="Symbols count total">269k</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Reading time total &asymp;</span>
+    
+    <span title="Reading time total">4:04</span>
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.0.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=7.0.0"></script>
+
+  <script src="/js/src/motion.js?v=7.0.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/affix.js?v=7.0.0"></script>
+
+  <script src="/js/src/schemes/pisces.js?v=7.0.0"></script>
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=7.0.0"></script>
+<script src="/js/src/post-details.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  
+    <script>
+  window.livereOptions = {
+    refer: 'post/2019/2/qemu对CPUID的处理.html'
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+</script>
+
+  
+
+
+  
+
+  <script>
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+  
+  <script>
+    
+    function addCount(Counter) {
+      var $visitors = $('.leancloud_visitors');
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+
+      Counter('get', '/classes/Counter', { where: JSON.stringify({ url }) })
+        .done(function({ results }) {
+          if (results.length > 0) {
+            var counter = results[0];
+            
+              var $element = $(document.getElementById(url));
+              $element.find('.leancloud-visitors-count').text(counter.time + 1);
+            
+            Counter('put', '/classes/Counter/' + counter.objectId, JSON.stringify({ time: { '__op': 'Increment', 'amount': 1 } }))
+            
+              .fail(function ({ responseJSON }) {
+                console.log(`Failed to save Visitor num, with error message: ${responseJSON.error}`);
+              })
+          } else {
+            
+              var $element = $(document.getElementById(url));
+              $element.find('.leancloud-visitors-count').text('Counter not initialized! More info at console err msg.');
+              console.error('ATTENTION! LeanCloud counter has security bug, see how to solve it here: https://github.com/theme-next/hexo-leancloud-counter-security. \n However, you can still use LeanCloud without security, by setting `security` option to `false`.');
+            
+          }
+        })
+        .fail(function ({ responseJSON }) {
+          console.log(`LeanCloud Counter Error: ${responseJSON.code} ${responseJSON.error}`);
+        });
+    }
+    
+
+    $(function() {
+      $.get('https://app-router.leancloud.cn/2/route?appId=' + 'tf4TRbjrkONfr7VekxlWI8Py-gzGzoHsz')
+        .done(function({ api_server }) {
+          var Counter = function(method, url, data) {
+            return $.ajax({
+              method: method,
+              url: 'https://' + api_server + '/1.1' + url,
+              headers: {
+                'X-LC-Id': 'tf4TRbjrkONfr7VekxlWI8Py-gzGzoHsz',
+                'X-LC-Key': '5c1wL7zY6VY7oLzi5xaCIu5x',
+                'Content-Type': 'application/json',
+              },
+              data: data
+            });
+          };
+          
+            addCount(Counter);
+          
+        });
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  <style>
+    .copy-btn {
+      display: inline-block;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 20px;
+      color: #333;
+      white-space: nowrap;
+      vertical-align: middle;
+      cursor: pointer;
+      background-color: #eee;
+      background-image: linear-gradient(#fcfcfc, #eee);
+      border: 1px solid #d5d5d5;
+      border-radius: 3px;
+      user-select: none;
+      outline: 0;
+    }
+
+    .highlight-wrap .copy-btn {
+      transition: opacity .3s ease-in-out;
+      opacity: 0;
+      padding: 2px 6px;
+      position: absolute;
+      right: 4px;
+      top: 8px;
+    }
+
+    .highlight-wrap:hover .copy-btn,
+    .highlight-wrap .copy-btn:focus {
+      opacity: 1
+    }
+
+    .highlight-wrap {
+      position: relative;
+    }
+  </style>
+  <script>
+    $('.highlight').each(function(i, e) {
+      var $wrap = $('<div>').addClass('highlight-wrap');
+      $(e).after($wrap);
+      $wrap.append($('<button>').addClass('copy-btn').append('Copy').on('click', function(e) {
+        var code = $(this).parent().find('.code').find('.line').map(function(i, e) {
+          return $(e).text();
+        }).toArray().join('\n');
+        var ta = document.createElement('textarea');
+        var range = document.createRange(); //For Chrome
+        var sel = window.getSelection(); //For Chrome
+        var yPosition = window.pageYOffset || document.documentElement.scrollTop;
+        ta.style.top = yPosition + 'px'; //Prevent page scroll
+        ta.style.position = 'absolute';
+        ta.style.opacity = '0';
+        ta.value = code;
+        ta.textContent = code; //For FireFox
+        ta.contentEditable = true;
+        ta.readOnly = false;
+        document.body.appendChild(ta);
+        range.selectNode(ta);
+        sel.removeAllRanges();
+        sel.addRange(range);
+        ta.setSelectionRange(0, code.length);
+        var result = document.execCommand('copy');
+        
+          if (result) $(this).text('Copied');
+          else $(this).text('Copy failed');
+        
+        ta.blur(); //For iOS
+        $(this).blur();
+      })).on('mouseleave', function(e) {
+        var $b = $(this).find('.copy-btn');
+        setTimeout(function() {
+          $b.text('Copy');
+        }, 300);
+      }).append(e);
+    })
+  </script>
+
+
+  
+
+</body>
+</html>
