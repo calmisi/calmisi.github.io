@@ -96,18 +96,18 @@
 
 
 
-  <meta name="description" content="[TOC] MSR寄存器的介绍The scope of an MSR defines the set of processors that access the same MSR with RDMSR and WRMSR.Thread-scope MSRs are unique to every logical processor; Core-scope MSRs are shared by th">
+  <meta name="description" content="MSR寄存器的介绍The scope of an MSR defines the set of processors that access the same MSR with RDMSR and WRMSR.Thread-scope MSRs are unique to every logical processor; Core-scope MSRs are shared by the thre">
 <meta name="keywords" content="MSR">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Intel MSR介绍和vmx对MSR的处理总结">
 <meta property="og:url" content="https://blog.calmisi.cn/post/2019/2/Intel MSR介绍和vmx对MSR的处理总结.html">
 <meta property="og:site_name" content="Calmisi Lee">
-<meta property="og:description" content="[TOC] MSR寄存器的介绍The scope of an MSR defines the set of processors that access the same MSR with RDMSR and WRMSR.Thread-scope MSRs are unique to every logical processor; Core-scope MSRs are shared by th">
+<meta property="og:description" content="MSR寄存器的介绍The scope of an MSR defines the set of processors that access the same MSR with RDMSR and WRMSR.Thread-scope MSRs are unique to every logical processor; Core-scope MSRs are shared by the thre">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2019-02-02T01:48:00.854Z">
+<meta property="og:updated_time" content="2019-03-06T15:50:05.298Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Intel MSR介绍和vmx对MSR的处理总结">
-<meta name="twitter:description" content="[TOC] MSR寄存器的介绍The scope of an MSR defines the set of processors that access the same MSR with RDMSR and WRMSR.Thread-scope MSRs are unique to every logical processor; Core-scope MSRs are shared by th">
+<meta name="twitter:description" content="MSR寄存器的介绍The scope of an MSR defines the set of processors that access the same MSR with RDMSR and WRMSR.Thread-scope MSRs are unique to every logical processor; Core-scope MSRs are shared by the thre">
 
 
 
@@ -435,7 +435,7 @@
                 
                   <span class="post-meta-item-text">Edited on</span>
                 
-                <time title="Modified: 2019-02-02 09:48:00" itemprop="dateModified" datetime="2019-02-02T09:48:00+08:00">2019-02-02</time>
+                <time title="Modified: 2019-03-06 23:50:05" itemprop="dateModified" datetime="2019-03-06T23:50:05+08:00">2019-03-06</time>
               
             
           </span>
@@ -526,8 +526,7 @@
       
 
       
-        <p>[TOC]</p>
-<h1 id="MSR寄存器的介绍"><a href="#MSR寄存器的介绍" class="headerlink" title="MSR寄存器的介绍"></a>MSR寄存器的介绍</h1><p>The scope of an MSR defines the set of processors that access the same MSR with RDMSR and WRMSR.<br>Thread-scope MSRs are unique to every logical processor; Core-scope MSRs are shared by the threads in the same core; similarly for module-scope, die-scope, and package-scope.<br>When a processor package contains a single die, die-scope and package-scope are synonymous. When a package contains multiple die, they are distinct。<br>MSR寄存器的作用域可以是thread，即单个超线程，可以是每个core有单独的，也可以是一个die共用，还是是整个package。<br><a id="more"></a></p>
+        <h1 id="MSR寄存器的介绍"><a href="#MSR寄存器的介绍" class="headerlink" title="MSR寄存器的介绍"></a>MSR寄存器的介绍</h1><p>The scope of an MSR defines the set of processors that access the same MSR with RDMSR and WRMSR.<br>Thread-scope MSRs are unique to every logical processor; Core-scope MSRs are shared by the threads in the same core; similarly for module-scope, die-scope, and package-scope.<br>When a processor package contains a single die, die-scope and package-scope are synonymous. When a package contains multiple die, they are distinct。<br>MSR寄存器的作用域可以是thread，即单个超线程，可以是每个core有单独的，也可以是一个die共用，还是是整个package。<br><a id="more"></a></p>
 <h2 id="Architectural-MSRs"><a href="#Architectural-MSRs" class="headerlink" title="Architectural MSRs"></a>Architectural MSRs</h2><p>A subset of MSRs and associated bit fields, which do not change on future processor generations, are now considered architectural MSRs. 这些architectural MSRs都有<code>IA32_</code>前缀。</p>
 <h2 id="wrmsr指令："><a href="#wrmsr指令：" class="headerlink" title="wrmsr指令："></a>wrmsr指令：</h2><p>wrmsr指令将EDX:EAX的值写入由ECX指定的64-bit的MSR寄存器中。<br>其中EDX写入MSR的高32位，EAX写入MSR的低32位。RAX,RCX,RDX的高32位都被忽略。<br><!-- more --></p>
 <ol>
@@ -785,7 +784,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">61</span>
+                    <span class="site-state-item-count">62</span>
                     <span class="site-state-item-name">posts</span>
                   </a>
                 </div>
@@ -1048,7 +1047,7 @@
     
       <span class="post-meta-item-text">Symbols count total: </span>
     
-    <span title="Symbols count total">269k</span>
+    <span title="Symbols count total">278k</span>
   
 
   
@@ -1059,7 +1058,7 @@
     
       <span class="post-meta-item-text">Reading time total &asymp;</span>
     
-    <span title="Reading time total">4:04</span>
+    <span title="Reading time total">4:13</span>
   
 </div>
 
