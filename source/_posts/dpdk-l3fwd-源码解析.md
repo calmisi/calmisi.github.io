@@ -2,9 +2,8 @@
 title: dpdk_l3fwd-源码解析
 date: 2017-05-10 10:21:43
 tags:
-- l3fwd
+categories: 
 - DPDK
-categories: DPDK源码解析
 ---
 
 本文对DPDK17.02自带的example l3fwd进行走读解析。

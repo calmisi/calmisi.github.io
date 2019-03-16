@@ -1,9 +1,9 @@
 ---
 title: DPDK的makefile学习
 date: 2017-11-09 15:33:24
-tags: DPDK源码解析
-categories:
+tags:
 - Makefile
+categories:
 - DPDK
 ---
 

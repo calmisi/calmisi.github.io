@@ -74,6 +74,7 @@ pagination_dir: page
 ## Plugins: https://hexo.io/plugins/
 ## Themes: https://hexo.io/themes/
 theme: next
+#theme: landscape
 
 #avatar: /images/avatar.jpg
 
@@ -113,7 +114,7 @@ symbols_count_time:
 
 #leancloud_counter_security  
 leancloud_counter_security:
-  enable_sync: true
+  enable_sync: false
   app_id: tf4TRbjrkONfr7VekxlWI8Py-gzGzoHsz
   app_key: 5c1wL7zY6VY7oLzi5xaCIu5x
   username: calmisi
