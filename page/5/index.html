@@ -374,6 +374,224 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://blog.calmisi.cn/post/2016/12/Xlinx-vc709-trd-DMA驱动源码解读.html"/>
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Calmisi Lee"/>
+      <meta itemprop="description" content="Pas de regrets"/>
+      <meta itemprop="image" content="/images/avatar.jpg"/>
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Calmisi Lee"/>
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/post/2016/12/Xlinx-vc709-trd-DMA驱动源码解读.html" class="post-title-link" itemprop="url">Xlinx vc709 trd DMA驱动源码解读</a>
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2016-12-29 21:20:42" itemprop="dateCreated datePublished" datetime="2016-12-29T21:20:42+08:00">2016-12-29</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2018-09-16 00:54:21" itemprop="dateModified" datetime="2018-09-16T00:54:21+08:00">2018-09-16</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/vc709-DMA-驱动/" itemprop="url" rel="index"><span itemprop="name">vc709 DMA 驱动</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+            <span id="/post/2016/12/Xlinx-vc709-trd-DMA驱动源码解读.html" class="leancloud_visitors" data-flag-title="Xlinx vc709 trd DMA驱动源码解读">
+              <span class="post-meta-divider">|</span>
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Views: </span>
+              
+                <span class="leancloud-visitors-count"></span>
+            </span>
+          
+
+          
+
+          
+            <div class="post-symbolscount">
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Symbols count in article: </span>
+                
+                <span title="Symbols count in article">13k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Reading time &asymp;</span>
+                
+                <span title="Reading time">12 mins.</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h1 id="raw-ethernet-performance测试"><a href="#raw-ethernet-performance测试" class="headerlink" title="raw ethernet performance测试"></a>raw ethernet performance测试</h1><p>在运行<code>Raw Ethernet Perfomance Mode</code>的时候,<br>安装驱动运行的脚本为<code>/v7_xt_conn_trd/software/linux/v7_xt_conn_trd/linux_driver_app/run_raw_ethermode.sh</code><br>其内容为：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/sh</span></span><br><span class="line">compilation_error=1</span><br><span class="line">module_insertion_error=2</span><br><span class="line">compilation_clean_error=3</span><br><span class="line"></span><br><span class="line">pgrep App|xargs <span class="built_in">kill</span> -SIGINT 1&gt;/dev/null 2&gt;&amp;1</span><br><span class="line">sleep 5;</span><br><span class="line"><span class="built_in">cd</span> App</span><br><span class="line">make clean 1&gt;/dev/null 2&gt;&amp;1</span><br><span class="line">make APP_MODE=RAWETHERNET 1&gt;/dev/null 2&gt;&amp;1</span><br><span class="line">./App 1&gt;Applog  2&gt;&amp;1 &amp;</span><br><span class="line"><span class="built_in">cd</span> ../</span><br><span class="line"></span><br><span class="line">/bin/sh remove_modules.sh</span><br><span class="line"><span class="built_in">cd</span> driver</span><br><span class="line">make DRIVER_MODE=RAWETHERNET clean</span><br><span class="line"><span class="keyword">if</span> [ <span class="string">"$?"</span> != <span class="string">"0"</span> ]; <span class="keyword">then</span></span><br><span class="line">	<span class="built_in">echo</span> <span class="string">"Error in cleaning RAW_ETHERNET performance driver"</span></span><br><span class="line">	<span class="built_in">exit</span> <span class="variable">$compilation_clean_error</span>;</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line">make DRIVER_MODE=RAWETHERNET</span><br><span class="line"><span class="keyword">if</span> [ <span class="string">"$?"</span> != <span class="string">"0"</span> ]; <span class="keyword">then</span></span><br><span class="line">	<span class="built_in">echo</span> <span class="string">"Error in compiling RAW_ETHERNET performance driver"</span></span><br><span class="line">	<span class="built_in">exit</span> <span class="variable">$compilation_error</span>;</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line">sudo make DRIVER_MODE=RAWETHERNET insert </span><br><span class="line"><span class="keyword">if</span> [ <span class="string">"$?"</span> != <span class="string">"0"</span> ]; <span class="keyword">then</span></span><br><span class="line">	<span class="built_in">echo</span> <span class="string">"Error in inserting RAW_ETHERNET performance driver"</span></span><br><span class="line">	<span class="built_in">exit</span> <span class="variable">$module_insertion_error</span>;</span><br><span class="line"><span class="keyword">fi</span></span><br></pre></td></tr></table></figure><br>可以看到6-12行代码，先判断系统中是否有App程序在运行，如果有就Kill掉。<br>然后等待5秒后，进入App目录，重新编译App程序，编译完成后以RAWETHERNET模式运行APP。</p>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/post/2016/12/Xlinx-vc709-trd-DMA驱动源码解读.html#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="https://blog.calmisi.cn/post/2016/12/linux设备驱动，内核相关知识点.html"/>
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2347,225 +2565,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://blog.calmisi.cn/post/2016/11/ATX电源接口定义.html"/>
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Calmisi Lee"/>
-      <meta itemprop="description" content="Pas de regrets"/>
-      <meta itemprop="image" content="/images/avatar.jpg"/>
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Calmisi Lee"/>
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/post/2016/11/ATX电源接口定义.html" class="post-title-link" itemprop="url">ATX电源接口定义</a>
-              
-            
-          </h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-
-              
-                
-              
-
-              <time title="Created: 2016-11-30 09:40:18" itemprop="dateCreated datePublished" datetime="2016-11-30T09:40:18+08:00">2016-11-30</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">Edited on</span>
-                
-                <time title="Modified: 2018-09-16 00:54:21" itemprop="dateModified" datetime="2018-09-16T00:54:21+08:00">2018-09-16</time>
-              
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">In</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/LuanQiBaZao/" itemprop="url" rel="index"><span itemprop="name">LuanQiBaZao</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-            
-          
-
-          
-          
-            <span id="/post/2016/11/ATX电源接口定义.html" class="leancloud_visitors" data-flag-title="ATX电源接口定义">
-              <span class="post-meta-divider">|</span>
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Views: </span>
-              
-                <span class="leancloud-visitors-count"></span>
-            </span>
-          
-
-          
-
-          
-            <div class="post-symbolscount">
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-file-word-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">Symbols count in article: </span>
-                
-                <span title="Symbols count in article">754</span>
-              
-
-              
-                <span class="post-meta-divider">|</span>
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">Reading time &asymp;</span>
-                
-                <span title="Reading time">1 mins.</span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>实验室的FPGA板的有一个外接的电源适配器，但是插在主板上再用外接的电源适配器供电就不方便了。随板子一起的有个ATX电源的转接线，是大4D的针转6pin口的。板子电源插口还提示不能直接用PCIE显卡的6pin的口直接插上去供电，必须要用它的大4D转6pin的线，后来测试了一下是因为FPGA板上的6pin口的12V线和地线和标准的PCIe显卡6pin口不一致。  </p>
-<p>问题来了。我们的服务器的ATX电源没有D型4pin的口，这下可怎么搞。于是我就查了一下ATX电源的各种接头的定义规范，准备自己DIY一个6PIN转6PIN的线，达到给FPGA板正确供电的效果。<br>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/post/2016/11/ATX电源接口定义.html#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-      
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2617,7 +2616,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">62</span>
+                    <span class="site-state-item-count">63</span>
                     <span class="site-state-item-name">posts</span>
                   </a>
                 </div>
@@ -2666,7 +2665,9 @@
                     
                       
                     
-                    <span class="site-state-item-count">18</span>
+                      
+                    
+                    <span class="site-state-item-count">19</span>
                     <span class="site-state-item-name">categories</span>
                   </a>
                 </div>
@@ -2863,7 +2864,7 @@
     
       <span class="post-meta-item-text">Symbols count total: </span>
     
-    <span title="Symbols count total">278k</span>
+    <span title="Symbols count total">284k</span>
   
 
   
@@ -2874,7 +2875,7 @@
     
       <span class="post-meta-item-text">Reading time total &asymp;</span>
     
-    <span title="Reading time total">4:13</span>
+    <span title="Reading time total">4:18</span>
   
 </div>
 

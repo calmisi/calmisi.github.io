@@ -96,25 +96,25 @@
 
 
 
-  <meta name="description" content="由于把台式机搬回寝室了，只能用实验室的服务器，服务器是Centos7的系统，有很多东西没有windows习惯。这里讲以下如何在Centos上翻墙。">
-<meta name="keywords" content="Centos7,Shadowsocks">
+  <meta name="description" content="本文介绍KVM的两个IOCTL，其都为VM level的ioctl：KVM_GET_SUPPORTED_CPUID和KVM_GET_EMULATED_CPUID.userspace的VMM程序，可以调用KVM_GET_SUPPORTED_CPUD来查询host kvm可以向guest支持哪些CPUID；可以调用KVM_GET_SUPPORTED_CPUID来查询kvm对guest支持的哪些CPUI">
+<meta name="keywords" content="CPUID">
 <meta property="og:type" content="article">
-<meta property="og:title" content="centos7中安装shadowsocks客户端并通过firefox进行智能代理">
-<meta property="og:url" content="https://blog.calmisi.cn/post/2017/10/centos7中安装shadowsocks客户端并通过firefox进行智能代理.html">
+<meta property="og:title" content="KVM向userspace提供查询CPUID相关的2个IOCTL">
+<meta property="og:url" content="https://blog.calmisi.cn/post/2019/3/KVM向userspace提供查询CPUID相关的2个IOCTL.html">
 <meta property="og:site_name" content="Calmisi Lee">
-<meta property="og:description" content="由于把台式机搬回寝室了，只能用实验室的服务器，服务器是Centos7的系统，有很多东西没有windows习惯。这里讲以下如何在Centos上翻墙。">
+<meta property="og:description" content="本文介绍KVM的两个IOCTL，其都为VM level的ioctl：KVM_GET_SUPPORTED_CPUID和KVM_GET_EMULATED_CPUID.userspace的VMM程序，可以调用KVM_GET_SUPPORTED_CPUD来查询host kvm可以向guest支持哪些CPUID；可以调用KVM_GET_SUPPORTED_CPUID来查询kvm对guest支持的哪些CPUI">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2018-09-15T16:54:21.661Z">
+<meta property="og:updated_time" content="2019-03-16T09:21:01.145Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="centos7中安装shadowsocks客户端并通过firefox进行智能代理">
-<meta name="twitter:description" content="由于把台式机搬回寝室了，只能用实验室的服务器，服务器是Centos7的系统，有很多东西没有windows习惯。这里讲以下如何在Centos上翻墙。">
+<meta name="twitter:title" content="KVM向userspace提供查询CPUID相关的2个IOCTL">
+<meta name="twitter:description" content="本文介绍KVM的两个IOCTL，其都为VM level的ioctl：KVM_GET_SUPPORTED_CPUID和KVM_GET_EMULATED_CPUID.userspace的VMM程序，可以调用KVM_GET_SUPPORTED_CPUD来查询host kvm可以向guest支持哪些CPUID；可以调用KVM_GET_SUPPORTED_CPUID来查询kvm对guest支持的哪些CPUI">
 
 
 
 
 
 
-  <link rel="canonical" href="https://blog.calmisi.cn/post/2017/10/centos7中安装shadowsocks客户端并通过firefox进行智能代理.html"/>
+  <link rel="canonical" href="https://blog.calmisi.cn/post/2019/3/KVM向userspace提供查询CPUID相关的2个IOCTL.html"/>
 
 
 
@@ -124,7 +124,7 @@
   };
 </script>
 
-  <title>centos7中安装shadowsocks客户端并通过firefox进行智能代理 | Calmisi Lee</title>
+  <title>KVM向userspace提供查询CPUID相关的2个IOCTL | Calmisi Lee</title>
   
 
 
@@ -375,7 +375,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://blog.calmisi.cn/post/2017/10/centos7中安装shadowsocks客户端并通过firefox进行智能代理.html"/>
+    <link itemprop="mainEntityOfPage" href="https://blog.calmisi.cn/post/2019/3/KVM向userspace提供查询CPUID相关的2个IOCTL.html"/>
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Calmisi Lee"/>
@@ -392,7 +392,7 @@
 
         
         
-          <h2 class="post-title" itemprop="name headline">centos7中安装shadowsocks客户端并通过firefox进行智能代理
+          <h2 class="post-title" itemprop="name headline">KVM向userspace提供查询CPUID相关的2个IOCTL
 
               
             
@@ -418,29 +418,42 @@
                 
               
 
-              <time title="Created: 2017-10-31 19:16:10" itemprop="dateCreated datePublished" datetime="2017-10-31T19:16:10+08:00">2017-10-31</time>
+              <time title="Created: 2019-03-16 17:17:32 / Modified: 17:21:01" itemprop="dateCreated datePublished" datetime="2019-03-16T17:17:32+08:00">2019-03-16</time>
             
 
             
               
 
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">Edited on</span>
-                
-                <time title="Modified: 2018-09-16 00:54:21" itemprop="dateModified" datetime="2018-09-16T00:54:21+08:00">2018-09-16</time>
               
             
           </span>
 
           
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/KVM/" itemprop="url" rel="index"><span itemprop="name">KVM</span></a></span>
+
+                
+                
+                  , 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/KVM/QEMU/" itemprop="url" rel="index"><span itemprop="name">QEMU</span></a></span>
+
+                
+                
+              
+            </span>
+          
 
           
             
@@ -449,7 +462,7 @@
 
           
           
-            <span id="/post/2017/10/centos7中安装shadowsocks客户端并通过firefox进行智能代理.html" class="leancloud_visitors" data-flag-title="centos7中安装shadowsocks客户端并通过firefox进行智能代理">
+            <span id="/post/2019/3/KVM向userspace提供查询CPUID相关的2个IOCTL.html" class="leancloud_visitors" data-flag-title="KVM向userspace提供查询CPUID相关的2个IOCTL">
               <span class="post-meta-divider">|</span>
               <span class="post-meta-item-icon">
                 <i class="fa fa-eye"></i>
@@ -474,7 +487,7 @@
                 
                   <span class="post-meta-item-text">Symbols count in article: </span>
                 
-                <span title="Symbols count in article">2k</span>
+                <span title="Symbols count in article">5.6k</span>
               
 
               
@@ -488,7 +501,7 @@
                 
                   <span class="post-meta-item-text">Reading time &asymp;</span>
                 
-                <span title="Reading time">2 mins.</span>
+                <span title="Reading time">5 mins.</span>
               
             </div>
           
@@ -508,60 +521,83 @@
       
 
       
-        <p>由于把台式机搬回寝室了，只能用实验室的服务器，<br>服务器是Centos7的系统，有很多东西没有windows习惯。<br>这里讲以下如何在Centos上翻墙。</p>
+        <p>本文介绍KVM的两个IOCTL，其都为VM level的ioctl：<code>KVM_GET_SUPPORTED_CPUID</code>和<code>KVM_GET_EMULATED_CPUID</code>.<br>userspace的VMM程序，可以调用<code>KVM_GET_SUPPORTED_CPUD</code>来查询host kvm可以向guest支持哪些CPUID；可以调用<code>KVM_GET_SUPPORTED_CPUID</code>来查询kvm对guest支持的哪些CPUID是模拟的。</p>
 <a id="more"></a>
-<p>shadowsocks（简称ss），在windows的客户端的配置很多，linux上却很少。</p>
-<p>在centos7上的教程也有不少，但是他们都没讲清楚一个概念：ss-server 和 ss-local的区别。</p>
-<p>这里推荐auooo大神的ss<a href="http://www.auooo.com/2015/06/26/shadowsocks%EF%BC%88%E5%BD%B1%E6%A2%AD%EF%BC%89%E4%B8%8D%E5%AE%8C%E5%85%A8%E6%8C%87%E5%8D%97/" target="_blank" rel="noopener">不完全指南 </a></p>
-<p>里面对于ss的原理介绍的非常浅显易懂。</p>
-<p>我在这里说下结论：ss-server是搭建服务器用到的组件（就是你买了一个vps，要用它来翻墙。那么你要在这个vps上面搭建ss服务器，搭建好了你才能用你的笔记本啊，手机啊链接这个vps上网。）</p>
-<p>ss-local就是本地客户端。就是windows下面的那个ss。centos等linux版本上面，对应的就是ss-local。</p>
-<hr>
-<h1 id="安装ss服务"><a href="#安装ss服务" class="headerlink" title="安装ss服务"></a>安装ss服务</h1><p>现在讲讲客户端构筑步骤（服务端教程其实基本一样，都可以用同一个配置文件。只不过一个是ss-local启动，一个ss-server启动）</p>
+<p>在x86.c中，kvm_arch_dev_ioctl中关于KVM_GET_SUPPORTED_CPUID和KVM_GET_EMULATED_CPUID的实现为：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">long</span> <span class="title">kvm_arch_dev_ioctl</span><span class="params">(struct file *filp,</span></span></span><br><span class="line"><span class="function"><span class="params">                        <span class="keyword">unsigned</span> <span class="keyword">int</span> ioctl, <span class="keyword">unsigned</span> <span class="keyword">long</span> arg)</span> </span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">        <span class="keyword">void</span> __user *argp = (<span class="keyword">void</span> __user *)arg;</span><br><span class="line">        <span class="keyword">long</span> r;</span><br><span class="line">	</span><br><span class="line">	...</span><br><span class="line">        <span class="keyword">case</span> KVM_GET_SUPPORTED_CPUID:</span><br><span class="line">        <span class="keyword">case</span> KVM_GET_EMULATED_CPUID: &#123;</span><br><span class="line">                <span class="class"><span class="keyword">struct</span> <span class="title">kvm_cpuid2</span> __<span class="title">user</span> *<span class="title">cpuid_arg</span> = <span class="title">argp</span>;</span></span><br><span class="line">                <span class="class"><span class="keyword">struct</span> <span class="title">kvm_cpuid2</span> <span class="title">cpuid</span>;</span></span><br><span class="line"></span><br><span class="line">                r = -EFAULT;</span><br><span class="line">                <span class="keyword">if</span> (copy_from_user(&amp;cpuid, cpuid_arg, <span class="keyword">sizeof</span>(cpuid)))</span><br><span class="line">                        <span class="keyword">goto</span> out; </span><br><span class="line"></span><br><span class="line">                r = kvm_dev_ioctl_get_cpuid(&amp;cpuid, cpuid_arg-&gt;entries,        </span><br><span class="line">                                            ioctl);</span><br><span class="line">                <span class="keyword">if</span> (r)</span><br><span class="line">                        <span class="keyword">goto</span> out; </span><br><span class="line"></span><br><span class="line">                r = -EFAULT;</span><br><span class="line">                <span class="keyword">if</span> (copy_to_user(cpuid_arg, &amp;cpuid, <span class="keyword">sizeof</span>(cpuid)))</span><br><span class="line">                        <span class="keyword">goto</span> out; </span><br><span class="line">                r = <span class="number">0</span>; </span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">	...</span><br><span class="line">out:</span><br><span class="line">	<span class="keyword">return</span> r;</span><br></pre></td></tr></table></figure></p>
+<p>我们可以看到KVM中关于KMV_GET_SUPPORTED_CPUID和KVM_GET_EMULATED_CPUID这2个IOCTL的实现是公共的。<br>首先cory_from_user()获取userspace传进来的参数；<br>然后调用kem_dev_ioctl_get_get_cpuid()，如果返回值不为0，则说明发生了错误，那么直接return 返回值；<br>否则调用copy_to_user将获得的CPUID结构返回给userspace。<br>所以，如果结果不为0，那么该2个IOCTL调用都是失败的。</p>
+<h1 id="kvm-dev-ioctl-get-cpuid"><a href="#kvm-dev-ioctl-get-cpuid" class="headerlink" title="kvm_dev_ioctl_get_cpuid()"></a>kvm_dev_ioctl_get_cpuid()</h1><p>在上一部函数调用为kvm_dev_ioctl_get_cpuid(&amp;cpuid, cpuid_arg-&gt;entries, ioctl);<br>我们可以看到第一个参数&amp;cpuid： 从userspace复制过来的参数struct kvm_cpuid2的机构体，传进来的该结构体只有argp-&gt;nent是有效的，其表示argp-&gt;entries[]数组的大小。<br>第二个参数cpuid_arg-&gt;entries为userspace传入的argp-&gt;entries[]数组的起始指针；<br>第三个参数为IOCTL的类型，为了区分是KMV_GET_SUPPORTED_CPUID和KVM_GET_EMULATED_CPUID；<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* for KVM_SET_CPUID2 */</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">kvm_cpuid2</span> &#123;</span>                                                             </span><br><span class="line">        __u32 nent;</span><br><span class="line">        __u32 padding;</span><br><span class="line">        <span class="class"><span class="keyword">struct</span> <span class="title">kvm_cpuid_entry2</span> <span class="title">entries</span>[0];</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<p>具体地，我们看kvm_dev_ioctl_get_cpuid()函数做了什么。</p>
 <ol>
-<li>git下载源码。这里采用源码安装。</li>
-</ol>
-<p><code>git clone https://github.com/shadowsocks/shadowsocks-libev.git</code></p>
-<ol start="2">
-<li>yum安装必要rpm</li>
-</ol>
-<p><code>yum install -y gcc automake autoconf libtool make build-essential curl curl-devel zlib-devel openssl-devel perl perl-devel cpio expat-devel gettext-devel git  asciidoc xmlto</code> </p>
-<ol start="3">
-<li><p>进入shadowsocks-libev目录，编译源码并安装</p>
-<p><code>./configure &amp;&amp; make; make install</code></p>
-</li>
-<li><p>编写配置文件</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">mkdir ~/etc/shadowsocks/</span><br><span class="line">vim ~/etc/shadowsocks/sslocal.json</span><br><span class="line"></span><br><span class="line"><span class="comment">#然后编辑如下内容，并保存</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="string">"server"</span>:<span class="string">"ss帐号的地址"</span>,</span><br><span class="line">	<span class="string">"server_port"</span>:<span class="string">"ss帐号的端口"</span>,</span><br><span class="line">	<span class="string">"local_address"</span>:<span class="string">"127.0.0.1"</span>,</span><br><span class="line">	<span class="string">"local_port"</span>:1080,</span><br><span class="line">	<span class="string">"password"</span>:<span class="string">"帐号密码"</span>,</span><br><span class="line">	<span class="string">"timeout"</span>:300,</span><br><span class="line">	<span class="string">"method"</span>:<span class="string">"aes-256-cfb"</span>,</span><br><span class="line">	<span class="string">"fast_open"</span>:<span class="literal">false</span>,</span><br><span class="line">	<span class="string">"workers"</span>:1</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<p>5.添加开机自动启动的服务<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/systemd/system/sslocal.service</span><br><span class="line"></span><br><span class="line">编辑为如下内容，并保存</span><br><span class="line">[Unit]  </span><br><span class="line">Description=Shadowsocks  </span><br><span class="line"></span><br><span class="line">[Service]  </span><br><span class="line">TimeoutStartSec=0  </span><br><span class="line"><span class="comment">#the_path_to为上一步创建的sslocal.json的绝对目录</span></span><br><span class="line">ExecStart=/usr/<span class="built_in">local</span>/bin/ss-local -c the_path_to/sslocal.json   </span><br><span class="line"></span><br><span class="line">[Install]  </span><br><span class="line">WantedBy=multi-user.target</span><br></pre></td></tr></table></figure></p>
-<ol start="6">
-<li>运行<code>systemctl start sslocal</code>启动服务</li>
-</ol>
-<hr>
-<h1 id="配置firefox浏览器的代理"><a href="#配置firefox浏览器的代理" class="headerlink" title="配置firefox浏览器的代理"></a>配置firefox浏览器的代理</h1><ol>
-<li>安装foxyproxy插件，在adds-on搜索foxyproxy并安装，</li>
-<li>设置foxyproxy，<ul>
-<li>在Proxies中点击Add New Proxy,</li>
-<li>在General中输入名字，sslocal;并选一个颜色；</li>
-<li>在Proxy Details中，选择 Manual Proxy Configuration,<ul>
-<li>Server or IP Address设置为127.0.0.1； Port为1080； 并勾选SOCKS proxy, SOCKS v5</li>
+<li>如果userspace传进来cpuid-&gt;nent &lt; 1，则return -E2BIG;</li>
+<li>如果userspace传进来的cpuid-&gt;entries[]的大小cpuid-&gt;nent大于KVM_MAX_CPUID_ENTRIES,那么更新cpuid-&gt;nent为KVM_MAX_CPUID_ENTRIES;</li>
+<li>会调用sanity_check_entries(entries, cpuid-&gt;nent, type)<br>该函数检查userspace传递来的entries数组中的每一个entry-&gt;padding是否正确或者为0.<br>如果padding有问题，返回true，则直接return -EINVAL;<br>只检查KVM_GET_EMULATED_CPUID，对KVM_GET_SUPPORTED_CPUID不检查，直接返回false.</li>
+<li>然后动态vzalloc cpuid-&gt;nent数量的kvm_cpuid_entry2数组,如果分配不成功则return -ENOMEM;</li>
+<li><p>进入for循环，根据函数开头定义的kvm_cpuid_param param[]数组进行CPUID的读取。<br>获取每一个param[i],</p>
+<ul>
+<li>判断ent-&gt;qualifier &amp;&amp; !ent-&gt;qualifier(ent)，则跳过这个param[i];<br>根据上面定义，只有在.func=0xC0000000的时候，有qualifier,该qualifie判断当前的CPU是不是centaur_cpu，<br>由于我们考虑intel cpu,该ent-&gt;qualifier(ent)返回false,则continue跳过该param[i]，<br>只有是centaur cpu的时候，才会执行该param[i]条目，读取相关的CPUID</li>
+<li>调用do_cpuid_ent()<br>/* is important!!!!</li>
 </ul>
+<ul>
+<li>entry:需要填充的vzalloc的kvm_cpuid_entry2 cpuid_entries[nent]号成员，nent初始值为0</li>
+<li>func:cpuid的主leaf</li>
+<li>idx:cpudi的次leaf</li>
+<li>nent:当前填充/操作的kvm_cpuid_entry2 cpuid_entries[nent]中nent的指针</li>
+<li>maxnent:cpuid_entries的size</li>
+<li><p>type:KVM_GET_EMULATED_CPUID或者KVM_GET_SUPPORTED_CPUID<br>static int do_cpuid_ent(struct kvm_cpuid_entry2 *entry, u32 func,</p>
+<pre><code>u32 idx, int *nent, int maxnent, unsigned int type)
+</code></pre><p>{<br>   if (type == KVM_GET_EMULATED_CPUID)</p>
+<pre><code>return __do_cpuid_ent_emulated(entry, func, idx, nent, maxnent);
+</code></pre><p>   return __do_cpuid_ent(entry, func, idx, nent, maxnent);<br>}<br>*/</p>
 </li>
-<li>然后点击ok,创建该Proxy,</li>
-<li>此时需要先将代理模式更改为sslocal,因为后面添加模式订阅可能需要翻墙，</li>
-<li>在设置里面，配置Pattern Subscriptions，<ul>
-<li>直接点go,创建新的模式订阅 ；</li>
-<li>name 为gfwlist, description为gfwlist, URL为： <a href="https://raw.githubusercontent.com/gfwlist/gfwlist/master/gfwlist.txt；" target="_blank" rel="noopener">https://raw.githubusercontent.com/gfwlist/gfwlist/master/gfwlist.txt；</a></li>
-<li>在proxies中添加刚刚创建的sslocal；</li>
-<li>Refresh Rate设置为600;格式设置为AutoProxy; Obfuscation设置为Base64;</li>
-</ul>
-</li>
-<li>可以在QuickAdd中开启快速添加，</li>
-<li>最后将模式改为 “ues proxies based on pre-defined patterns and priorities”</li>
 </ul>
 </li>
 </ol>
+<p>回去看笔记，A4纸<br><code>`</code>C<br>int kvm_dev_ioctl_get_cpuid(struct kvm_cpuid2 <em>cpuid,<br>                            struct kvm_cpuid_entry2 __user </em>entries,<br>                            unsigned int type)<br>{<br>        struct kvm_cpuid_entry2 *cpuid_entries;<br>        int limit, nent = 0, r = -E2BIG, i;<br>        u32 func;<br>        static const struct kvm_cpuid_param param[] = {<br>                { .func = 0, .has_leaf_count = true },<br>                { .func = 0x80000000, .has_leaf_count = true },<br>                { .func = 0xC0000000, .qualifier = is_centaur_cpu, .has_leaf_count = true },<br>                { .func = KVM_CPUID_SIGNATURE },<br>                { .func = KVM_CPUID_FEATURES },<br>        };</p>
+<pre><code>    if (cpuid-&gt;nent &lt; 1)
+            goto out;
+    if (cpuid-&gt;nent &gt; KVM_MAX_CPUID_ENTRIES)
+            cpuid-&gt;nent = KVM_MAX_CPUID_ENTRIES;
+
+    if (sanity_check_entries(entries, cpuid-&gt;nent, type))
+            return -EINVAL;
+
+r = -ENOMEM;
+    cpuid_entries = vzalloc(array_size(sizeof(struct kvm_cpuid_entry2),
+                                       cpuid-&gt;nent));
+    if (!cpuid_entries)
+            goto out;
+
+r = 0;
+    for (i = 0; i &lt; ARRAY_SIZE(param); i++) {
+            const struct kvm_cpuid_param *ent = &amp;param[i];
+
+            if (ent-&gt;qualifier &amp;&amp; !ent-&gt;qualifier(ent))
+                    continue;
+
+            r = do_cpuid_ent(&amp;cpuid_entries[nent], ent-&gt;func, ent-&gt;idx,
+                            &amp;nent, cpuid-&gt;nent, type);
+            if (r)
+                    goto out_free;
+
+            if (!ent-&gt;has_leaf_count)
+                    continue;
+
+            limit = cpuid_entries[nent - 1].eax;
+            for (func = ent-&gt;func + 1; func &lt;= limit &amp;&amp; nent &lt; cpuid-&gt;nent &amp;&amp; r == 0; ++func)
+                    r = do_cpuid_ent(&amp;cpuid_entries[nent], func, ent-&gt;idx,
+                                 &amp;nent, cpuid-&gt;nent, type);
+
+            if (r)
+                    goto out_free;
+    }
+
+    r = -EFAULT;
+    if (copy_to_user(entries, cpuid_entries,
+                     nent * sizeof(struct kvm_cpuid_entry2)))
+            goto out_free;
+    cpuid-&gt;nent = nent;
+    r = 0;
+</code></pre><p>out_free:<br>        vfree(cpuid_entries);<br>out:<br>        return r;<br>}</p>
 
       
     </div>
@@ -614,9 +650,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/Centos7/" rel="tag"># Centos7</a>
-          
-            <a href="/tags/Shadowsocks/" rel="tag"># Shadowsocks</a>
+            <a href="/tags/CPUID/" rel="tag"># CPUID</a>
           
         </div>
       
@@ -629,8 +663,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/post/2017/9/设置iptables的NAT转发，让内网的服务器通过NAT服务器访问外网.html" rel="next" title="设置iptables的NAT转发，让内网的服务器通过NAT服务器访问外网">
-                <i class="fa fa-chevron-left"></i> 设置iptables的NAT转发，让内网的服务器通过NAT服务器访问外网
+              <a href="/post/2019/3/QEMU-KVM如何创建虚拟机.html" rel="next" title="QEMU-KVM如何创建虚拟机">
+                <i class="fa fa-chevron-left"></i> QEMU-KVM如何创建虚拟机
               </a>
             
           </div>
@@ -638,10 +672,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/post/2017/11/DPDK的makefile学习.html" rel="prev" title="DPDK的makefile学习">
-                DPDK的makefile学习 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -944,7 +974,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#安装ss服务"><span class="nav-number">1.</span> <span class="nav-text">安装ss服务</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#配置firefox浏览器的代理"><span class="nav-number">2.</span> <span class="nav-text">配置firefox浏览器的代理</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#kvm-dev-ioctl-get-cpuid"><span class="nav-number">1.</span> <span class="nav-text">kvm_dev_ioctl_get_cpuid()</span></a></li></ol></div>
             
 
           </div>
@@ -1117,7 +1147,7 @@
   
     <script>
   window.livereOptions = {
-    refer: 'post/2017/10/centos7中安装shadowsocks客户端并通过firefox进行智能代理.html'
+    refer: 'post/2019/3/KVM向userspace提供查询CPUID相关的2个IOCTL.html'
   };
   (function(d, s) {
     var j, e = d.getElementsByTagName(s)[0];
