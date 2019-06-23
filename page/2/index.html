@@ -374,6 +374,667 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://blog.calmisi.cn/post/2019/2/Intel MSR介绍和vmx对MSR的处理总结.html"/>
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Calmisi Lee"/>
+      <meta itemprop="description" content="Pas de regrets"/>
+      <meta itemprop="image" content="/images/avatar.jpg"/>
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Calmisi Lee"/>
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/post/2019/2/Intel MSR介绍和vmx对MSR的处理总结.html" class="post-title-link" itemprop="url">Intel MSR介绍和vmx对MSR的处理总结</a>
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2019-02-01 18:59:29" itemprop="dateCreated datePublished" datetime="2019-02-01T18:59:29+08:00">2019-02-01</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2019-03-06 23:50:05" itemprop="dateModified" datetime="2019-03-06T23:50:05+08:00">2019-03-06</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/KVM/" itemprop="url" rel="index"><span itemprop="name">KVM</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+            <span id="/post/2019/2/Intel MSR介绍和vmx对MSR的处理总结.html" class="leancloud_visitors" data-flag-title="Intel MSR介绍和vmx对MSR的处理总结">
+              <span class="post-meta-divider">|</span>
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Views: </span>
+              
+                <span class="leancloud-visitors-count"></span>
+            </span>
+          
+
+          
+
+          
+            <div class="post-symbolscount">
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Symbols count in article: </span>
+                
+                <span title="Symbols count in article">15k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Reading time &asymp;</span>
+                
+                <span title="Reading time">14 mins.</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h1 id="MSR寄存器的介绍"><a href="#MSR寄存器的介绍" class="headerlink" title="MSR寄存器的介绍"></a>MSR寄存器的介绍</h1><p>The scope of an MSR defines the set of processors that access the same MSR with RDMSR and WRMSR.<br>Thread-scope MSRs are unique to every logical processor; Core-scope MSRs are shared by the threads in the same core; similarly for module-scope, die-scope, and package-scope.<br>When a processor package contains a single die, die-scope and package-scope are synonymous. When a package contains multiple die, they are distinct。<br>MSR寄存器的作用域可以是thread，即单个超线程，可以是每个core有单独的，也可以是一个die共用，还是是整个package。<br>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/post/2019/2/Intel MSR介绍和vmx对MSR的处理总结.html#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://blog.calmisi.cn/post/2019/1/kvm对guest中MSR寄存器的处理（四）-wrmsr.html"/>
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Calmisi Lee"/>
+      <meta itemprop="description" content="Pas de regrets"/>
+      <meta itemprop="image" content="/images/avatar.jpg"/>
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Calmisi Lee"/>
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/post/2019/1/kvm对guest中MSR寄存器的处理（四）-wrmsr.html" class="post-title-link" itemprop="url">kvm对guest中MSR寄存器的处理（四）-- wrmsr</a>
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2019-01-25 22:19:35" itemprop="dateCreated datePublished" datetime="2019-01-25T22:19:35+08:00">2019-01-25</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2019-03-06 23:49:43" itemprop="dateModified" datetime="2019-03-06T23:49:43+08:00">2019-03-06</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/KVM/" itemprop="url" rel="index"><span itemprop="name">KVM</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+            <span id="/post/2019/1/kvm对guest中MSR寄存器的处理（四）-wrmsr.html" class="leancloud_visitors" data-flag-title="kvm对guest中MSR寄存器的处理（四）-- wrmsr">
+              <span class="post-meta-divider">|</span>
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Views: </span>
+              
+                <span class="leancloud-visitors-count"></span>
+            </span>
+          
+
+          
+
+          
+            <div class="post-symbolscount">
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Symbols count in article: </span>
+                
+                <span title="Symbols count in article">3.2k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Reading time &asymp;</span>
+                
+                <span title="Reading time">3 mins.</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>本文为kvm操作MSR寄存器的第四部分，主要介绍kvm trap guest中的wrmsr指令的处理过程。</p>
+<p>当guest中因为执行wrmsr指令产生vm exit时，其exit reason为32，相应地最后会调用KVM中的handle_wrmsr()函数。<br>其函数实现如下：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">handle_wrmsr</span><span class="params">(struct kvm_vcpu *vcpu)</span>                                                                                                              </span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">        <span class="class"><span class="keyword">struct</span> <span class="title">msr_data</span> <span class="title">msr</span>;</span> </span><br><span class="line">        u32 ecx = vcpu-&gt;arch.regs[VCPU_REGS_RCX];</span><br><span class="line">        u64 data = (vcpu-&gt;arch.regs[VCPU_REGS_RAX] &amp; <span class="number">-1u</span>) </span><br><span class="line">                | ((u64)(vcpu-&gt;arch.regs[VCPU_REGS_RDX] &amp; <span class="number">-1u</span>) &lt;&lt; <span class="number">32</span>); </span><br><span class="line"></span><br><span class="line">        msr.data = data;</span><br><span class="line">        msr.index = ecx; </span><br><span class="line">        msr.host_initiated = <span class="literal">false</span>;</span><br><span class="line">        <span class="keyword">if</span> (kvm_set_msr(vcpu, &amp;msr) != <span class="number">0</span>) &#123; </span><br><span class="line">                trace_kvm_msr_write_ex(ecx, data);</span><br><span class="line">                kvm_inject_gp(vcpu, <span class="number">0</span>);</span><br><span class="line">                <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">        &#125;    </span><br><span class="line"></span><br><span class="line">        trace_kvm_msr_write(ecx, data);</span><br><span class="line">        <span class="keyword">return</span> kvm_skip_emulated_instruction(vcpu);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/post/2019/1/kvm对guest中MSR寄存器的处理（四）-wrmsr.html#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://blog.calmisi.cn/post/2019/1/kvm对MSR寄存器的处理（三）.html"/>
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Calmisi Lee"/>
+      <meta itemprop="description" content="Pas de regrets"/>
+      <meta itemprop="image" content="/images/avatar.jpg"/>
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Calmisi Lee"/>
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/post/2019/1/kvm对MSR寄存器的处理（三）.html" class="post-title-link" itemprop="url">kvm对MSR寄存器的处理（三）</a>
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2019-01-23 20:53:24" itemprop="dateCreated datePublished" datetime="2019-01-23T20:53:24+08:00">2019-01-23</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2019-03-06 23:49:36" itemprop="dateModified" datetime="2019-03-06T23:49:36+08:00">2019-03-06</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/KVM/" itemprop="url" rel="index"><span itemprop="name">KVM</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+            <span id="/post/2019/1/kvm对MSR寄存器的处理（三）.html" class="leancloud_visitors" data-flag-title="kvm对MSR寄存器的处理（三）">
+              <span class="post-meta-divider">|</span>
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Views: </span>
+              
+                <span class="leancloud-visitors-count"></span>
+            </span>
+          
+
+          
+
+          
+            <div class="post-symbolscount">
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Symbols count in article: </span>
+                
+                <span title="Symbols count in article">8.3k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Reading time &asymp;</span>
+                
+                <span title="Reading time">8 mins.</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h1 id="msrs-to-save-emulated-msrs-msr-based-features"><a href="#msrs-to-save-emulated-msrs-msr-based-features" class="headerlink" title="msrs_to_save[], emulated_msrs[], msr_based_features[]"></a>msrs_to_save[], emulated_msrs[], msr_based_features[]</h1><p>在x86.c文件中定一个了msrs_to_save[], emulated_msrs[], msr_based_features[]三个保存MSR寄存器index的数组，<br>以及num_msrs_to_save, num_emulated_msrs, num_msr_based_features三个静态全局变量来表示以上三个数组的大小。</p>
+<blockquote>
+<p><strong>其中msrs_to_save[]和emulated_msrs[]数组合起来为暴露给userspace的MSRs: userspace(QEMU)通过KVM_GET_MSR_INDEX_LIST ioctl获取，并且之后就可以调用KVM_GET_MSRS, KVM_SET_MSRS对这些MSRs进行读写</strong><br><strong>msr_based_features[]数组向userspace传递KVM支持的feature-based MSRs.</strong></p>
+</blockquote>
+<blockquote>
+<p>注意<br><strong>msr_based_features[]数组和前面2个数组不是互斥的。<br>即msr_based_features[]数组中的MSR可以同时属于前面两个数组，但msr_to_save[]和emulated_msrs[]是互斥的。</strong></p>
+</blockquote>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/post/2019/1/kvm对MSR寄存器的处理（三）.html#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="https://blog.calmisi.cn/post/2019/1/kvm对guest中MSR寄存器的处理（二）-rdmsr.html"/>
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1885,663 +2546,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://blog.calmisi.cn/post/2018/4/Latex编译pdf后的字体嵌入问题.html"/>
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Calmisi Lee"/>
-      <meta itemprop="description" content="Pas de regrets"/>
-      <meta itemprop="image" content="/images/avatar.jpg"/>
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Calmisi Lee"/>
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/post/2018/4/Latex编译pdf后的字体嵌入问题.html" class="post-title-link" itemprop="url">Latex编译pdf后的字体嵌入问题</a>
-              
-            
-          </h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-
-              
-                
-              
-
-              <time title="Created: 2018-04-27 13:54:51" itemprop="dateCreated datePublished" datetime="2018-04-27T13:54:51+08:00">2018-04-27</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">Edited on</span>
-                
-                <time title="Modified: 2018-09-16 00:54:21" itemprop="dateModified" datetime="2018-09-16T00:54:21+08:00">2018-09-16</time>
-              
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">In</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/LuanQiBaZao/" itemprop="url" rel="index"><span itemprop="name">LuanQiBaZao</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-            
-          
-
-          
-          
-            <span id="/post/2018/4/Latex编译pdf后的字体嵌入问题.html" class="leancloud_visitors" data-flag-title="Latex编译pdf后的字体嵌入问题">
-              <span class="post-meta-divider">|</span>
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Views: </span>
-              
-                <span class="leancloud-visitors-count"></span>
-            </span>
-          
-
-          
-
-          
-            <div class="post-symbolscount">
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-file-word-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">Symbols count in article: </span>
-                
-                <span title="Symbols count in article">772</span>
-              
-
-              
-                <span class="post-meta-divider">|</span>
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">Reading time &asymp;</span>
-                
-                <span title="Reading time">1 mins.</span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>最近在提交论文的camera ready版本的时候需要在<a href="https://www.pdf-express.org/" target="_blank" rel="noopener">IEEE PDF-eXpress</a>中检测。<br>结果检查结果提示<code>Font Arial, Arial, Italic is not embedded (18x on page 3)</code>问题。<br>就是一些字体没有embedded。</p>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/post/2018/4/Latex编译pdf后的字体嵌入问题.html#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-      
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://blog.calmisi.cn/post/2018/4/centos安装与配置原版texlive.html"/>
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Calmisi Lee"/>
-      <meta itemprop="description" content="Pas de regrets"/>
-      <meta itemprop="image" content="/images/avatar.jpg"/>
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Calmisi Lee"/>
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/post/2018/4/centos安装与配置原版texlive.html" class="post-title-link" itemprop="url">centos安装与配置原版texlive</a>
-              
-            
-          </h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-
-              
-                
-              
-
-              <time title="Created: 2018-04-25 17:22:09" itemprop="dateCreated datePublished" datetime="2018-04-25T17:22:09+08:00">2018-04-25</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">Edited on</span>
-                
-                <time title="Modified: 2018-09-16 00:54:21" itemprop="dateModified" datetime="2018-09-16T00:54:21+08:00">2018-09-16</time>
-              
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">In</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-            
-          
-
-          
-          
-            <span id="/post/2018/4/centos安装与配置原版texlive.html" class="leancloud_visitors" data-flag-title="centos安装与配置原版texlive">
-              <span class="post-meta-divider">|</span>
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Views: </span>
-              
-                <span class="leancloud-visitors-count"></span>
-            </span>
-          
-
-          
-
-          
-            <div class="post-symbolscount">
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-file-word-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">Symbols count in article: </span>
-                
-                <span title="Symbols count in article">1.8k</span>
-              
-
-              
-                <span class="post-meta-divider">|</span>
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">Reading time &asymp;</span>
-                
-                <span title="Reading time">2 mins.</span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>以前一直是在windows系统上编译论文，<br>现在想在服务器的centos系统上修改论文终稿，于是就探索了一下。</p>
-<h1 id="使用yum安装"><a href="#使用yum安装" class="headerlink" title="使用yum安装"></a>使用<code>yum</code>安装</h1><p>尝试的第一种方法是<code>yum</code>安装<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">yum install texlive-latex</span><br><span class="line">#安装texlive-latex</span><br><span class="line">yum install texmaker</span><br><span class="line">#安装tex文件编辑器</span><br></pre></td></tr></table></figure></p>
-<p>使用yum很方便，当使用texmaker编译之前论文的源文件的时候，提示好多包无法识别，<br>没有办法，还是觉得像windows那样，安装原版TEXLIVE<br>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/post/2018/4/centos安装与配置原版texlive.html#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-      
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://blog.calmisi.cn/post/2017/11/NVIDIA-dirver-is-incompatible-with-GNOME-desktop-in-vncserver.html"/>
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Calmisi Lee"/>
-      <meta itemprop="description" content="Pas de regrets"/>
-      <meta itemprop="image" content="/images/avatar.jpg"/>
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Calmisi Lee"/>
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/post/2017/11/NVIDIA-dirver-is-incompatible-with-GNOME-desktop-in-vncserver.html" class="post-title-link" itemprop="url">NVIDIA dirver is incompatible with GNOME desktop in vncserver</a>
-              
-            
-          </h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-
-              
-                
-              
-
-              <time title="Created: 2017-11-21 12:19:28" itemprop="dateCreated datePublished" datetime="2017-11-21T12:19:28+08:00">2017-11-21</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">Edited on</span>
-                
-                <time title="Modified: 2018-09-16 00:54:21" itemprop="dateModified" datetime="2018-09-16T00:54:21+08:00">2018-09-16</time>
-              
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">In</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-            
-          
-
-          
-          
-            <span id="/post/2017/11/NVIDIA-dirver-is-incompatible-with-GNOME-desktop-in-vncserver.html" class="leancloud_visitors" data-flag-title="NVIDIA dirver is incompatible with GNOME desktop in vncserver">
-              <span class="post-meta-divider">|</span>
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Views: </span>
-              
-                <span class="leancloud-visitors-count"></span>
-            </span>
-          
-
-          
-
-          
-            <div class="post-symbolscount">
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-file-word-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">Symbols count in article: </span>
-                
-                <span title="Symbols count in article">708</span>
-              
-
-              
-                <span class="post-meta-divider">|</span>
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">Reading time &asymp;</span>
-                
-                <span title="Reading time">1 mins.</span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>之前一直是用的Centos自带的nouveau,<br>但是自从接了个2k屏幕后，经常待机锁屏后无法恢复，屏幕黑屏。<br>遂装了显卡NVIDIA的驱动。  </p>
-<p>在 Linux 操作系统下，NVIDIA 显卡的驱动需要手动安装，而且需要手动设置，其中有几步需要注意的地方，<br>详见 <a href="http://blog.csdn.net/xueshengke/article/details/51965504" target="_blank" rel="noopener">NVIDIA 显卡驱动安装教程</a> 。  </p>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/post/2017/11/NVIDIA-dirver-is-incompatible-with-GNOME-desktop-in-vncserver.html#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-      
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2593,7 +2597,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">63</span>
+                    <span class="site-state-item-count">66</span>
                     <span class="site-state-item-name">posts</span>
                   </a>
                 </div>
@@ -2755,7 +2759,11 @@
                     
                       
                     
-                    <span class="site-state-item-count">49</span>
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">51</span>
                     <span class="site-state-item-name">tags</span>
                   </a>
                 </div>
@@ -2841,7 +2849,7 @@
     
       <span class="post-meta-item-text">Symbols count total: </span>
     
-    <span title="Symbols count total">284k</span>
+    <span title="Symbols count total">302k</span>
   
 
   
@@ -2852,7 +2860,7 @@
     
       <span class="post-meta-item-text">Reading time total &asymp;</span>
     
-    <span title="Reading time total">4:18</span>
+    <span title="Reading time total">4:35</span>
   
 </div>
 

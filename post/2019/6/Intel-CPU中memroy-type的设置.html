@@ -1,0 +1,1684 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222"/>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2"/>
+
+<link rel="stylesheet" href="/css/main.css?v=7.0.0"/>
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/8.jpg?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/8.jpg?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.ico?v=7.0.0">
+
+
+  <link rel="mask-icon" href="/images/8.jpg?v=7.0.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.0.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="本文介绍Intel CPU如何设置一个内存地址的memory type,也就是cache type.">
+<meta name="keywords" content="Intel,Memory">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Intel CPU中memroy type的设置">
+<meta property="og:url" content="https://blog.calmisi.cn/post/2019/6/Intel-CPU中memroy-type的设置.html">
+<meta property="og:site_name" content="Calmisi Lee">
+<meta property="og:description" content="本文介绍Intel CPU如何设置一个内存地址的memory type,也就是cache type.">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https://blog.calmisi.cn/post/2019/6/Intel-CPU中memroy-type的设置/pat_1.png">
+<meta property="og:image" content="https://blog.calmisi.cn/post/2019/6/Intel-CPU中memroy-type的设置/pat_2.png">
+<meta property="og:image" content="https://blog.calmisi.cn/post/2019/6/Intel-CPU中memroy-type的设置/cache_type_1.png">
+<meta property="og:image" content="https://blog.calmisi.cn/post/2019/6/Intel-CPU中memroy-type的设置/cache_type_2.png">
+<meta property="og:updated_time" content="2019-06-18T06:16:36.298Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Intel CPU中memroy type的设置">
+<meta name="twitter:description" content="本文介绍Intel CPU如何设置一个内存地址的memory type,也就是cache type.">
+<meta name="twitter:image" content="https://blog.calmisi.cn/post/2019/6/Intel-CPU中memroy-type的设置/pat_1.png">
+
+
+
+
+
+
+  <link rel="canonical" href="https://blog.calmisi.cn/post/2019/6/Intel-CPU中memroy-type的设置.html"/>
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Intel CPU中memroy type的设置 | Calmisi Lee</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Calmisi Lee</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <h1 class="site-subtitle" itemprop="description">Never like what you think.</h1>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br/>Home</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br/>Archives</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br/>Tags</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br/>Categories</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br/>About</a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br/>Search</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="Searching..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://blog.calmisi.cn/post/2019/6/Intel-CPU中memroy-type的设置.html"/>
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Calmisi Lee"/>
+      <meta itemprop="description" content="Pas de regrets"/>
+      <meta itemprop="image" content="/images/avatar.jpg"/>
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Calmisi Lee"/>
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">Intel CPU中memroy type的设置
+
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2019-06-16 22:31:19" itemprop="dateCreated datePublished" datetime="2019-06-16T22:31:19+08:00">2019-06-16</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2019-06-18 14:16:36" itemprop="dateModified" datetime="2019-06-18T14:16:36+08:00">2019-06-18</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Intel-SDM/" itemprop="url" rel="index"><span itemprop="name">Intel-SDM</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+            <span id="/post/2019/6/Intel-CPU中memroy-type的设置.html" class="leancloud_visitors" data-flag-title="Intel CPU中memroy type的设置">
+              <span class="post-meta-divider">|</span>
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Views: </span>
+              
+                <span class="leancloud-visitors-count"></span>
+            </span>
+          
+
+          
+
+          
+            <div class="post-symbolscount">
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Symbols count in article: </span>
+                
+                <span title="Symbols count in article">8.7k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Reading time &asymp;</span>
+                
+                <span title="Reading time">8 mins.</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>本文介绍Intel CPU如何设置一个内存地址的memory type,也就是cache type.</p>
+<a id="more"></a>
+<h1 id="MTRR"><a href="#MTRR" class="headerlink" title="MTRR"></a>MTRR</h1><h2 id="introduction"><a href="#introduction" class="headerlink" title="introduction"></a>introduction</h2><p>The MTRR mechanism allows up to 96 memory ranges to be defined in physical memory, and it defines a set of model-specific register (MSRs) for specifying the type of memory that is contained in each range.                                </p>
+<p>Following a hardware reset, the P6 and more recent processor families disable all the fixed and viriable MTRRs, which in effect makse all of physical memory uncacheable.<br>Initialization software should then set the MTRRs to a specific, system-defined memory map. Typically, the BIOS (basic input/output system) software configures the MTRRs.<br>The operation system or executive is then free to modify the memory map using the normal page-level cacheability attributes.   </p>
+<p>In a multiprocessor system using a processor in the P6 family or a more recent family, each processor <em>MUST</em> use the identical MTRR memory map so that software will have a consistent view of memory.                                    </p>
+<h2 id="Enumeration-and-configuraion"><a href="#Enumeration-and-configuraion" class="headerlink" title="Enumeration and configuraion"></a>Enumeration and configuraion</h2><p>MTRRs are supported when CPUID.1_0:EDX.MTRR[12]. If MTRR bit is 1. then can use RDMSR to read the 64-bit read-only MSR IA32_MTRRcap:                                                                      </p>
+<h2 id="IA32-MTRRCAP-MSR"><a href="#IA32-MTRRCAP-MSR" class="headerlink" title="IA32_MTRRCAP MSR"></a>IA32_MTRRCAP MSR</h2><ol>
+<li>bit 0-7: VCNT (variable range registers count), indicates the number of variable ranges implemented on the processor.                                   </li>
+<li>bit 8: FIX (fixed range registers supported) flag, Fixed range MTRRs (IA32_MTRR_FIX64K_00000 through IA32_MTRR_FIX4K_0F8000) are supported when set; no fixed range registers are supported when clear.                         </li>
+<li>bit 10: WC (write combining) flag, The write-combining (WC) memory type is supported when set; the WC type is not supported when clear.                    </li>
+<li>bit 11: SMRR (system-management Range Register) flag, The system-management range register (SMRR) interface is supported when set.                          </li>
+</ol>
+<h2 id="IA32-MTRR-DEF-TYPE-MSR"><a href="#IA32-MTRR-DEF-TYPE-MSR" class="headerlink" title="IA32_MTRR_DEF_TYPE MSR"></a>IA32_MTRR_DEF_TYPE MSR</h2><p>设置不被MTRRs覆盖的physical memory的default propertyies.                           </p>
+<ol>
+<li>bit 0-7: Indicates the default memory type used for those physical memory address ranges that do not have a memory type specified for them by an MTRR.<br>The legal values for this field are 0(UC), 1(WC), 4(WT), 5(WP), 6(WB).          </li>
+<li>bit 10: FE (fixed MTRRs enabled) flag, Fixed-range MTRRs are enabled when set; fixed-range MTRRs are disabled when clear. When the fixed-range MTRRs are enabled, they take priority over the variable-range MTRRs when overlaps in ranges occur.<br>If the fixed-range MTRRs are disabled, the variable-range MTRRs can still be uesd and can map the range ordinarily covered by the fixed-range MTRRs.                                                              </li>
+<li>bit 11: E (MTRRs enabled) flag, MTRRs are enabled when set; all MTRRs are disabled when clear, and the UC memory type is applied to all of physical memory.<br>When this flag is set, the FE falg can disable the fixed-range MTRRs; when the flag is clear, the FE flag has no affect. When the E flag is set, the type specified in the default memory type field is used for areas of memory not already mapped by either a fixed or variable MTRR.                </li>
+</ol>
+<h2 id="Fixed-Range-MTRRs"><a href="#Fixed-Range-MTRRs" class="headerlink" title="Fixed Range MTRRs"></a>Fixed Range MTRRs</h2><p>The fixed memory ranges are mapped with 11 fixed-range registers of 64 bits each. Each of these registers is divided into 8-bit fields that are used to specify the memory type for each of the sub-ranges the register controls:          </p>
+<ol>
+<li><p><em>Registers IA32_MTRR_FIX64K_00000</em> – Maps the 512-KByte address range from 0H to 7FFFFH. This range is divided into eight 64-KByte sub-ranges.即该64 bits的寄存器，每个字节(8 bits)表示一个64-KByte的sub-ranges的type.        </p>
+</li>
+<li><p><em>Registers IA32_MTRR_FIX16K_80000 and IA32_MTRR_FIX16K_A0000</em> – Maps the two 128-KByte address ranges from 80000H to BFFFFH. This range is divided into sixteen 16-KByte sub-rangs, 8 ranges per register.                              </p>
+</li>
+<li><p><em>Registers IA32_MTRR_FIX4K_C0000 through IA32_MTRR_FIX4K_F8000</em> – Maps 8 32-KByte address ranges from C0000H to FFFFFH. This range is divided into 64 4-KByte sub-ranges, 8 ranges per register.                                   </p>
+</li>
+</ol>
+<p>总结：<br>IA32_MTRR_FIX64K_00000每个字节(8bits)表示一个64KByte的范围<br>IA32_MTRR_FIX16K_80000                       16<br>IA32_MTRR_FIX16K_A0000                       16<br>IA32_MTRR_FIX4K_C0000                        4<br>IA32_MTRR_FIX4K_C8000<br>IA32_MTRR_FIX4K_D0000<br>IA32_MTRR_FIX4K_D8000<br>IA32_MTRR_FIX4K_E0000<br>IA32_MTRR_FIX4K_E8000<br>IA32_MTRR_FIX4K_F0000<br>IA32_MTRR_FIX4K_F8000                                                              </p>
+<h2 id="Variable-Range-MTRRs"><a href="#Variable-Range-MTRRs" class="headerlink" title="Variable Range MTRRs"></a>Variable Range MTRRs</h2><hr>
+<h1 id="PAT-Page-Attribute-Table"><a href="#PAT-Page-Attribute-Table" class="headerlink" title="PAT - Page Attribute Table"></a>PAT - Page Attribute Table</h1><p>The Page Attribute Table (PAT) extends the IA-32 architecture’s page-table format to allow memory types to be assigned to regions of physical memory based on linear address mappings.</p>
+<p>The PAT extends the functions of the PCD and PWT bits in page tables to allow all five of the memory types that can be assigned with the MTRRs (plus one additional memory type) to also be assigned dynamically to pages of the linear address space.</p>
+<p>The PAT was introduced to IA-32 architecture on the Pentium III processor. It is also available in the Pentium 4 and Intel Xeon processors.</p>
+<h2 id="Detecting-Support-for-the-PAT-feature"><a href="#Detecting-Support-for-the-PAT-feature" class="headerlink" title="Detecting Support for the PAT feature"></a>Detecting Support for the PAT feature</h2><p>CPUID.1_0:EDX.PAT[bit 16] -&gt; Support PAT, and IA32_PAT msr.</p>
+<p>Note that there is no separate flag or control bit in any of the control registers that enables the PAT.<br>The PAT is always enabled on all processors that support it, and the table lookup always occurs whenever paging is enabled, in all paging modes.</p>
+<h2 id="IA32-PAT-msr"><a href="#IA32-PAT-msr" class="headerlink" title="IA32_PAT msr"></a>IA32_PAT msr</h2><ol>
+<li>Address 0x277H.</li>
+<li>The IA32_PAT MSR包含8个page attribute域：PA0 ~ PA7.每个域占一个字节，且每个域的低3位为有效位，可以指定一个memory type;高5个bits是reserved bits,必须为0。</li>
+<li>这8个域可以被指定为任意一种memory type.<img src="/post/2019/6/Intel-CPU中memroy-type的设置/pat_1.png" title="IA32_PAT msr and available encodings">
+</li>
+</ol>
+<h2 id="使用PAT为Page页设置memory-type"><a href="#使用PAT为Page页设置memory-type" class="headerlink" title="使用PAT为Page页设置memory type"></a>使用PAT为Page页设置memory type</h2><p>用来指向一个page页的Page-table 或者 Page-directory的PAT、PCD、PWT三个bits连起来指定一个PAT entries(PA0 ~ PA7)。<br>The bit 7 in page-table entries that point to 4-KByte pages and bit 12 in paging-structure entries that point to larger pages.<br>The PCD and PWT bits are bit 4 and 3, in paging-structure entries that point to pages of any size.</p>
+<h2 id="配置PAT-entries-PA0-PA7"><a href="#配置PAT-entries-PA0-PA7" class="headerlink" title="配置PAT entries PA0 ~ PA7"></a>配置PAT entries PA0 ~ PA7</h2><p>下图为在power up或者reset之后,默认的PAT entries的配置。soft reset(INIT reset)不会改变该配置。<br><img src="/post/2019/6/Intel-CPU中memroy-type的设置/pat_2.png" title="上电或者重置之后默认的PAT enties配置"></p>
+<p>可以使用WRMSR来配置IA32_PAT msr从而配置不同的PAT entries(PA0 ~ PA7)。</p>
+<hr>
+<p>#11.5 CACHE CONTROL</p>
+<h2 id="11-5-1-Cache-Control-Registers-and-Bits"><a href="#11-5-1-Cache-Control-Registers-and-Bits" class="headerlink" title="11.5.1 Cache Control Registers and Bits"></a>11.5.1 Cache Control Registers and Bits</h2><ol>
+<li>CR0.CD[30]:  </li>
+<li>CR0.NW[29]:</li>
+<li>PCD and PWT flags in paging-structure entries: control the memory type used to access paging structures and pages.</li>
+<li>PCD and PWT flags in CR3: Control the memory type used to access the first paging structure of the current paging-structure hierarchy.</li>
+<li>G(global) flag in the page-directory and page-table entries: </li>
+<li>PGE(pagee global enable) flag in CR4:</li>
+<li>Memory type range registers (MTRRs)(从P6 family开始)</li>
+<li>Page Attribute Table(PAT) MSR (从Pentium III开始)</li>
+<li>Third-Level Cache Disable flag, IA32_MISC_ENABLE.[6] (只有Intel NetBurst微架构):允许单独地disable/enable L3 cache.</li>
+<li>KEN# and WB/WT# pins(Pentium processor)： </li>
+<li>PCD and PWT pins(Pentium Porcessor):</li>
+</ol>
+<h2 id="11-5-2-Precedence-of-Cache-Controls"><a href="#11-5-2-Precedence-of-Cache-Controls" class="headerlink" title="11.5.2 Precedence of Cache Controls"></a>11.5.2 Precedence of Cache Controls</h2><p>Cache control flags 和MTRRs 一起层次地(hierarchically)限制caching。此处的层次我也不是很懂，具体表现如下：</p>
+<ol>
+<li>如果CR0.CD[30] flag被置上(为1)，那么caching是全局禁止的。</li>
+<li>如果CR0.CD[30] flag被清掉(为0)，那么page-level cache control flags and/or MTRRs 可以被用来限制caching:<br>具体地，如果这两者有冲突，禁止caching会有更好的优先级。也就是说：<ol>
+<li>如果MTRR配置一个memory region为 uncacheable, 那么page-level caching control不能将该区域配置为enable caching.</li>
+<li>反之，也成立。即如果page-level caching control指定一个page为uncacheable, MTRR的配置也能将该page变为cacheable.</li>
+</ol>
+</li>
+<li>如果write-back和write-through的caching policies同时指定到a page and a region of memroy.<br>the write-through policy占更高的优先级。<br>另外write-combining policy（只能通过MTRR或者PAT来指定）比write-through, write-back的优先级更高。<br>也就是write-combining &gt; write-through &gt; write-back</li>
+<li>page level的memory type取决于是否enable了PAT.</li>
+</ol>
+<h2 id="11-5-2-1-Pentium-Pro-and-Pentium-II-processors的memory-types"><a href="#11-5-2-1-Pentium-Pro-and-Pentium-II-processors的memory-types" class="headerlink" title="11.5.2.1 Pentium Pro and Pentium II processors的memory types"></a>11.5.2.1 Pentium Pro and Pentium II processors的memory types</h2><p>Pentium Pro and Pentium II处理器不支持PAT。<br>一个page页的有效memory type取决于MTRR和 决定该page的page-table/page-directory的PCD和PWT bits。</p>
+<p>当normal caching is in effect( CR0.CD[30] and CR0.NW[29]都为0)时，the effective memory type由以下的规则决定：</p>
+<ol>
+<li>如果page的PCD和PWT为都0，那么有效的memory type由MTRR决定。</li>
+<li>如果page的PCD为1，那么有效的memory type为UC.</li>
+<li>如果page的PCD为0,并且PWT为1。如果MTRR为WB, 那么有效的memory type是WT; 其他情况下就为MTRR的type.</li>
+<li>当PCD和PWT为相反的值得时候， 那么MTRR为WP, WC时，最有的有效memory type是model-specific的（我们应该避免）；当MTRR为WB,WT,UC时，有效的memory type是结构统一的。<br>具体见下图。<img src="/post/2019/6/Intel-CPU中memroy-type的设置/cache_type_1.png" title="Effective Page-level Memory Types for Pentium Pro and Pentium II processors">
+</li>
+</ol>
+<h2 id="11-5-2-2-Pentium-III-and-More-Recent-Processor-Families"><a href="#11-5-2-2-Pentium-III-and-More-Recent-Processor-Families" class="headerlink" title="11.5.2.2 Pentium III and More Recent Processor Families"></a>11.5.2.2 Pentium III and More Recent Processor Families</h2><p>The Intel Core 2 Duo, Intel Atom, Intel Core Duo, Intel Core Solo, Pentium M, Pentium 4, Intel Xeon, and Pentium III processors使用PAT来选择有效的page-level memory types.<br>此时PAT的memory type由[PAT,PCD,PWT]bits决定的PAT entry决定。<br>如果normal caching is in effect( CR0.CD[30] and CR0.NW[29]都为0）时，the effective memory type由以下的规则决定：<br><img src="/post/2019/6/Intel-CPU中memroy-type的设置/cache_type_2.png" title="Effective Page-level Memory Types for Pentium III and More Recent processors"></p>
+<h2 id="11-5-2-3"><a href="#11-5-2-3" class="headerlink" title="11.5.2.3"></a>11.5.2.3</h2><p>如果两个相邻的page页为不同的memory type，当内存写操作跨这2个memory pages的时候， 那么这个操作数可能会别写2次。<br>如果是向实际的内存写，那么上述的两次写不会有问题；如果写的是memory-mapped device page,那么这个设备可能会发生故障（malfunction）</p>
+<hr>
+<h1 id="guest的memory-type"><a href="#guest的memory-type" class="headerlink" title="guest的memory type"></a>guest的memory type</h1>
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div></div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>Donate</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechat_pay.jpg" alt="Calmisi Lee WeChat Pay"/>
+        <p>WeChat Pay</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/ali_pay.jpg" alt="Calmisi Lee Alipay"/>
+        <p>Alipay</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Intel/" rel="tag"># Intel</a>
+          
+            <a href="/tags/Memory/" rel="tag"># Memory</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/post/2019/3/KVM向userspace提供查询CPUID相关的2个IOCTL.html" rel="next" title="KVM向userspace提供查询CPUID相关的2个IOCTL">
+                <i class="fa fa-chevron-left"></i> KVM向userspace提供查询CPUID相关的2个IOCTL
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/post/2019/6/QEMU-KVM创建vcpu.html" rel="prev" title="QEMU-KVM创建vcpu">
+                QEMU-KVM创建vcpu <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8zOTc5MS8xNjMxOA=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Calmisi Lee"/>
+            
+              <p class="site-author-name" itemprop="name">Calmisi Lee</p>
+              <p class="site-description motion-element" itemprop="description">Pas de regrets</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">66</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">19</span>
+                    <span class="site-state-item-name">categories</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">51</span>
+                    <span class="site-state-item-name">tags</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/calmisi" title="GitHub &rarr; https://github.com/calmisi" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="mailto:calmisi@163.com" title="E-Mail &rarr; mailto:calmisi@163.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#MTRR"><span class="nav-number">1.</span> <span class="nav-text">MTRR</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#introduction"><span class="nav-number">1.1.</span> <span class="nav-text">introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Enumeration-and-configuraion"><span class="nav-number">1.2.</span> <span class="nav-text">Enumeration and configuraion</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IA32-MTRRCAP-MSR"><span class="nav-number">1.3.</span> <span class="nav-text">IA32_MTRRCAP MSR</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IA32-MTRR-DEF-TYPE-MSR"><span class="nav-number">1.4.</span> <span class="nav-text">IA32_MTRR_DEF_TYPE MSR</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Fixed-Range-MTRRs"><span class="nav-number">1.5.</span> <span class="nav-text">Fixed Range MTRRs</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Variable-Range-MTRRs"><span class="nav-number">1.6.</span> <span class="nav-text">Variable Range MTRRs</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#PAT-Page-Attribute-Table"><span class="nav-number">2.</span> <span class="nav-text">PAT - Page Attribute Table</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Detecting-Support-for-the-PAT-feature"><span class="nav-number">2.1.</span> <span class="nav-text">Detecting Support for the PAT feature</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IA32-PAT-msr"><span class="nav-number">2.2.</span> <span class="nav-text">IA32_PAT msr</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用PAT为Page页设置memory-type"><span class="nav-number">2.3.</span> <span class="nav-text">使用PAT为Page页设置memory type</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#配置PAT-entries-PA0-PA7"><span class="nav-number">2.4.</span> <span class="nav-text">配置PAT entries PA0 ~ PA7</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#11-5-1-Cache-Control-Registers-and-Bits"><span class="nav-number">2.5.</span> <span class="nav-text">11.5.1 Cache Control Registers and Bits</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#11-5-2-Precedence-of-Cache-Controls"><span class="nav-number">2.6.</span> <span class="nav-text">11.5.2 Precedence of Cache Controls</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#11-5-2-1-Pentium-Pro-and-Pentium-II-processors的memory-types"><span class="nav-number">2.7.</span> <span class="nav-text">11.5.2.1 Pentium Pro and Pentium II processors的memory types</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#11-5-2-2-Pentium-III-and-More-Recent-Processor-Families"><span class="nav-number">2.8.</span> <span class="nav-text">11.5.2.2 Pentium III and More Recent Processor Families</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#11-5-2-3"><span class="nav-number">2.9.</span> <span class="nav-text">11.5.2.3</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#guest的memory-type"><span class="nav-number">3.</span> <span class="nav-text">guest的memory type</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">  <a href="http://www.miitbeian.gov.cn" rel="noopener" target="_blank"> </a>&copy; 2015.6 – <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Calmisi Lee</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Symbols count total: </span>
+    
+    <span title="Symbols count total">302k</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Reading time total &asymp;</span>
+    
+    <span title="Reading time total">4:35</span>
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.0.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=7.0.0"></script>
+
+  <script src="/js/src/motion.js?v=7.0.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/affix.js?v=7.0.0"></script>
+
+  <script src="/js/src/schemes/pisces.js?v=7.0.0"></script>
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=7.0.0"></script>
+<script src="/js/src/post-details.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  
+    <script>
+  window.livereOptions = {
+    refer: 'post/2019/6/Intel-CPU中memroy-type的设置.html'
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+</script>
+
+  
+
+
+  
+
+  <script>
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+  
+  <script>
+    
+    function addCount(Counter) {
+      var $visitors = $('.leancloud_visitors');
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+
+      Counter('get', '/classes/Counter', { where: JSON.stringify({ url }) })
+        .done(function({ results }) {
+          if (results.length > 0) {
+            var counter = results[0];
+            
+              var $element = $(document.getElementById(url));
+              $element.find('.leancloud-visitors-count').text(counter.time + 1);
+            
+            Counter('put', '/classes/Counter/' + counter.objectId, JSON.stringify({ time: { '__op': 'Increment', 'amount': 1 } }))
+            
+              .fail(function ({ responseJSON }) {
+                console.log(`Failed to save Visitor num, with error message: ${responseJSON.error}`);
+              })
+          } else {
+            
+              var $element = $(document.getElementById(url));
+              $element.find('.leancloud-visitors-count').text('Counter not initialized! More info at console err msg.');
+              console.error('ATTENTION! LeanCloud counter has security bug, see how to solve it here: https://github.com/theme-next/hexo-leancloud-counter-security. \n However, you can still use LeanCloud without security, by setting `security` option to `false`.');
+            
+          }
+        })
+        .fail(function ({ responseJSON }) {
+          console.log(`LeanCloud Counter Error: ${responseJSON.code} ${responseJSON.error}`);
+        });
+    }
+    
+
+    $(function() {
+      $.get('https://app-router.leancloud.cn/2/route?appId=' + 'tf4TRbjrkONfr7VekxlWI8Py-gzGzoHsz')
+        .done(function({ api_server }) {
+          var Counter = function(method, url, data) {
+            return $.ajax({
+              method: method,
+              url: 'https://' + api_server + '/1.1' + url,
+              headers: {
+                'X-LC-Id': 'tf4TRbjrkONfr7VekxlWI8Py-gzGzoHsz',
+                'X-LC-Key': '5c1wL7zY6VY7oLzi5xaCIu5x',
+                'Content-Type': 'application/json',
+              },
+              data: data
+            });
+          };
+          
+            addCount(Counter);
+          
+        });
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  <style>
+    .copy-btn {
+      display: inline-block;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 20px;
+      color: #333;
+      white-space: nowrap;
+      vertical-align: middle;
+      cursor: pointer;
+      background-color: #eee;
+      background-image: linear-gradient(#fcfcfc, #eee);
+      border: 1px solid #d5d5d5;
+      border-radius: 3px;
+      user-select: none;
+      outline: 0;
+    }
+
+    .highlight-wrap .copy-btn {
+      transition: opacity .3s ease-in-out;
+      opacity: 0;
+      padding: 2px 6px;
+      position: absolute;
+      right: 4px;
+      top: 8px;
+    }
+
+    .highlight-wrap:hover .copy-btn,
+    .highlight-wrap .copy-btn:focus {
+      opacity: 1
+    }
+
+    .highlight-wrap {
+      position: relative;
+    }
+  </style>
+  <script>
+    $('.highlight').each(function(i, e) {
+      var $wrap = $('<div>').addClass('highlight-wrap');
+      $(e).after($wrap);
+      $wrap.append($('<button>').addClass('copy-btn').append('Copy').on('click', function(e) {
+        var code = $(this).parent().find('.code').find('.line').map(function(i, e) {
+          return $(e).text();
+        }).toArray().join('\n');
+        var ta = document.createElement('textarea');
+        var range = document.createRange(); //For Chrome
+        var sel = window.getSelection(); //For Chrome
+        var yPosition = window.pageYOffset || document.documentElement.scrollTop;
+        ta.style.top = yPosition + 'px'; //Prevent page scroll
+        ta.style.position = 'absolute';
+        ta.style.opacity = '0';
+        ta.value = code;
+        ta.textContent = code; //For FireFox
+        ta.contentEditable = true;
+        ta.readOnly = false;
+        document.body.appendChild(ta);
+        range.selectNode(ta);
+        sel.removeAllRanges();
+        sel.addRange(range);
+        ta.setSelectionRange(0, code.length);
+        var result = document.execCommand('copy');
+        
+          if (result) $(this).text('Copied');
+          else $(this).text('Copy failed');
+        
+        ta.blur(); //For iOS
+        $(this).blur();
+      })).on('mouseleave', function(e) {
+        var $b = $(this).find('.copy-btn');
+        setTimeout(function() {
+          $b.text('Copy');
+        }, 300);
+      }).append(e);
+    })
+  </script>
+
+
+  
+
+</body>
+</html>

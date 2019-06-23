@@ -374,6 +374,671 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://blog.calmisi.cn/post/2017/4/搭建shadowsocks-server.html"/>
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Calmisi Lee"/>
+      <meta itemprop="description" content="Pas de regrets"/>
+      <meta itemprop="image" content="/images/avatar.jpg"/>
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Calmisi Lee"/>
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/post/2017/4/搭建shadowsocks-server.html" class="post-title-link" itemprop="url">搭建shadowsocks server</a>
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2017-04-27 21:28:23" itemprop="dateCreated datePublished" datetime="2017-04-27T21:28:23+08:00">2017-04-27</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2018-09-16 00:54:21" itemprop="dateModified" datetime="2018-09-16T00:54:21+08:00">2018-09-16</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+            <span id="/post/2017/4/搭建shadowsocks-server.html" class="leancloud_visitors" data-flag-title="搭建shadowsocks server">
+              <span class="post-meta-divider">|</span>
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Views: </span>
+              
+                <span class="leancloud-visitors-count"></span>
+            </span>
+          
+
+          
+
+          
+            <div class="post-symbolscount">
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Symbols count in article: </span>
+                
+                <span title="Symbols count in article">5.6k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Reading time &asymp;</span>
+                
+                <span title="Reading time">5 mins.</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>自从搬了新实验室，虽然都是校内网，无奈网络差太多，LOL都打不了。  </p>
+<p>今天发现了有Proxifier这个东西，它可以将基于SOCK5的代理变为操作系统全局的。<br>这样就可以先ssh连上服务器221（221服务器所在的机房的网络好嘛，打游戏方便）。<br>在221的ssh上创建一个基于SOCK5的动态隧道。<br>然后用Proxifier将这个SOCK5的代理设为全局的，就可以用221服务器那边的网络玩LOL啦。  </p>
+<p>可是实验发现基于SSH隧道的SOCK5代理，用了proxifier还是只能代理浏览器的流量，真烦心。<br>没办法，只能尝试用SS的SOCK5代理了，首先用我的境外SS账号测试，发现基于SS的proxifier全局代理可以代理其他应用（非浏览器，如chrome）的流量。<br>那么要用221的网打LOL,只能在221上装一个SS的server了。<br>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/post/2017/4/搭建shadowsocks-server.html#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://blog.calmisi.cn/post/2017/4/linux-mmap-函数.html"/>
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Calmisi Lee"/>
+      <meta itemprop="description" content="Pas de regrets"/>
+      <meta itemprop="image" content="/images/avatar.jpg"/>
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Calmisi Lee"/>
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/post/2017/4/linux-mmap-函数.html" class="post-title-link" itemprop="url">linux mmap()函数</a>
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2017-04-20 14:47:35" itemprop="dateCreated datePublished" datetime="2017-04-20T14:47:35+08:00">2017-04-20</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2018-09-16 00:54:21" itemprop="dateModified" datetime="2018-09-16T00:54:21+08:00">2018-09-16</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/系统函数/" itemprop="url" rel="index"><span itemprop="name">系统函数</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+            <span id="/post/2017/4/linux-mmap-函数.html" class="leancloud_visitors" data-flag-title="linux mmap()函数">
+              <span class="post-meta-divider">|</span>
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Views: </span>
+              
+                <span class="leancloud-visitors-count"></span>
+            </span>
+          
+
+          
+
+          
+            <div class="post-symbolscount">
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Symbols count in article: </span>
+                
+                <span title="Symbols count in article">2.5k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Reading time &asymp;</span>
+                
+                <span title="Reading time">2 mins.</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>头文件：#include &lt;unistd.h&gt;    #include &lt;sys/mman.h&gt;</p>
+<p>定义函数：<code>void *mmap(void *start, size_t length, int prot, int flags, int fd, off_t offsize);</code></p>
+<p>参数说明：<br></p>
+<table><br><tbody><br><tr><br><th><br>参数</th><br><th><br>说明</th><br></tr><br><tr><br><td><br>start</td><br><td><br>指向欲对应的内存起始地址，通常设为NULL，代表让系统自动选定地址，对应成功后该地址会返回。</td><br></tr><br><tr><br><td><br>length</td><br><td><br>代表将文件中多大的部分对应到内存。</td><br></tr><br><tr><br><td><br>prot</td><br><td><br>&nbsp;代表映射区域的保护方式，有下列组合：<br><ul><br><li><br>PROT_EXEC &nbsp;映射区域可被执行；</li><br><li><br>PROT_READ &nbsp;映射区域可被读取；</li><br><li><br>PROT_WRITE &nbsp;映射区域可被写入；</li><br><li><br>PROT_NONE &nbsp;映射区域不能存取。</li><br></ul><br></td><br></tr><br><tr><br><td><br>flags</td><br><td><br>会影响映射区域的各种特性：<br><ul><br><li><br>MAP_FIXED &nbsp;如果参数 start 所指的地址无法成功建立映射时，则放弃映射，不对地址做修正。通常不鼓励用此旗标。</li><br><li><br>MAP_SHARED &nbsp;对应射区域的写入数据会复制回文件内，而且允许其他映射该文件的进程共享。</li><br><li><br>MAP_PRIVATE &nbsp;对应射区域的写入操作会产生一个映射文件的复制，即私人的&quot;写入时复制&quot; (copy&nbsp;on write)对此区域作的任何修改都不会写回原来的文件内容。</li><br><li><br>MAP_ANONYMOUS &nbsp;建立匿名映射，此时会忽略参数fd，不涉及文件，而且映射区域无法和其他进程共享。</li><br><li><br>MAP_DENYWRITE &nbsp;只允许对应射区域的写入操作，其他对文件直接写入的操作将会被拒绝。</li><br><li><br>MAP_LOCKED &nbsp;将映射区域锁定住，这表示该区域不会被置换(swap)。</li><br></ul><br><br><br><span style="color:#b22222;">在调用mmap()时必须要指定MAP_SHARED 或MAP_PRIVATE。</span></td><br></tr><br><tr><br><td><br>fd</td><br><td><br>open()返回的文件描述词，代表欲映射到内存的文件。</td><br></tr><br><tr><br><td><br>offset</td><br><td><br>文件映射的偏移量，通常设置为0，代表从文件最前方开始对应，offset必须是分页大小的整数倍。</td><br></tr><br></tbody><br></table>
+
+<p>返回值：若映射成功则返回映射区的内存起始地址，否则返回MAP_FAILED(-1)，错误原因存于errno 中。</p>
+<p>错误代码：</p>
+<ul>
+<li>EBADF  参数fd 不是有效的文件描述词。</li>
+<li>EACCES  存取权限有误。如果是MAP_PRIVATE 情况下文件必须可读，使用MAP_SHARED 则要有PROT_WRITE 以及该文件要能写入。</li>
+<li>EINVAL  参数start、length 或offset 有一个不合法。</li>
+<li>EAGAIN  文件被锁住，或是有太多内存被锁住。</li>
+<li>ENOMEM  内存不足。</li>
+</ul>
+<p>范例：利用mmap()来读取/etc/passwd 文件内容。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/stat.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/mman.h&gt;</span></span></span><br><span class="line">main()&#123;</span><br><span class="line">    <span class="keyword">int</span> fd;</span><br><span class="line">    <span class="keyword">void</span> *start;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">stat</span> <span class="title">sb</span>;</span></span><br><span class="line">    fd = open(<span class="string">"/etc/passwd"</span>, O_RDONLY); <span class="comment">/*打开/etc/passwd */</span></span><br><span class="line">    fstat(fd, &amp;sb); <span class="comment">/* 取得文件大小 */</span></span><br><span class="line">    start = mmap(<span class="literal">NULL</span>, sb.st_size, PROT_READ, MAP_PRIVATE, fd, <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">if</span>(start == MAP_FAILED) <span class="comment">/* 判断是否映射成功 */</span></span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"%s"</span>, start); munma(start, sb.st_size); <span class="comment">/* 解除映射 */</span></span><br><span class="line">    closed(fd);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>执行结果：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">root : x : 0 : root : /root : /bin/bash</span><br><span class="line">bin : x : 1 : 1 : bin : /bin :</span><br><span class="line">daemon : x : 2 : 2 :daemon : /sbin</span><br><span class="line">adm : x : 3 : 4 : adm : /var/adm :</span><br><span class="line">lp : x :4 :7 : lp : /var/spool/lpd :</span><br><span class="line">sync : x : 5 : 0 : sync : /sbin : bin/sync :</span><br><span class="line">shutdown : x : 6 : 0 : shutdown : /sbin : /sbin/shutdown</span><br><span class="line">halt : x : 7 : 0 : halt : /sbin : /sbin/halt</span><br><span class="line">mail : x : 8 : 12 : mail : /var/spool/mail :</span><br><span class="line">news : x :9 :13 : news : /var/spool/news :</span><br><span class="line">uucp : x :10 :14 : uucp : /var/spool/uucp :</span><br><span class="line">operator : x : 11 : 0 :operator : /root:</span><br><span class="line">games : x : 12 :100 : games :/usr/games:</span><br><span class="line">gopher : x : 13 : 30 : gopher : /usr/lib/gopher-data:</span><br><span class="line">ftp : x : 14 : 50 : FTP User : /home/ftp:</span><br><span class="line">nobody : x :99: 99: Nobody : /:</span><br><span class="line">xfs :x :100 :101 : X Font Server : /etc/xll/fs : /bin/false</span><br><span class="line">gdm : x : 42 :42 : : /home/gdm: /bin/bash</span><br><span class="line">kids : x : 500 :500 :/home/kids : /bin/bash</span><br></pre></td></tr></table></figure></p>
+
+          
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://blog.calmisi.cn/post/2017/3/vc709-BAR空间地址-寄存器设置.html"/>
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Calmisi Lee"/>
+      <meta itemprop="description" content="Pas de regrets"/>
+      <meta itemprop="image" content="/images/avatar.jpg"/>
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Calmisi Lee"/>
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/post/2017/3/vc709-BAR空间地址-寄存器设置.html" class="post-title-link" itemprop="url">vc709 BAR空间地址&寄存器设置</a>
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2017-03-30 14:53:42" itemprop="dateCreated datePublished" datetime="2017-03-30T14:53:42+08:00">2017-03-30</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2018-09-16 00:54:21" itemprop="dateModified" datetime="2018-09-16T00:54:21+08:00">2018-09-16</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/vc709-DMA-驱动/" itemprop="url" rel="index"><span itemprop="name">vc709 DMA 驱动</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+            <span id="/post/2017/3/vc709-BAR空间地址-寄存器设置.html" class="leancloud_visitors" data-flag-title="vc709 BAR空间地址&寄存器设置">
+              <span class="post-meta-divider">|</span>
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Views: </span>
+              
+                <span class="leancloud-visitors-count"></span>
+            </span>
+          
+
+          
+
+          
+            <div class="post-symbolscount">
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Symbols count in article: </span>
+                
+                <span title="Symbols count in article">1.2k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Reading time &asymp;</span>
+                
+                <span title="Reading time">1 mins.</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>本文记录Xilinx VC709这块开发板的PCI BAR空间的设置相关信息。<br>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/post/2017/3/vc709-BAR空间地址-寄存器设置.html#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="https://blog.calmisi.cn/post/2017/3/Linux内存分配方法总结.html"/>
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1903,663 +2568,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://blog.calmisi.cn/post/2017/3/编译click-modular-router遇到的一些问题.html"/>
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Calmisi Lee"/>
-      <meta itemprop="description" content="Pas de regrets"/>
-      <meta itemprop="image" content="/images/avatar.jpg"/>
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Calmisi Lee"/>
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/post/2017/3/编译click-modular-router遇到的一些问题.html" class="post-title-link" itemprop="url">编译click modular router遇到的一些问题</a>
-              
-            
-          </h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-
-              
-                
-              
-
-              <time title="Created: 2017-03-01 15:05:29" itemprop="dateCreated datePublished" datetime="2017-03-01T15:05:29+08:00">2017-03-01</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">Edited on</span>
-                
-                <time title="Modified: 2018-09-16 00:54:21" itemprop="dateModified" datetime="2018-09-16T00:54:21+08:00">2018-09-16</time>
-              
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">In</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-            
-          
-
-          
-          
-            <span id="/post/2017/3/编译click-modular-router遇到的一些问题.html" class="leancloud_visitors" data-flag-title="编译click modular router遇到的一些问题">
-              <span class="post-meta-divider">|</span>
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Views: </span>
-              
-                <span class="leancloud-visitors-count"></span>
-            </span>
-          
-
-          
-
-          
-            <div class="post-symbolscount">
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-file-word-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">Symbols count in article: </span>
-                
-                <span title="Symbols count in article">530</span>
-              
-
-              
-                <span class="post-meta-divider">|</span>
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">Reading time &asymp;</span>
-                
-                <span title="Reading time">1 mins.</span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>系统为Ubuntu 16.04.1 LTS</p>
-<p>#问题1：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Cant&apos;t find /usr/src/linux, so I can&apos;t compile the linuxmodule driver</span><br><span class="line">(You may need the --with-linux=DIR option.)</span><br></pre></td></tr></table></figure></p>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/post/2017/3/编译click-modular-router遇到的一些问题.html#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-      
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://blog.calmisi.cn/post/2017/2/intel-XL710模式设置.html"/>
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Calmisi Lee"/>
-      <meta itemprop="description" content="Pas de regrets"/>
-      <meta itemprop="image" content="/images/avatar.jpg"/>
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Calmisi Lee"/>
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/post/2017/2/intel-XL710模式设置.html" class="post-title-link" itemprop="url">intel XL710模式设置</a>
-              
-            
-          </h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-
-              
-                
-              
-
-              <time title="Created: 2017-02-16 19:12:12" itemprop="dateCreated datePublished" datetime="2017-02-16T19:12:12+08:00">2017-02-16</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">Edited on</span>
-                
-                <time title="Modified: 2018-09-16 00:54:21" itemprop="dateModified" datetime="2018-09-16T00:54:21+08:00">2018-09-16</time>
-              
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">In</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Networking/" itemprop="url" rel="index"><span itemprop="name">Networking</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-            
-          
-
-          
-          
-            <span id="/post/2017/2/intel-XL710模式设置.html" class="leancloud_visitors" data-flag-title="intel XL710模式设置">
-              <span class="post-meta-divider">|</span>
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Views: </span>
-              
-                <span class="leancloud-visitors-count"></span>
-            </span>
-          
-
-          
-
-          
-            <div class="post-symbolscount">
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-file-word-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">Symbols count in article: </span>
-                
-                <span title="Symbols count in article">652</span>
-              
-
-              
-                <span class="post-meta-divider">|</span>
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">Reading time &asymp;</span>
-                
-                <span title="Reading time">1 mins.</span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>买了块Intel 40G的网卡XL710QDA2.<br>由于实验室的交换机是pica8的，只有4个10G的光口，为了让XL710网卡能和交换机互连，就需要设置其工作模式。</p>
-<p>设置其工作模式需要用到Intel的QCU工具（QSFP+ Configuration Utility），<br>官方有个说明文档：<a href="http://www.intel.com/content/dam/www/public/us/en/documents/guides/qsfp-configuration-utility-quick-usage-guide.pdf" target="_blank" rel="noopener">http://www.intel.com/content/dam/www/public/us/en/documents/guides/qsfp-configuration-utility-quick-usage-guide.pdf</a></p>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/post/2017/2/intel-XL710模式设置.html#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-      
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://blog.calmisi.cn/post/2017/1/MTU-MSS以及Mpps.html"/>
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Calmisi Lee"/>
-      <meta itemprop="description" content="Pas de regrets"/>
-      <meta itemprop="image" content="/images/avatar.jpg"/>
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Calmisi Lee"/>
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/post/2017/1/MTU-MSS以及Mpps.html" class="post-title-link" itemprop="url">MTU,MSS以及Mpps</a>
-              
-            
-          </h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-
-              
-                
-              
-
-              <time title="Created: 2017-01-10 16:10:35" itemprop="dateCreated datePublished" datetime="2017-01-10T16:10:35+08:00">2017-01-10</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">Edited on</span>
-                
-                <time title="Modified: 2018-09-16 00:54:21" itemprop="dateModified" datetime="2018-09-16T00:54:21+08:00">2018-09-16</time>
-              
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">In</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Networking/" itemprop="url" rel="index"><span itemprop="name">Networking</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-            
-          
-
-          
-          
-            <span id="/post/2017/1/MTU-MSS以及Mpps.html" class="leancloud_visitors" data-flag-title="MTU,MSS以及Mpps">
-              <span class="post-meta-divider">|</span>
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Views: </span>
-              
-                <span class="leancloud-visitors-count"></span>
-            </span>
-          
-
-          
-
-          
-            <div class="post-symbolscount">
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-file-word-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">Symbols count in article: </span>
-                
-                <span title="Symbols count in article">1.5k</span>
-              
-
-              
-                <span class="post-meta-divider">|</span>
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">Reading time &asymp;</span>
-                
-                <span title="Reading time">1 mins.</span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>转自<a href="http://blog.csdn.net/smartfox80/article/details/22508637" target="_blank" rel="noopener">http://blog.csdn.net/smartfox80/article/details/22508637</a></p>
-<p>MSS是指应用层在一个数据包内最大能传输的字节数<br>MTU是指IP层在一个数据包内最大能传输的字节数<br>MTU= MSS+TCP层头部长度+IP层头部长度<br>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/post/2017/1/MTU-MSS以及Mpps.html#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-      
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2611,7 +2619,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">63</span>
+                    <span class="site-state-item-count">66</span>
                     <span class="site-state-item-name">posts</span>
                   </a>
                 </div>
@@ -2773,7 +2781,11 @@
                     
                       
                     
-                    <span class="site-state-item-count">49</span>
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">51</span>
                     <span class="site-state-item-name">tags</span>
                   </a>
                 </div>
@@ -2859,7 +2871,7 @@
     
       <span class="post-meta-item-text">Symbols count total: </span>
     
-    <span title="Symbols count total">284k</span>
+    <span title="Symbols count total">302k</span>
   
 
   
@@ -2870,7 +2882,7 @@
     
       <span class="post-meta-item-text">Reading time total &asymp;</span>
     
-    <span title="Reading time total">4:18</span>
+    <span title="Reading time total">4:35</span>
   
 </div>
 
