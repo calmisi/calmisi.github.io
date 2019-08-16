@@ -286,6 +286,10 @@ static TypeImpl *type_new(const TypeInfo *info)
 
 # 二、 main()函数初始化
 在QEMU的源代码的linux-user/main.c函数中，是linux平台的main()函数入口。
+
+> 注意，此处描述有问题，正确的`main()`入口函数应该在vl.c中，请参考文章：
+> [qemu-system-x86_64命令创建虚拟机的详细过程][vl_c_main]
+
 ```C
 static const char *cpu_model;
 static const char *cpu_type;
@@ -395,8 +399,9 @@ static TypeImpl *type_table_lookup(const char *name)
 }
 ```
  `object_class_by_name(typename)`会调用`type_get_by_name(typename)`，其会调用`type_table_lookup(name)`在[hash_table](#type-register-static-amp-x86-register-cpudef-type)中查找对应的name对应的TypeImpl。
-该hash_table中的元素是在上一节[cpu model(cpu type)的初始化](#cpu-model-cpu-type-的初始化)中调用`x86_cpu_register_types()`==>`type_register_static()`/`x86_register_cpudef_type()`==>`type_register()`==>`tyep_register_internal()`函数向hash_table中加入的。
-获取到typename对应的TypeImpl实例后，会调用`type_initialize()`函数，该函数会动态分配type-class，并且还会调用type->class_init()函数，初始化type->class。
+该hash_table中的元素是在上一节[cpu model(cpu type)的初始化](#cpu-model-cpu-type-的初始化)中调用
+`x86_cpu_register_types()`==>`type_register_static()`/`x86_register_cpudef_type()`==>`type_register()`==>`tyep_register_internal()`函数向hash_table中加入的。
+获取到typename对应的TypeImpl实例后，会调用`type_initialize()`函数，该函数会动态分配type->class，并且还会调用type->class_init()函数，初始化type->class。
 调用`object_class_by_name(CPU_RESOLVING_TYPE)`获取到ObjectClass后，将其转化为CPUClass,然后调用cc->class_by_name(cpu_model)。
 具体地，CPU_RESOLVING_TYPE(TYPE_X86_CPU)的`.class_init = x86_cpu_common_class_init`，在x86_cpu_common_class_init()函数中将该CPUClass的`class_by_name`句柄设置为`x86_cpu_class_by_name()`，所以会调用`x86_cpu_class_by_name()`函数，其调用object_class_by_name(model_pieces[0]"-"TYPE_X86_CPU)获取oc;
 >总结：
@@ -408,4 +413,11 @@ static TypeImpl *type_table_lookup(const char *name)
 然后调用cc->parse_features()函数会根据`-cpu`函数后面的-feature,+feature等初始化plus_features[]和minus_features[]数组。
 
 > 总结
-> `parse_cpu_model()`函数，不仅获得了cpu_type，还初始化了plus_features[]和minus_features[]数组。
+> 1. `parse_cpu_model()`函数，不仅获得了cpu_type，还初始化了plus_features[]和minus_features[]数组。
+> 2. object_class_by_name(const char *typename)和object_class_get_name(ObjectClass *klass)的区别：
+>    前者通过传入的typename获取ObjectClass,或者通过ObjectClass获取typename，正好是反着的。
+
+
+
+
+[vl_c_main]: ../6/qemu-system-x86-64命令创建虚拟机的详细过程.html
