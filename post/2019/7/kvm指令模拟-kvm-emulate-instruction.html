@@ -1,0 +1,1707 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222"/>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2"/>
+
+<link rel="stylesheet" href="/css/main.css?v=7.0.0"/>
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/8.jpg?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/8.jpg?v=7.0.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.ico?v=7.0.0">
+
+
+  <link rel="mask-icon" href="/images/8.jpg?v=7.0.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.0.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="kvm_emualte_instruction(struct kvm_vcpu *vcpu, int emulation_type)根据当前vcpu的状态和指定的emulation_type来进行当前vcpu所执行的指令进行模拟。">
+<meta name="keywords" content="KVM,Instruction emulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="kvm指令模拟-kvm_emulate_instruction">
+<meta property="og:url" content="https://blog.calmisi.cn/post/2019/7/kvm指令模拟-kvm-emulate-instruction.html">
+<meta property="og:site_name" content="Calmisi Lee">
+<meta property="og:description" content="kvm_emualte_instruction(struct kvm_vcpu *vcpu, int emulation_type)根据当前vcpu的状态和指定的emulation_type来进行当前vcpu所执行的指令进行模拟。">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2019-07-10T13:42:24.027Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="kvm指令模拟-kvm_emulate_instruction">
+<meta name="twitter:description" content="kvm_emualte_instruction(struct kvm_vcpu *vcpu, int emulation_type)根据当前vcpu的状态和指定的emulation_type来进行当前vcpu所执行的指令进行模拟。">
+
+
+
+
+
+
+  <link rel="canonical" href="https://blog.calmisi.cn/post/2019/7/kvm指令模拟-kvm-emulate-instruction.html"/>
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>kvm指令模拟-kvm_emulate_instruction | Calmisi Lee</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Calmisi Lee</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <h1 class="site-subtitle" itemprop="description">Never like what you think.</h1>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br/>Home</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br/>Archives</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br/>Tags</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br/>Categories</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br/>About</a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br/>Search</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="Searching..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://blog.calmisi.cn/post/2019/7/kvm指令模拟-kvm-emulate-instruction.html"/>
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Calmisi Lee"/>
+      <meta itemprop="description" content="Pas de regrets"/>
+      <meta itemprop="image" content="/images/avatar.jpg"/>
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Calmisi Lee"/>
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">kvm指令模拟-kvm_emulate_instruction
+
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2019-07-06 19:36:53" itemprop="dateCreated datePublished" datetime="2019-07-06T19:36:53+08:00">2019-07-06</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2019-07-10 21:42:24" itemprop="dateModified" datetime="2019-07-10T21:42:24+08:00">2019-07-10</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/KVM/" itemprop="url" rel="index"><span itemprop="name">KVM</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+            <span id="/post/2019/7/kvm指令模拟-kvm-emulate-instruction.html" class="leancloud_visitors" data-flag-title="kvm指令模拟-kvm_emulate_instruction">
+              <span class="post-meta-divider">|</span>
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Views: </span>
+              
+                <span class="leancloud-visitors-count"></span>
+            </span>
+          
+
+          
+
+          
+            <div class="post-symbolscount">
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Symbols count in article: </span>
+                
+                <span title="Symbols count in article">17k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Reading time &asymp;</span>
+                
+                <span title="Reading time">15 mins.</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>kvm_emualte_instruction(struct kvm_vcpu *vcpu, int emulation_type)<br>根据当前vcpu的状态和指定的emulation_type来进行当前vcpu所执行的指令进行模拟。</p>
+<a id="more"></a>
+<h1 id="Emulation-type-amp-Emulation-result"><a href="#Emulation-type-amp-Emulation-result" class="headerlink" title="Emulation type &amp; Emulation result"></a>Emulation type &amp; Emulation result</h1><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> emulation_result &#123;</span><br><span class="line">	EMULATE_DONE,		<span class="comment">/* no further processing */</span></span><br><span class="line">	EMULATE_USER_EXIT,	<span class="comment">/* kvm_run ready for userspace exit */</span></span><br><span class="line">	EMULATE_FAIL,		<span class="comment">/* can't emulate this instruction */</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> EMULTYPE_NO_DECODE		(1 &lt;&lt; 0)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> EMULTYPE_TRAP_NO		(1 &lt;&lt; 1)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> EMULTYPE_SKIP			(1 &lt;&lt; 2)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> EMULTYPE_ALLOW_RETRY	(1 &lt;&lt; 3)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> EMULTYPE_NO_UD_ON_FAIL	(1 &lt;&lt; 4)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> EMULTYPE_VMWARE			(1 &lt;&lt; 5)</span></span><br></pre></td></tr></table></figure>
+<h1 id="x86-emulate-instruction"><a href="#x86-emulate-instruction" class="headerlink" title="x86_emulate_instruction"></a>x86_emulate_instruction</h1><p><code>kvm_emulate_instruction()</code>函数实际是对<code>x86_emulate_instruction()</code>函数的封装：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">kvm_emulate_instruction</span><span class="params">(struct kvm_vcpu *vcpu, <span class="keyword">int</span> emulate_type)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">return</span> x86_emulate_instruction(vcpu, <span class="number">0</span>, emulation_type, <span class="literal">NULL</span>, <span class="number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">x86_emulate_instruction</span><span class="params">(struct kvm_vcpu *vcpu,</span></span></span><br><span class="line"><span class="function"><span class="params">							<span class="keyword">unsigned</span> <span class="keyword">long</span> cr2,</span></span></span><br><span class="line"><span class="function"><span class="params">							<span class="keyword">int</span> emulation_type,</span></span></span><br><span class="line"><span class="function"><span class="params">							<span class="keyword">void</span> *insn,</span></span></span><br><span class="line"><span class="function"><span class="params">							<span class="keyword">int</span> insn_len)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>该函数有5个参数：</p>
+<ol>
+<li>vcpu：需要进行指令模拟的vcpu,</li>
+<li>cr2: 当前vcpu的cr2;</li>
+<li>emulation_type: 模拟的类型；</li>
+<li>insn: 需要模拟的指令的指针；</li>
+<li>insn_len:需要模拟的指令的长度；</li>
+</ol>
+<p>该函数在kvm中有三个地方会被调用：</p>
+<ol>
+<li>in arch/x86/kvm/mmu.c-&gt; kvm_mmu_page_fault()-&gt;x86_emulate_instruction(vcpu, cr2, emulation_type, insn, insn_len);</li>
+<li>in arch/x86/kvm/x86.c-&gt; kvm_emulate_instruction()-&gt;x86_emulate_instruction(vcpu, 0, emulation_type, NULL, 0);</li>
+<li>in arch/x86/kvm/x86.c-&gt; kvm_emulate_instruction_from_buffer()-&gt;x86_emulate_instruction(vcpu, 0, 0, insn, insn_len);</li>
+</ol>
+<p>我们重点关注case 2， ji<code>kvm_emulate_instruction()</code></p>
+<h1 id="kvm-emulate-instruction"><a href="#kvm-emulate-instruction" class="headerlink" title="kvm_emulate_instruction"></a>kvm_emulate_instruction</h1><p>其调用<code>x86_emulate_instruction()</code>传入的cr2为0，insn为NULL,insn_len为0，即只有<code>vcpu</code>,<code>emulation_type</code>有效。</p>
+<h1 id="x86-emulate-instruction-1"><a href="#x86-emulate-instruction-1" class="headerlink" title="x86_emulate_instruction"></a>x86_emulate_instruction</h1><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">x86_emulate_instruction</span><span class="params">(struct kvm_vcpu *vcpu,                                  </span></span></span><br><span class="line"><span class="function"><span class="params">                            <span class="keyword">unsigned</span> <span class="keyword">long</span> cr2,                                      </span></span></span><br><span class="line"><span class="function"><span class="params">                            <span class="keyword">int</span> emulation_type,                                     </span></span></span><br><span class="line"><span class="function"><span class="params">                            <span class="keyword">void</span> *insn,                                             </span></span></span><br><span class="line"><span class="function"><span class="params">                            <span class="keyword">int</span> insn_len)</span>                                           </span></span><br><span class="line"><span class="function"></span>&#123;                                                                                   </span><br><span class="line">        <span class="keyword">int</span> r;                                                                      </span><br><span class="line">        <span class="class"><span class="keyword">struct</span> <span class="title">x86_emulate_ctxt</span> *<span class="title">ctxt</span> = &amp;<span class="title">vcpu</span>-&gt;<span class="title">arch</span>.<span class="title">emulate_ctxt</span>;</span>                   </span><br><span class="line">        <span class="keyword">bool</span> writeback = <span class="literal">true</span>;                                                      </span><br><span class="line">        <span class="keyword">bool</span> write_fault_to_spt = vcpu-&gt;arch.write_fault_to_shadow_pgtable;         </span><br><span class="line">                                                                                    </span><br><span class="line">        vcpu-&gt;arch.l1tf_flush_l1d = <span class="literal">true</span>;                                           </span><br><span class="line">                                                                                    </span><br><span class="line">        <span class="comment">/*                                                                          </span></span><br><span class="line"><span class="comment">         * Clear write_fault_to_shadow_pgtable here to ensure it is                 </span></span><br><span class="line"><span class="comment">         * never reused.                                                            </span></span><br><span class="line"><span class="comment">         */</span>                                                                         </span><br><span class="line">        vcpu-&gt;arch.write_fault_to_shadow_pgtable = <span class="literal">false</span>;                           </span><br><span class="line">        kvm_clear_exception_queue(vcpu);                                            </span><br><span class="line">                                                                                    </span><br><span class="line">        <span class="keyword">if</span> (!(emulation_type &amp; EMULTYPE_NO_DECODE)) &#123;                               </span><br><span class="line">                init_emulate_ctxt(vcpu);                                            </span><br><span class="line">                                                                                    </span><br><span class="line">                <span class="comment">/*                                                                  </span></span><br><span class="line"><span class="comment">                 * We will reenter on the same instruction since                    </span></span><br><span class="line"><span class="comment">                 * we do not set complete_userspace_io.  This does not              </span></span><br><span class="line"><span class="comment">                 * handle watchpoints yet, those would be handled in                </span></span><br><span class="line"><span class="comment">                 * the emulate_ops.                                                 </span></span><br><span class="line"><span class="comment">                 */</span>                                                                 </span><br><span class="line">                <span class="keyword">if</span> (!(emulation_type &amp; EMULTYPE_SKIP) &amp;&amp;                            </span><br><span class="line">                    kvm_vcpu_check_breakpoint(vcpu, &amp;r))                            </span><br><span class="line">                        <span class="keyword">return</span> r;                                                   </span><br><span class="line">                                                                                    </span><br><span class="line">                ctxt-&gt;interruptibility = <span class="number">0</span>;                                         </span><br><span class="line">                ctxt-&gt;have_exception = <span class="literal">false</span>;                                       </span><br><span class="line">                ctxt-&gt;exception.<span class="built_in">vector</span> = <span class="number">-1</span>;                                        </span><br><span class="line">                ctxt-&gt;perm_ok = <span class="literal">false</span>;                                              </span><br><span class="line">                                                                                    </span><br><span class="line">                ctxt-&gt;ud = emulation_type &amp; EMULTYPE_TRAP_UD;                       </span><br><span class="line">                                                                                    </span><br><span class="line">                r = x86_decode_insn(ctxt, insn, insn_len);                          </span><br><span class="line">                                                                                    </span><br><span class="line">                trace_kvm_emulate_insn_start(vcpu);                                 </span><br><span class="line">                ++vcpu-&gt;stat.insn_emulation;                                        </span><br><span class="line">                <span class="keyword">if</span> (r != EMULATION_OK)  &#123;                                           </span><br><span class="line">                        <span class="keyword">if</span> (emulation_type &amp; EMULTYPE_TRAP_UD)                      </span><br><span class="line">                                <span class="keyword">return</span> EMULATE_FAIL;                                </span><br><span class="line">                        <span class="keyword">if</span> (reexecute_instruction(vcpu, cr2, write_fault_to_spt,</span><br><span class="line">                                                emulation_type))                    </span><br><span class="line">                                <span class="keyword">return</span> EMULATE_DONE;                                </span><br><span class="line">                        <span class="keyword">if</span> (ctxt-&gt;have_exception &amp;&amp; inject_emulated_exception(vcpu))</span><br><span class="line">                                <span class="keyword">return</span> EMULATE_DONE;                                </span><br><span class="line">                        <span class="keyword">if</span> (emulation_type &amp; EMULTYPE_SKIP)                         </span><br><span class="line">                                <span class="keyword">return</span> EMULATE_FAIL;                                </span><br><span class="line">                        <span class="keyword">return</span> handle_emulation_failure(vcpu, emulation_type);  </span><br><span class="line">                &#125;                                                                   </span><br><span class="line">        &#125;                                                                           </span><br><span class="line">                                                                                    </span><br><span class="line">        <span class="keyword">if</span> ((emulation_type &amp; EMULTYPE_VMWARE) &amp;&amp;                                   </span><br><span class="line">            !is_vmware_backdoor_opcode(ctxt))                                       </span><br><span class="line">                <span class="keyword">return</span> EMULATE_FAIL;                                                </span><br><span class="line">                                                                                    </span><br><span class="line">        <span class="keyword">if</span> (emulation_type &amp; EMULTYPE_SKIP) &#123;                                       </span><br><span class="line">                kvm_rip_write(vcpu, ctxt-&gt;_eip);                                    </span><br><span class="line">                <span class="keyword">if</span> (ctxt-&gt;eflags &amp; X86_EFLAGS_RF)                                   </span><br><span class="line">                        kvm_set_rflags(vcpu, ctxt-&gt;eflags &amp; ~X86_EFLAGS_RF);    </span><br><span class="line">                <span class="keyword">return</span> EMULATE_DONE;                                                </span><br><span class="line">        &#125;                                                                           </span><br><span class="line">                                                                                    </span><br><span class="line">        <span class="keyword">if</span> (retry_instruction(ctxt, cr2, emulation_type))                           </span><br><span class="line">                <span class="keyword">return</span> EMULATE_DONE;                                                </span><br><span class="line">                                                                                    </span><br><span class="line">        <span class="comment">/* this is needed for vmware backdoor interface to work since it            </span></span><br><span class="line"><span class="comment">           changes registers values  during IO operation */</span>                         </span><br><span class="line">        <span class="keyword">if</span> (vcpu-&gt;arch.emulate_regs_need_sync_from_vcpu) &#123;                          </span><br><span class="line">                vcpu-&gt;arch.emulate_regs_need_sync_from_vcpu = <span class="literal">false</span>;                </span><br><span class="line">                emulator_invalidate_register_cache(ctxt);                           </span><br><span class="line">        &#125;                                                                           </span><br><span class="line">                                                                                    </span><br><span class="line">restart:                                                                            </span><br><span class="line">        <span class="comment">/* Save the faulting GPA (cr2) in the address field */</span>                      </span><br><span class="line">        ctxt-&gt;exception.address = cr2;                                              </span><br><span class="line">                                                                                    </span><br><span class="line">        r = x86_emulate_insn(ctxt);                                                 </span><br><span class="line">                                                                                    </span><br><span class="line">        <span class="keyword">if</span> (r == EMULATION_INTERCEPTED)                                             </span><br><span class="line">                <span class="keyword">return</span> EMULATE_DONE;                                                </span><br><span class="line">                                                                                    </span><br><span class="line">        <span class="keyword">if</span> (r == EMULATION_FAILED) &#123;                                                </span><br><span class="line">                <span class="keyword">if</span> (reexecute_instruction(vcpu, cr2, write_fault_to_spt,            </span><br><span class="line">                                        emulation_type))                            </span><br><span class="line">                        <span class="keyword">return</span> EMULATE_DONE;                                        </span><br><span class="line">                                                                                    </span><br><span class="line">                <span class="keyword">return</span> handle_emulation_failure(vcpu, emulation_type);              </span><br><span class="line">        &#125;                                                                           </span><br><span class="line">                                                                                    </span><br><span class="line">        <span class="keyword">if</span> (ctxt-&gt;have_exception) &#123;                                                 </span><br><span class="line">                r = EMULATE_DONE;                                                   </span><br><span class="line">                <span class="keyword">if</span> (inject_emulated_exception(vcpu))                                </span><br><span class="line">                        <span class="keyword">return</span> r;                                                   </span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (vcpu-&gt;arch.pio.count) &#123;                                          </span><br><span class="line">                <span class="keyword">if</span> (!vcpu-&gt;arch.pio.in) &#123;                                           </span><br><span class="line">                        <span class="comment">/* <span class="doctag">FIXME:</span> return into emulator if single-stepping.  */</span>  </span><br><span class="line">                        vcpu-&gt;arch.pio.count = <span class="number">0</span>;                                   </span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;                                                            </span><br><span class="line">                        writeback = <span class="literal">false</span>;                                          </span><br><span class="line">                        vcpu-&gt;arch.complete_userspace_io = complete_emulated_pio;</span><br><span class="line">                &#125;                                                                   </span><br><span class="line">                r = EMULATE_USER_EXIT;                                              </span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (vcpu-&gt;mmio_needed) &#123;                                             </span><br><span class="line">                <span class="keyword">if</span> (!vcpu-&gt;mmio_is_write)                                           </span><br><span class="line">                        writeback = <span class="literal">false</span>;                                          </span><br><span class="line">                r = EMULATE_USER_EXIT;                                              </span><br><span class="line">                vcpu-&gt;arch.complete_userspace_io = complete_emulated_mmio;          </span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (r == EMULATION_RESTART)                                          </span><br><span class="line">                <span class="keyword">goto</span> restart;                                                       </span><br><span class="line">        <span class="keyword">else</span>                                                                        </span><br><span class="line">                r = EMULATE_DONE;                                                   </span><br><span class="line">                                                                                    </span><br><span class="line">        <span class="keyword">if</span> (writeback) &#123;                                                            </span><br><span class="line">                <span class="keyword">unsigned</span> <span class="keyword">long</span> rflags = kvm_x86_ops-&gt;get_rflags(vcpu);               </span><br><span class="line">                toggle_interruptibility(vcpu, ctxt-&gt;interruptibility);              </span><br><span class="line">                vcpu-&gt;arch.emulate_regs_need_sync_to_vcpu = <span class="literal">false</span>;                  </span><br><span class="line">                kvm_rip_write(vcpu, ctxt-&gt;eip);                                     </span><br><span class="line">                <span class="keyword">if</span> (r == EMULATE_DONE &amp;&amp; ctxt-&gt;tf)                                  </span><br><span class="line">                        kvm_vcpu_do_singlestep(vcpu, &amp;r);                           </span><br><span class="line">                <span class="keyword">if</span> (!ctxt-&gt;have_exception ||                                        </span><br><span class="line">                    exception_type(ctxt-&gt;exception.<span class="built_in">vector</span>) == EXCPT_TRAP)           </span><br><span class="line">                        __kvm_set_rflags(vcpu, ctxt-&gt;eflags);                       </span><br><span class="line">                                                                                    </span><br><span class="line">                <span class="comment">/*                                                                  </span></span><br><span class="line"><span class="comment">                 * For STI, interrupts are shadowed; so KVM_REQ_EVENT will          </span></span><br><span class="line"><span class="comment">                 * do nothing, and it will be requested again as soon as            </span></span><br><span class="line"><span class="comment">                 * the shadow expires.  But we still need to check here,            </span></span><br><span class="line"><span class="comment">                 * because POPF has no interrupt shadow.                            </span></span><br><span class="line"><span class="comment">                 */</span>                                                                 </span><br><span class="line">                <span class="keyword">if</span> (unlikely((ctxt-&gt;eflags &amp; ~rflags) &amp; X86_EFLAGS_IF))             </span><br><span class="line">                        kvm_make_request(KVM_REQ_EVENT, vcpu);                      </span><br><span class="line">        &#125; <span class="keyword">else</span>                                                                      </span><br><span class="line">                vcpu-&gt;arch.emulate_regs_need_sync_to_vcpu = <span class="literal">true</span>;                   </span><br><span class="line">                                                                                    </span><br><span class="line">        <span class="keyword">return</span> r;                                                                   </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol>
+<li>首先判断是否需要decode instruction.即如果没有置上EMULTYPE_NO_DECODE,那么就需要指令译码。<ul>
+<li>init_emulate_ctxt(vcpu)： 初始化vcpu-&gt;arch.tmulate_ctxt；<ul>
+<li>初始化ctxt的一些变量<ul>
+<li>获取当前vcpu的CS段描述符的DB位（bit22） 和L位（bit21）</li>
+<li>ctxt-&gt;eflag</li>
+<li>ctxt-&gt;tf;</li>
+<li>ctxt-&gt;rip;</li>
+<li>ctxt-&gt;mode;可选的值有<ul>
+<li>X86EMUL_MODE_REAL</li>
+<li>X86EMUL_MODE_VM86</li>
+<li>X86EMUL_MODE_PROT64</li>
+<li>X86EMUL_MODE_PROT32</li>
+<li>X86EMUL_MODE_PROT16</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>init_decode_cache(ctxt);<ul>
+<li>memset(&amp;ctxt-&gt;rip_relative, 0 , (void <em>)&amp;ctxt-&gt;modrm - (void </em>)&amp;ctxt-&gt;rip_relative);</li>
+<li>ctxt-&gt;io_read.pos = 0;</li>
+<li>ctxt-&gt;io_read.end = 0;</li>
+<li>ctxt-&gt;mem_read.end = 0;</li>
+</ul>
+</li>
+<li>vcpu-&gt;arch.emulate_regs_need_sync_from_vcpu = false;</li>
+</ul>
+</li>
+<li>如果当前模拟没有设置EMULTYPE_SKIP并且当前指令设置了breakpoint，那么直接返回，因为还没有set_complete_userspace_io,所以还会再进入到当前指令。</li>
+<li>继续初始化ctxt的一些域：<ul>
+<li>ctxt-&gt;interruptibility = 0;</li>
+<li>ctxt-&gt;have_exception = false;</li>
+<li>ctxt-&gt;exception.vector = -l;</li>
+<li>ctxt-&gt;perm_ok = false;</li>
+<li>ctxt-&gt;ud = emulation_type &amp; EMULTYPE_TRAP_UD;</li>
+</ul>
+</li>
+<li>x86_decode_insn(ctxt, insn, insn_len)进行指令decode;<br>在此处会有tracepoint来trace kvm_emulate_insn(failed=0),并且将vcpu-&gt;stat.insn_emulation加1；<br>如果返回值为EMULATION_OK,说明指令译码过程没有出问题。</li>
+</ul>
+</li>
+<li>如果emulation_type置上了EMULTYPE_VMWARE,但是该指令不是vmware_backdoor_opcode，那么return EMULATE_FAIL；</li>
+<li>如果置上了EMULTYPE_SKIP，那么更新vcpu_rip和EFLAGS_RF；</li>
+<li></li>
+</ol>
+<h2 id="x86-decode-insn"><a href="#x86-decode-insn" class="headerlink" title="x86_decode_insn"></a>x86_decode_insn</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">x86_decode_insn</span><span class="params">(struct x86_emulate_ctxt *ctxt, <span class="keyword">void</span> *insn, <span class="keyword">int</span> insn_len)</span></span></span><br></pre></td></tr></table></figure>
+<p>初始状态：</p>
+<ul>
+<li>op_prefix = false;</li>
+<li>has_seg_override = false;</li>
+<li>ctxt-&gt;memop.type = OP_NONE;</li>
+<li>ctxt-&gt;memopp = NULL;</li>
+<li>ctxt-&gt;_eip = ctxt-&gt;eip;</li>
+<li>ctxt-&gt;fetch.ptr = ctxt-&gt;fetch.data;</li>
+<li>ctxt-&gt;fetch.end = ctxt-&gt;fetch.data + insn_len; 如果传入的insn为NULL，insn_len为0，那么ctxt-&gt;fetch.ptr == ctxt-&gt;fetch.end;</li>
+<li>ctxt-&gt;opcode.len = 1;</li>
+</ul>
+<ol>
+<li><p>如果传入的insn != NULL, 那么将insn地址开始的insn_len长度的指令memcpy到ctxt-&gt;fetch.data；<br>如果传入的insn == NULL, 那么调用<code>__do_insn_fetch_bytes(ctxt,1)</code>。该函数会设置ctxt-&gt;fetch.end;</p>
+</li>
+<li><p>根据ctxt-&gt;mode来设置def_op_bytes和def_ad_bytes的长度，最终会赋值到</p>
+</li>
+</ol>
+<ul>
+<li>ctxt-&gt;op_bytes = def_op_bytes; 操作数长度</li>
+<li>ctxt-&gt;ad_bytes = def_ad_bytes; 地址长度</li>
+</ul>
+<ol start="3">
+<li>for()循环进行指令前缀处理，ctxt-&gt;b = insn_fetch(u8, ctxt), 取出一个字节，根据不同的值进行不同的处理，比如有前缀，段超越，address-size override等等。</li>
+</ol>
+<ul>
+<li>设置op_prefix,更新ctxt-&gt;op_bytes;                0x66： operand-size override;</li>
+<li>更新ctxt-&gt;ad_bytes;                            0x67: address-size override;</li>
+<li>设置has_seg_override, ctxt-&gt;seg_override;        0x26,0x2e,0x36,0x3e,0x64,0x65: Segment override;</li>
+<li>设置ctxt-&gt;rex_prefix;                            0x40…0x4f: /<em>REX</em>/</li>
+<li>设置ctxt-&gt;lock_prefix;                            0xf0: lock;</li>
+<li>设置ctxt-&gt;rep_prefix;                            0xf2, 0xf3: REP</li>
+</ul>
+<ol start="4">
+<li><p>上一步处理完指令前缀后，ctxt-&gt;b指向前缀后的指令的第一个字节，<br>然后根据ctxt-&gt;b的值，来检查是几字节指令，将指令译码出入opcode,并设置ctxt-&gt;opcode_len= 1/2/3;</p>
+</li>
+<li><p>retry_instruction(),很多情况不执行，具体还不清楚这一步是在什么场景需要。</p>
+</li>
+<li><p>restart开始指令执行的模拟：</p>
+<ul>
+<li>ctxt-&gt;exception.address = cr2;</li>
+<li>x86_emulate_insn(ctxt)进行指令执行模拟</li>
+</ul>
+</li>
+</ol>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div></div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>Donate</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechat_pay.jpg" alt="Calmisi Lee WeChat Pay"/>
+        <p>WeChat Pay</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/ali_pay.jpg" alt="Calmisi Lee Alipay"/>
+        <p>Alipay</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/KVM/" rel="tag"># KVM</a>
+          
+            <a href="/tags/Instruction-emulation/" rel="tag"># Instruction emulation</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/post/2019/6/qemu-system-x86-64命令创建虚拟机的详细过程.html" rel="next" title="qemu-system-x86_64命令创建虚拟机的详细过程">
+                <i class="fa fa-chevron-left"></i> qemu-system-x86_64命令创建虚拟机的详细过程
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8zOTc5MS8xNjMxOA=="></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Calmisi Lee"/>
+            
+              <p class="site-author-name" itemprop="name">Calmisi Lee</p>
+              <p class="site-description motion-element" itemprop="description">Pas de regrets</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">67</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">19</span>
+                    <span class="site-state-item-name">categories</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">52</span>
+                    <span class="site-state-item-name">tags</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/calmisi" title="GitHub &rarr; https://github.com/calmisi" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="mailto:calmisi@163.com" title="E-Mail &rarr; mailto:calmisi@163.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Emulation-type-amp-Emulation-result"><span class="nav-number">1.</span> <span class="nav-text">Emulation type &amp; Emulation result</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#x86-emulate-instruction"><span class="nav-number">2.</span> <span class="nav-text">x86_emulate_instruction</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#kvm-emulate-instruction"><span class="nav-number">3.</span> <span class="nav-text">kvm_emulate_instruction</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#x86-emulate-instruction-1"><span class="nav-number">4.</span> <span class="nav-text">x86_emulate_instruction</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#x86-decode-insn"><span class="nav-number">4.1.</span> <span class="nav-text">x86_decode_insn</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">  <a href="http://www.miitbeian.gov.cn" rel="noopener" target="_blank"> </a>&copy; 2015.6 – <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Calmisi Lee</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Symbols count total: </span>
+    
+    <span title="Symbols count total">319k</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Reading time total &asymp;</span>
+    
+    <span title="Reading time total">4:50</span>
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.0.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=7.0.0"></script>
+
+  <script src="/js/src/motion.js?v=7.0.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/affix.js?v=7.0.0"></script>
+
+  <script src="/js/src/schemes/pisces.js?v=7.0.0"></script>
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=7.0.0"></script>
+<script src="/js/src/post-details.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=7.0.0"></script>
+
+
+
+  
+
+
+  
+    <script>
+  window.livereOptions = {
+    refer: 'post/2019/7/kvm指令模拟-kvm-emulate-instruction.html'
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+</script>
+
+  
+
+
+  
+
+  <script>
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+  
+  <script>
+    
+    function addCount(Counter) {
+      var $visitors = $('.leancloud_visitors');
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+
+      Counter('get', '/classes/Counter', { where: JSON.stringify({ url }) })
+        .done(function({ results }) {
+          if (results.length > 0) {
+            var counter = results[0];
+            
+              var $element = $(document.getElementById(url));
+              $element.find('.leancloud-visitors-count').text(counter.time + 1);
+            
+            Counter('put', '/classes/Counter/' + counter.objectId, JSON.stringify({ time: { '__op': 'Increment', 'amount': 1 } }))
+            
+              .fail(function ({ responseJSON }) {
+                console.log(`Failed to save Visitor num, with error message: ${responseJSON.error}`);
+              })
+          } else {
+            
+              var $element = $(document.getElementById(url));
+              $element.find('.leancloud-visitors-count').text('Counter not initialized! More info at console err msg.');
+              console.error('ATTENTION! LeanCloud counter has security bug, see how to solve it here: https://github.com/theme-next/hexo-leancloud-counter-security. \n However, you can still use LeanCloud without security, by setting `security` option to `false`.');
+            
+          }
+        })
+        .fail(function ({ responseJSON }) {
+          console.log(`LeanCloud Counter Error: ${responseJSON.code} ${responseJSON.error}`);
+        });
+    }
+    
+
+    $(function() {
+      $.get('https://app-router.leancloud.cn/2/route?appId=' + 'tf4TRbjrkONfr7VekxlWI8Py-gzGzoHsz')
+        .done(function({ api_server }) {
+          var Counter = function(method, url, data) {
+            return $.ajax({
+              method: method,
+              url: 'https://' + api_server + '/1.1' + url,
+              headers: {
+                'X-LC-Id': 'tf4TRbjrkONfr7VekxlWI8Py-gzGzoHsz',
+                'X-LC-Key': '5c1wL7zY6VY7oLzi5xaCIu5x',
+                'Content-Type': 'application/json',
+              },
+              data: data
+            });
+          };
+          
+            addCount(Counter);
+          
+        });
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  <style>
+    .copy-btn {
+      display: inline-block;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 20px;
+      color: #333;
+      white-space: nowrap;
+      vertical-align: middle;
+      cursor: pointer;
+      background-color: #eee;
+      background-image: linear-gradient(#fcfcfc, #eee);
+      border: 1px solid #d5d5d5;
+      border-radius: 3px;
+      user-select: none;
+      outline: 0;
+    }
+
+    .highlight-wrap .copy-btn {
+      transition: opacity .3s ease-in-out;
+      opacity: 0;
+      padding: 2px 6px;
+      position: absolute;
+      right: 4px;
+      top: 8px;
+    }
+
+    .highlight-wrap:hover .copy-btn,
+    .highlight-wrap .copy-btn:focus {
+      opacity: 1
+    }
+
+    .highlight-wrap {
+      position: relative;
+    }
+  </style>
+  <script>
+    $('.highlight').each(function(i, e) {
+      var $wrap = $('<div>').addClass('highlight-wrap');
+      $(e).after($wrap);
+      $wrap.append($('<button>').addClass('copy-btn').append('Copy').on('click', function(e) {
+        var code = $(this).parent().find('.code').find('.line').map(function(i, e) {
+          return $(e).text();
+        }).toArray().join('\n');
+        var ta = document.createElement('textarea');
+        var range = document.createRange(); //For Chrome
+        var sel = window.getSelection(); //For Chrome
+        var yPosition = window.pageYOffset || document.documentElement.scrollTop;
+        ta.style.top = yPosition + 'px'; //Prevent page scroll
+        ta.style.position = 'absolute';
+        ta.style.opacity = '0';
+        ta.value = code;
+        ta.textContent = code; //For FireFox
+        ta.contentEditable = true;
+        ta.readOnly = false;
+        document.body.appendChild(ta);
+        range.selectNode(ta);
+        sel.removeAllRanges();
+        sel.addRange(range);
+        ta.setSelectionRange(0, code.length);
+        var result = document.execCommand('copy');
+        
+          if (result) $(this).text('Copied');
+          else $(this).text('Copy failed');
+        
+        ta.blur(); //For iOS
+        $(this).blur();
+      })).on('mouseleave', function(e) {
+        var $b = $(this).find('.copy-btn');
+        setTimeout(function() {
+          $b.text('Copy');
+        }, 300);
+      }).append(e);
+    })
+  </script>
+
+
+  
+
+</body>
+</html>
